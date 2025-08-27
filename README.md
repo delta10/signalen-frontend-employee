@@ -85,13 +85,11 @@ De frontend is daarna beschikbaar op: http://localhost:3000.
 
 Zorg dat [Docker](http://docker.com/) en Docker compose zijn geïnstalleerd op je machine. Start met het volgende commando het backend project op:
 
-```
+```bash
 docker compose up
 ```
 
-De backend is daarna beschikbaar op: http://localhost:8000/signals/
-
-- 
+De backend is daarna beschikbaar op: http://localhost:8000/signals/. Het beheerpaneel is te vinden op http://localhost:8000/signals/admin/. Een overzicht van alle uitgaande mail is te vinden op http://localhost:8025/.
 
 ## Voor externen
 Deze repository bevat de frontend voor de “employee”-kant van het Signalen-platform: de interface waarmee gemeentemedewerkers meldingen kunnen bekijken, filteren en afhandelen.  
