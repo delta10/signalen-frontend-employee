@@ -62,23 +62,36 @@ ESLint is een codechecker. Het controleert of je code fouten of slechte gewoonte
 
 Afhankelijk van je IDE (VSCode, WebStorm, etc.) moet er mogelijk nog wat worden geconfigureerd om automatisch gebruik te maken van ESLint en Prettier. Het team van Delta10 kan hierbij helpen.
 
+Clone allereerst het GitHub-project op je ontwikkelmachine.
+
 **Frontend Project opstarten**
 
-1. Clone het GitHub-project op je ontwikkelmachine.
-2. Ga in de terminal naar de frontend-map:
+1. Ga in de terminal naar de frontend-map:
    ```bash
    cd frontend
    ```
-3. Installeer de benodigde NPM-packages:
+2. Installeer de benodigde NPM-packages:
    ```bash
    npm install
    ```
-4. Start de frontend
+3. Start de frontend
    ```bash
    npm run dev
    ```
 
 De frontend is daarna beschikbaar op: http://localhost:3000. 
+
+**Backend project opstarten**
+
+Zorg dat [Docker](http://docker.com/) en Docker compose zijn geïnstalleerd op je machine. Start met het volgende commando het backend project op:
+
+```
+docker compose up
+```
+
+De backend is daarna beschikbaar op: http://localhost:8000/signals/
+
+- 
 
 ## Voor externen
 Deze repository bevat de frontend voor de “employee”-kant van het Signalen-platform: de interface waarmee gemeentemedewerkers meldingen kunnen bekijken, filteren en afhandelen.  
