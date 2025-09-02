@@ -96,7 +96,7 @@ Wij hebben zowel een demo-omgeving voor de backend als voor de frontend beschikb
 
 **Frontend**:
 
-Op het moment dat er een Pull Request wordt aangemaakt in GitHub wordt er automatisch door Vercel een instantie opgespind waarop je je gedane frontend werk kan bekijken. De demo omgeving van de main branche is altijd inzichtelijk via: https://studenten-project.vercel.app/.
+Op het moment dat er een Pull Request wordt aangemaakt in GitHub wordt er automatisch door Vercel een instantie opgespind waarop je je gedane frontend werk kan bekijken. De demo omgeving van de main branche is altijd inzichtelijk via: https://signalen-frontend-employee.vercel.app/.
 
 **Backend**:
 
