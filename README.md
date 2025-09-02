@@ -94,10 +94,12 @@ De backend is daarna beschikbaar op: http://localhost:8000/signals/. Het beheerp
 #### Demo omgeving
 Wij hebben zowel een demo-omgeving voor de backend als voor de frontend beschikbaar gesteld.
 
-**Frontend**:\
+**Frontend**:
+
 Op het moment dat er een Pull Request wordt aangemaakt in GitHub wordt er automatisch door Vercel een instantie opgespind waarop je je gedane frontend werk kan bekijken. De demo omgeving van de main branche is altijd inzichtelijk via: https://studenten-project.vercel.app/.
 
-**Backend**:\
+**Backend**:
+
 - Frontend: https://meldingen.utrecht.demo.delta10.cloud/
 - Backoffice: https://meldingen.utrecht.demo.delta10.cloud/manage
 - Mailhog: https://meldingen.utrecht.demo.delta10.cloud/mailhog
@@ -106,5 +108,6 @@ Op het moment dat er een Pull Request wordt aangemaakt in GitHub wordt er automa
 Voor de inloggegevens van de backend raden wij aan even contact op te nemen met een van ons (Delta10 medewerkers).
 
 # Voor externen
-Deze repository bevat de frontend voor de “employee”-kant van het Signalen-platform: de interface waarmee gemeentemedewerkers meldingen kunnen bekijken, filteren en afhandelen.  
+
+Deze repository bevat de frontend voor de “employee”-kant van het Signalen-platform: de interface waarmee gemeentemedewerkers meldingen kunnen bekijken, filteren en afhandelen.
 Het project is open-source, zodat andere gemeenten, ontwikkelaars of geïnteresseerden kunnen meekijken met de ontwikkeling van deze app.
