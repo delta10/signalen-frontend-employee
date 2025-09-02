@@ -98,10 +98,10 @@ Wij hebben zowel een demo-omgeving voor de backend als voor de frontend beschikb
 Op het moment dat er een Pull Request wordt aangemaakt in GitHub wordt er automatisch door Vercel een instantie opgespind waarop je je gedane frontend werk kan bekijken. De demo omgeving van de main branche is altijd inzichtelijk via: https://studenten-project.vercel.app/.
 
 **Backend**:\
-Frontend: https://meldingen.utrecht.demo.delta10.cloud/
-Backoffice: https://meldingen.utrecht.demo.delta10.cloud/manage
-Mailhog: https://meldingen.utrecht.demo.delta10.cloud/mailhog
-Django admin: https://api.meldingen.utrecht.demo.delta10.cloud/signals/admin/
+- Frontend: https://meldingen.utrecht.demo.delta10.cloud/
+- Backoffice: https://meldingen.utrecht.demo.delta10.cloud/manage
+- Mailhog: https://meldingen.utrecht.demo.delta10.cloud/mailhog
+- Django admin: https://api.meldingen.utrecht.demo.delta10.cloud/signals/admin/
 
 Voor de inloggegevens van de backend raden wij aan even contact op te nemen met een van ons (Delta10 medewerkers).
 
