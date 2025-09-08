@@ -21,8 +21,7 @@ services:
     volumes:
       - media-data:/app/media
       - ./docker-compose/scripts/initialize.sh:/initialize.sh
-    command:
-      - /initialize.sh
+    command: ["bash", "/initialize.sh"]
 
   celery:
     image: signalen/backend
