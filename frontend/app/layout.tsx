@@ -3,7 +3,7 @@ import { Instrument_Sans } from "next/font/google";
 import "./globals.css";
 
 const instrumentSans = Instrument_Sans({
-  variable: "--font-Instrument-sans",
+  variable: "--font-instrument-sans",
   subsets: ["latin"],
 });
 
