@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import * as React from 'react';
+import { SheetDemo } from './message';
 import {
   Table,
   TableBody,
@@ -163,12 +164,7 @@ export default function Home() {
               height={28}
               className='dark:invert'
             />
-            <div>
-              <h1 className='text-2xl font-semibold'>Signalen — Gemeente</h1>
-              <p className='text-sm text-slate-600 dark:text-slate-400'>
-                Inwoners melden problemen; behandelaren verwerken ze hier.
-              </p>
-            </div>
+
           </div>
 
           <div className='hidden gap-2 sm:flex'>
@@ -329,12 +325,13 @@ export default function Home() {
                         </TableCell>
                         <TableCell>
                           <div className='flex gap-2'>
-                            <Button
-                              size='sm'
-                              onClick={() => console.log('Bekijk', displayId)}
+                            <SheetDemo
+                              id={String(s.id ?? s.signal_id ?? displayId)}
+                              title={title}
+                              body={String(s.text ?? '')}
                             >
-                              Bekijk
-                            </Button>
+                              <Button size='sm'>Bekijk</Button>
+                            </SheetDemo>
                             <Button
                               size='sm'
                               onClick={() =>
