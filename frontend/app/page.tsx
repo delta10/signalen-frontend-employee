@@ -1,6 +1,7 @@
 import Image from "next/image";
 
 import { SheetDemo } from "./message";
+import { Sheet } from "lucide-react";
 
 export default function Home() {
   return (
@@ -52,6 +53,10 @@ export default function Home() {
             Read our docs
           </a>
 
+        <div>
+          <SheetDemo />
+        </div>
+        
         </div>
       </main>
       <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
@@ -100,6 +105,8 @@ export default function Home() {
           />
           Go to nextjs.org →
         </a>
+
+
       </footer>
     </div>
   );
