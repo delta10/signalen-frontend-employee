@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import * as React from 'react';
-import { SheetDemo } from './message';
+import { SheetDemo } from '../components/ui/message-popup';
 import {
   Table,
   TableBody,
