@@ -13,6 +13,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
+import { List } from 'lucide-react';
+import { ListSignals } from '../server/listSignals';
 
 type Signal = {
   id: string;
@@ -35,20 +37,8 @@ export default function Home() {
     setError(null);
 
     // gebruik NEXT_PUBLIC_API_BASE of fallback naar localhost:8000
-    const API_BASE = (
-      process.env.NEXT_PUBLIC_API_BASE ||
-      'https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/private/signals/?page=1&page_size=50'
-    ).replace(/\/$/, '');
-    fetch(`${API_BASE}/api/signals`, {
-      headers: {
-        Authorization:
-          'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImI3MDJkNTU3MTU0OGI1ZjRlZjRhNzdiYzZiMTIzMjY0NzM1OTFjYWUifQ.eyJpc3MiOiJodHRwczovL21lbGRpbmdlbi51dHJlY2h0LmRlbW8uZGVsdGExMC5jbG91ZC9kZXgiLCJzdWIiOiJFZ1ZzYjJOaGJBIiwiYXVkIjoic2lnbmFsZW4iLCJleHAiOjE3NTk3ODM2NTcsImlhdCI6MTc1OTc0MDQ1Nywibm9uY2UiOiJRV05pUFpsQmpDLzRLS3hMVkp5bHV3PT0iLCJhdF9oYXNoIjoiWlNiN3BHSG1QX0gzeUJGTWtUdUZtQSIsImVtYWlsIjoiYWRtaW5AbWVsZGluZ2VuLnV0cmVjaHQuZGVtby5kZWx0YTEwLmNsb3VkIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJhZG1pbiJ9.hhzsy9c6g_xUCHseJARxYfJx8LK5QNnWK2VXcXa2K9hLju2hbhh07tSEGD-7btdyDJMsB_Yz7s7f96NzIfHqNcJBd3R0BqsyKipV9Jp0YqB48deIilWcvlhH2n_FGTerF9jiciiMLcoProVilhu-nAUdIiaVqGosiuFPVodfiBYN7TMGR6sw_J_Wnu5oYhdeRj2XszaYKkVVETlaVzyesEBAFlTvWzYfjg4qxKz3-l9g5yIV6xoIk-gkKx4m81FEiUbwWd4PIZGl7Kr06ZXqiLu-E2Vbm2aMf4jpaTz9HZfY6J2bzBloBKPKbaXLHTD_JRJ_6BlHiSFyYGqeGQHjfw',
-      },
-    })
-      .then((r) => {
-        if (!r.ok) throw new Error(r.statusText || 'Netwerkfout');
-        return r.json();
-      })
+      const allSignals: Signal[] = await ListSignals();
+      setSignals(allSignals);
       .then((data) => {
         if (!mounted) return;
         // backend geeft { count, results: [...] } — gebruik results als array
@@ -59,11 +49,7 @@ export default function Home() {
             : [];
         setSignals(items);
       })
-      .catch((err) => {
-        if (!mounted) return;
-        setError(err?.message ?? 'Fout bij laden');
-        setSignals([]);
-      })
+
       .finally(() => mounted && setLoading(false));
 
     return () => {
@@ -72,9 +58,9 @@ export default function Home() {
   }, []);
 
   React.useEffect(() => {
-    const cleanup = fetchSignals();
+    const cleanup = ListSignals();
     return () => cleanup && cleanup();
-  }, [fetchSignals]);
+  }, [ListSignals]);
 
   const loadMockData = () => {
     setSignals([
