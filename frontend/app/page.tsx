@@ -16,12 +16,22 @@ import { Button } from '@/components/ui/button';
 import { List } from 'lucide-react';
 import { ListSignals } from '../server/listSignals';
 
-type Signal = {
-  id: string;
+interface Signal {
+  id_display: string;
+  description?: string;
   title?: string;
   location?: string;
   reporter?: string;
-  status?: 'open' | 'in_progress' | 'closed' | string;
+  state_display?: 'Gemeld' |
+                  'In behandeling' |
+                  'afgehandeld' |
+                  'In afwachting van behandeling' |
+                  'Doorgezet naar extern' |
+                  'Reactie gevraagd' |
+                  'Ingepland' |
+                  'Extern: verzoek tot afhandeling' |
+                  'Geannuleerd' |
+                  string;
 };
 
 export default function Home() {
