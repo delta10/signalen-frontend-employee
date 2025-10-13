@@ -13,9 +13,13 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { List } from 'lucide-react';
+//import { List } from 'lucide-react';
 import { ListSignals } from '../server/listSignals';
+//import { Sign } from 'crypto';
+import { useEffect } from 'react';
+import Link from 'next/dist/client/link';
 
+const filtered: ListSignal[] = []; // Placeholder for filtered signals
 interface ListSignal {
   id_display: string;
   // title?: string;
@@ -48,43 +52,57 @@ interface ListSignal {
   };
 };
 
+async function grabSignals() {
+  const testServers = await ListSignals();
+  console.log("testServers", testServers);
+
+  if (!Array.isArray(testServers)) {
+    //toastr.error("Failed to fetch servers", "Error");
+    console.error("Expected an array of signals, but got:", testServers);
+    return [];
+  }
+  const signals: ListSignal[] = [];
+  for (const s of testServers) {
+    signals.push({
+      id_display: s.id_display,
+      priority: s.priority,
+      category: {
+        main: s.category.main,
+        sub: s.category.sub,
+      },
+      location: {
+        area_name: s.location.area_name,
+        address_text: s.location.address_text,
+      },
+      created_at: s.created_at,
+      assigned_user_email: s.assigned_user_email,
+      directing_department: {
+        name: s.directing_department.name
+      },
+      status: {
+        text: s.status.text,
+        state_display: s.status.state_display
+      }
+      });
+  }
+  return signals;
+}
+
 export default function Home() {
   const [signals, setSignals] = React.useState<ListSignal[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
+  //const [loading, setLoading] = React.useState(true);
+  //const [error, setError] = React.useState<string | null>(null);
   const [query, setQuery] = React.useState('');
   const [statusFilter, setStatusFilter] = React.useState<'all' | string>('all');
 
-  // const fetchSignals = React.useCallback(() => {
-  //   let mounted = true;
-  //   setLoading(true);
-  //   setError(null);
-
-  //   // gebruik NEXT_PUBLIC_API_BASE of fallback naar localhost:8000
-  //     const allSignals: ListSignal[] = await ListSignals();
-  //     setSignals(allSignals);
-  //     .then((data) => {
-  //       if (!mounted) return;
-  //       // backend geeft { count, results: [...] } — gebruik results als array
-  //       const items = Array.isArray(data)
-  //         ? data
-  //         : Array.isArray(data?.results)
-  //           ? data.results
-  //           : [];
-  //       setSignals(items);
-  //     })
-
-  //     .finally(() => mounted && setLoading(false));
-
-  //   return () => {
-  //     mounted = false;
-  //   };
-  // }, []);
-
-  // React.useEffect(() => {
-  //   const cleanup = ListSignals();
-  //   return () => cleanup && cleanup();
-  // }, [ListSignals]);
+    useEffect(() => {
+    const loadSignals = async () => {
+      const fetchedSignals = await grabSignals();
+      console.log("fetchedSignals", fetchedSignals);
+      setSignals(Array.isArray(fetchedSignals) ? fetchedSignals : []);
+    };
+    loadSignals();
+  }, []);
 
   const loadMockData = () => {
     setSignals([
@@ -122,57 +140,8 @@ export default function Home() {
         },
       },
     ]);
-    setError(null);
-    setLoading(false);
   };
 
-  // helper: bepaal de 'state' van een item (backend geeft object of string)
-  const getState = (item: any) => {
-    if (!item) return '';
-    if (typeof item.status === 'string') return item.status;
-    return item.status?.state ?? String(item.status ?? '');
-  };
-
-  // map UI-filterwaarden naar backend-state codes (pas aan indien nodig)
-  const statusFilterMap: Record<string, string[]> = {
-    open: ['m'], // "Gemeld"
-    in_progress: ['b'], // "In behandeling"
-    closed: ['o'], // "Afgehandeld"
-    afwachting: ['i'], // "In afwachting van behandeling"
-    door_extern: ['forward to external'], // "Doorgezet naar extern"
-    reactie_gevraagd: ['reaction requested'], // "Reactie gevraagd"
-    ingepland: ['ingepland'], // "Ingepland"
-    verzoek_afhandeling_extern: ['closure requested'], // "Extern: verzoek tot afhandeling"
-    geannuleerd: ['a'], // "Geannuleerd"
-  };
-
-  const filtered = signals.filter((s) => {
-    // status filter: vergelijk backend state codes
-    if (statusFilter !== 'all') {
-      const desired = statusFilterMap[statusFilter] ?? [statusFilter];
-      const state = getState(s);
-      if (!desired.includes(state)) return false;
-    }
-
-    // tekst-zoeking (veilig: zet id en velden om naar strings)
-    if (!query.trim()) return true;
-    const q = query.toLowerCase();
-    const idString = String(
-      (s as any).id_display ?? (s as any).id ?? '',
-    ).toLowerCase();
-    return (
-      idString.includes(q) ||
-      String((s as any).title ?? (s as any).text ?? (s as any)._display ?? '')
-        .toLowerCase()
-        .includes(q) ||
-      String((s as any).location?.address_text ?? (s as any).location ?? '')
-        .toLowerCase()
-        .includes(q) ||
-      String((s as any).reporter?.email ?? (s as any).reporter ?? '')
-        .toLowerCase()
-        .includes(q)
-    );
-  });
 
   return (
     <div className='min-h-screen bg-slate-50 p-6 text-slate-900 sm:p-12 dark:bg-slate-900 dark:text-slate-100'>
@@ -193,7 +162,8 @@ export default function Home() {
             <Button onClick={() => console.log('Nieuwe melding')}>
               Nieuwe melding
             </Button>
-            <Button onClick={() => fetchSignals()}>Ververs</Button>
+            <Button onClick={() => grabSignals()}>Ververs</Button>
+            <Button onClick={() => loadMockData()}>Load Mock Data</Button>
           </div>
         </div>
 
@@ -235,151 +205,53 @@ export default function Home() {
         </div>
       </header>
 
-      <main className='mx-auto max-w-7xl'>
-        <section className='rounded-md bg-white p-4 shadow-sm dark:bg-slate-800'>
-          {loading ? (
-            <div className='p-6 text-center'>Laden…</div>
-          ) : error ? (
-            <div className='p-6 text-center text-red-600'>
-              <div>Fout: {error}</div>
-              <div className='mt-3 flex justify-center gap-2'>
-                <Button onClick={() => fetchSignals()}>Opnieuw proberen</Button>
-                <Button onClick={() => loadMockData()}>
-                  Laad voorbeelddata
-                </Button>
+      {signals.map(signal => (
+        <div
+          key={signal.id_display}
+          className="flex items-center justify-between bg-secondary-700 border border-transparent rounded-lg px-5 py-4
+          hover:border-secondary-500 duration-300"
+        >
+          <Link
+            href={`/dashboard/server/${signal.id_display}/overview`}
+            className="flex items-center gap-2 text-sm flex-1"
+          >
+            <div>
+              <div className="flex items-center gap-x-2">
+                <h2 className="text-lg font-medium text-secondary-100">{signal.category?.main}</h2>
+                <span
+                  className={`badge badge-variant-secondary m-1 ${signal.status?.state_display === 'gemeld' ? 'badge-success' : 'badge-danger'
+                    }`}
+                >
+                  {signal.status?.state_display}
+                </span>
               </div>
+              <span className="block text-sm w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">
+                {signal.status?.text}
+              </span>
             </div>
-          ) : signals.length === 0 ? (
-            <div className='p-6 text-center'>
-              Geen signalen gevonden
-              <div className='mt-3'>
-                <Button onClick={() => loadMockData()}>
-                  Laad voorbeelddata
-                </Button>
-              </div>
+            <div className="w-48">
+              <span className="text-secondary-300 font-medium text-sm">Toegewezen aan</span>
+              <p>{signal.assigned_user_email}</p>
             </div>
-          ) : (
-            <>
-              <div className='mb-3 flex items-center justify-between'>
-                <div className='text-sm text-slate-600 dark:text-slate-400'>
-                  Totaal: {signals.length}
-                </div>
-                <div className='text-sm text-slate-600 dark:text-slate-400'>
-                  Getoond: {filtered.length}
-                </div>
-              </div>
-
-              <Table>
-                <TableCaption>Signalen overzicht</TableCaption>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Id</TableHead>
-                    {/* Urgentie-icoon kolom (geen tekst, alleen klein bolletje/icoon) */}
-                    <TableHead className='w-10' aria-label='Urgentie' />
-                    <TableHead>Titel</TableHead>
-                    <TableHead>Locatie</TableHead>
-                    <TableHead>Melder</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Acties</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filtered.map((s: any) => {
-                    // veilige weergavewaarden (backend kan objecten teruggeven)
-                    const displayId =
-                      s.id ?? (s.id !== undefined ? String(s.id) : '');
-                    const title = s.title ?? s.text ?? s._display ?? '—';
-
-                    const loc = s.location;
-                    const locationText =
-                      typeof loc === 'string'
-                        ? loc
-                        : (loc?.address_text ??
-                          (loc?.address
-                            ? `${loc.address.openbare_ruimte ?? ''} ${loc.address.huisnummer ?? ''}`.trim()
-                            : 'Onbekend'));
-
-                    const rep = s.reporter;
-                    const reporterText =
-                      typeof rep === 'string'
-                        ? rep
-                        : rep?.email || rep?.phone || 'Anoniem';
-
-                    const statusObj = s.status;
-                    const state =
-                      statusObj?.state ??
-                      (typeof statusObj === 'string' ? statusObj : undefined);
-                    const statusText = statusObj?.state_display ?? state ?? '—';
-
-                    return (
-                      <TableRow key={displayId || Math.random()}>
-                        <TableCell className='font-mono text-sm'>
-                          {displayId}
-                        </TableCell>
-
-                        {/* Urgentie-cel: vervang inhoud door jouw eigen icoon */}
-                        <TableCell className='px-2'>
-                          <span className='inline-flex h-6 w-6 items-center justify-center rounded-full bg-slate-200 dark:bg-slate-700'>
-                            {/* Vervang /icons/urgent.svg door jouw bestand in frontend/public/icons */}
-                            <img
-                              src='/icons/urgent.svg'
-                              alt='Urgentie'
-                              className='h-4 w-4'
-                            />
-                          </span>
-                        </TableCell>
-
-                        <TableCell>{title}</TableCell>
-                        <TableCell>{locationText}</TableCell>
-                        <TableCell>{reporterText}</TableCell>
-                        <TableCell>
-                          <span
-                            className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs ${
-                              state === 'open'
-                                ? 'bg-green-100 text-green-800'
-                                : state === 'in_progress'
-                                  ? 'bg-yellow-100 text-yellow-800'
-                                  : 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200'
-                            }`}
-                          >
-                            {statusText}
-                          </span>
-                        </TableCell>
-                        <TableCell>
-                          <div className='flex gap-2'>
-                            <SheetDemo
-                              id={String(s.id ?? s.signal_id ?? displayId)}
-                              title={title}
-                              body={String(s.text ?? '')}
-                            >
-                              <Button size='sm'>Bekijk</Button>
-                            </SheetDemo>
-                            <Button
-                              size='sm'
-                              onClick={() =>
-                                console.log('Toewijzen', displayId)
-                              }
-                            >
-                              Toewijzen
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </>
-          )}
-        </section>
+            <div className="w-48">
+              <span className="text-secondary-300 font-medium text-sm">Gemeld op</span>
+              <p>{signal.created_at}</p>
+            </div>
+          </Link>
+          <div
+            className="w-48 cursor-pointer text-secondary-300 font-medium text-sm"
+          >
+            <span className="text-2xl">...</span>
+          </div>
+        </div>
+      ))}
 
         <div className='mt-4 flex gap-2 sm:hidden'>
           <Button onClick={() => console.log('Nieuwe melding')}>
             Nieuwe melding
           </Button>
-          <Button onClick={() => fetchSignals()}>Ververs</Button>
+          <Button onClick={() => grabSignals()}>Ververs</Button>
         </div>
-      </main>
     </div>
   );
 }
