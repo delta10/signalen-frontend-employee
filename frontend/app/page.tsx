@@ -16,84 +16,110 @@ import { Button } from '@/components/ui/button';
 import { List } from 'lucide-react';
 import { ListSignals } from '../server/listSignals';
 
-interface Signal {
+interface ListSignal {
   id_display: string;
-  description?: string;
-  title?: string;
-  location?: string;
-  reporter?: string;
-  state_display?: 'Gemeld' |
-                  'In behandeling' |
-                  'afgehandeld' |
-                  'In afwachting van behandeling' |
-                  'Doorgezet naar extern' |
-                  'Reactie gevraagd' |
-                  'Ingepland' |
-                  'Extern: verzoek tot afhandeling' |
-                  'Geannuleerd' |
-                  string;
+  // title?: string;
+  priority?: string;
+  category?: {
+    main?: string;
+    sub?: string;
+  };
+  location?: {
+    area_name?: string;
+    address_text?: string;
+  };
+  created_at?: string;
+  assigned_user_email?: string;
+  directing_department?: {
+    name?: string
+  };
+  status?: {
+    text?: string;
+    state_display?: 'Gemeld' |
+                    'In behandeling' |
+                    'afgehandeld' |
+                    'In afwachting van behandeling' |
+                    'Doorgezet naar extern' |
+                    'Reactie gevraagd' |
+                    'Ingepland' |
+                    'Extern: verzoek tot afhandeling' |
+                    'Geannuleerd' |
+                    string;
+  };
 };
 
 export default function Home() {
-  const [signals, setSignals] = React.useState<Signal[]>([]);
+  const [signals, setSignals] = React.useState<ListSignal[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [query, setQuery] = React.useState('');
   const [statusFilter, setStatusFilter] = React.useState<'all' | string>('all');
 
-  const fetchSignals = React.useCallback(() => {
-    let mounted = true;
-    setLoading(true);
-    setError(null);
+  // const fetchSignals = React.useCallback(() => {
+  //   let mounted = true;
+  //   setLoading(true);
+  //   setError(null);
 
-    // gebruik NEXT_PUBLIC_API_BASE of fallback naar localhost:8000
-      const allSignals: Signal[] = await ListSignals();
-      setSignals(allSignals);
-      .then((data) => {
-        if (!mounted) return;
-        // backend geeft { count, results: [...] } — gebruik results als array
-        const items = Array.isArray(data)
-          ? data
-          : Array.isArray(data?.results)
-            ? data.results
-            : [];
-        setSignals(items);
-      })
+  //   // gebruik NEXT_PUBLIC_API_BASE of fallback naar localhost:8000
+  //     const allSignals: ListSignal[] = await ListSignals();
+  //     setSignals(allSignals);
+  //     .then((data) => {
+  //       if (!mounted) return;
+  //       // backend geeft { count, results: [...] } — gebruik results als array
+  //       const items = Array.isArray(data)
+  //         ? data
+  //         : Array.isArray(data?.results)
+  //           ? data.results
+  //           : [];
+  //       setSignals(items);
+  //     })
 
-      .finally(() => mounted && setLoading(false));
+  //     .finally(() => mounted && setLoading(false));
 
-    return () => {
-      mounted = false;
-    };
-  }, []);
+  //   return () => {
+  //     mounted = false;
+  //   };
+  // }, []);
 
-  React.useEffect(() => {
-    const cleanup = ListSignals();
-    return () => cleanup && cleanup();
-  }, [ListSignals]);
+  // React.useEffect(() => {
+  //   const cleanup = ListSignals();
+  //   return () => cleanup && cleanup();
+  // }, [ListSignals]);
 
   const loadMockData = () => {
     setSignals([
       {
-        id: 'S-001',
-        title: 'Kapotte lantaarnpaal',
-        location: 'Parkstraat 12',
-        reporter: 'J. de Boer',
-        status: 'open',
+        id_display: 'S-001',
+        location: {
+          address_text: 'Parkstraat 12',
+        },
+        assigned_user_email: 'J. de Boer',
+        status: {
+          state_display: 'open',
+          text: 'Kapotte lantaarnpaal',
+        },
       },
       {
-        id: 'S-002',
-        title: 'Zwerfvuil bij speeltuin',
-        location: 'Dorpsplein',
-        reporter: 'M. van Dijk',
-        status: 'in_progress',
+        id_display: 'S-002',
+        location: {
+          address_text: 'Dorpsplein',
+        },
+        assigned_user_email: 'M. van Dijk',
+        status: {
+          state_display: 'in_progress',
+          text: 'Zwerfvuil bij speeltuin',
+        },
       },
       {
-        id: 'S-003',
-        title: 'Verstopte put',
-        location: 'Stationsweg 3',
-        reporter: 'A. Klaassen',
-        status: 'closed',
+        id_display: 'S-003',
+        location: {
+          address_text: 'Stationsweg 3',
+        },
+        assigned_user_email: 'A. Klaassen',
+        status: {
+          state_display: 'closed',
+          text: 'Gevallen boom verwijderd',
+        },
       },
     ]);
     setError(null);

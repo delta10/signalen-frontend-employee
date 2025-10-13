@@ -1,11 +1,7 @@
 'use server';
 
-//import { checkJWT } from "./checkJWT";
-
 export async function ListSignals() {
-    //const { session } = await checkJWT();
-
-    const res = await fetch(`${process.env.DOMAIN_NAME}/signals/v1/private/signals/`, {
+   const res = await fetch(`${process.env.DOMAIN_NAME}/signals/v1/private/signals/`, {
         method: 'GET',
         headers: {
             "Content-Type": "application/json",
