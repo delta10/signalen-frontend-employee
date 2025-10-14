@@ -31,7 +31,7 @@ type MessageProps = {
   text: string;
   created_at: string;
   location: Location;
-  category: string;
+  category: string | any;
   reporter: Reporter;
   priority: string;
   state_display: string;
@@ -69,6 +69,12 @@ export function SheetDemo({ id, source, text, created_at, location, category, re
   // const [notesState, setNotes] = useState(notes || []);
   const [showHistory, setShowHistory] = useState(false);
 
+  // veilige weergave van category — backend kan object sturen
+  const categoryText: string =
+    typeof category === 'string'
+      ? category
+      : category?.sub ?? category?.main ?? category?.sub_slug ?? category?.main_slug ?? JSON.stringify(category ?? '');
+  
     const formatDate = (dateString: string) => {
       return new Date(dateString).toLocaleDateString('nl-NL', {
         day: '2-digit',
@@ -199,7 +205,7 @@ export function SheetDemo({ id, source, text, created_at, location, category, re
                   </Badge>
                 )}
                 <Badge className="text-xs">
-                  {category || 'Overlast'}
+                  {categoryText || 'Overlast'}
                 </Badge>
                 <span className="text-xs text-muted-foreground">
                   {created_at}
@@ -306,7 +312,7 @@ export function SheetDemo({ id, source, text, created_at, location, category, re
                   <div className="flex items-center gap-1">
                     <Tag className="h-4 w-4 text-muted-foreground" />
                     <span className="text-sm">
-                      {category || 'Niet gespecificeerd'}
+                      {categoryText || 'Niet gespecificeerd'}
                     </span>
                   </div>
                 </CardContent>
@@ -421,7 +427,7 @@ export function SheetDemo({ id, source, text, created_at, location, category, re
                         </Button>
                       </div>
                       <p className="text-sm text-muted-foreground">
-                        {category || 'Niet gecategoriseerd'}
+                        {categoryText || 'Niet gecategoriseerd'}
                       </p>
                     </div>
 
