@@ -42,7 +42,7 @@ export default function Home() {
     fetch(`${API_BASE}/api/signals`, {
       headers: {
         Authorization:
-          'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImI3MDJkNTU3MTU0OGI1ZjRlZjRhNzdiYzZiMTIzMjY0NzM1OTFjYWUifQ.eyJpc3MiOiJodHRwczovL21lbGRpbmdlbi51dHJlY2h0LmRlbW8uZGVsdGExMC5jbG91ZC9kZXgiLCJzdWIiOiJFZ1ZzYjJOaGJBIiwiYXVkIjoic2lnbmFsZW4iLCJleHAiOjE3NjAwNTM2ODYsImlhdCI6MTc2MDAxMDQ4Niwibm9uY2UiOiJzb21tbnBmWEFlUHpGOVZwcXJTaWJ3PT0iLCJhdF9oYXNoIjoiMkpDVHR3NUxFOXN6cFQwTFBWRS1FQSIsImVtYWlsIjoiYWRtaW5AbWVsZGluZ2VuLnV0cmVjaHQuZGVtby5kZWx0YTEwLmNsb3VkIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJhZG1pbiJ9.cjRySsKTrX1NOm8E6V36LuCI-_pBFCu_8YF0K-Z7lqgzhMeXkmn-ReUwOxeJQrkzip6s9kpk5_weAFN_arnc5dyofqHky7VTS-AwIgu6r5AAKdWSFf3idfdhJD3uHwQEj3h_WNpqoZ9-2dPziDu-nrBCGKerg-SjlalCjWncdIQBuZgN8u3aCaVlKCnuKXDkh8T-9u0C314SnHB9k6ehPb9-o_kiqrTBclQPSZHzgv61yLa4_oE9ZxR8Hw1tMNxcXE7FU5-mpxRYs45PFRHYOWcDdSVdkvbl7TwNW4zt9Ic3Qx9qDCChKDMuh6NwI12y5Du8xwjWqeT9hsnlaMXr6Q'
+          'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImI3MDJkNTU3MTU0OGI1ZjRlZjRhNzdiYzZiMTIzMjY0NzM1OTFjYWUifQ.eyJpc3MiOiJodHRwczovL21lbGRpbmdlbi51dHJlY2h0LmRlbW8uZGVsdGExMC5jbG91ZC9kZXgiLCJzdWIiOiJFZ1ZzYjJOaGJBIiwiYXVkIjoic2lnbmFsZW4iLCJleHAiOjE3NjA0NzEyMTYsImlhdCI6MTc2MDQyODAxNiwibm9uY2UiOiJsdExIMnJmdno1dHRXZ2ZUR1dFWCtnPT0iLCJhdF9oYXNoIjoiWnFzbDBPMmxLbk1yYlE5dWJ5UTEtUSIsImVtYWlsIjoiYWRtaW5AbWVsZGluZ2VuLnV0cmVjaHQuZGVtby5kZWx0YTEwLmNsb3VkIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJhZG1pbiJ9.puwwUOfp5CXJaxFCyr51UnHIconooHtEUrH0U0q1v9Wsqz5S0QeMP42Y8ANkTX3BdIkqWCjLeE0NvbyXza-CWHJ1XxEIDRkRCJhOe86ucZ7ip1Ys8stJ-iSvK1_HDFRrjrFrEdXFDfA2C3aiiaV6oSnM729-BKO7aQa3hJISkjupGTtB6wv04WZsgTIk8yOmEB2PIHTbOWU1ee1XQ_-E8wPwz5M3YFf-l9Gn6YzJBi2y7XMDm3-Jcj9JtwHFSPU0d2vMBCWnurC9EY4ulYRiVsDg52QZ8G-t_FYK3dSGPSh4cRxGF_nz4MdFbqpK41UFAsyNH78VZs1RE2RSFXhVmw',
       },
     })
       .then((r) => {
@@ -124,6 +124,28 @@ export default function Home() {
     geannuleerd: ['a'], // "Geannuleerd"
   };
 
+  // labels voor weergave in UI en teller per state
+  const statusLabels: Record<string, string> = {
+    m: 'Gemeld',
+    b: 'In behandeling',
+    o: 'Afgehandeld',
+    a: 'Geannuleerd',
+    i: 'In afwachting',
+    'forward to external': 'Doorgezet naar extern',
+    'reaction requested': 'Reactie gevraagd',
+    ingepland: 'Ingepland',
+    'closure requested': 'Verzoek afhandeling extern',
+  };
+
+  const countsByState = React.useMemo(() => {
+    const map: Record<string, number> = {};
+    (signals || []).forEach((s: any) => {
+      const st = getState(s) || 'unknown';
+      map[st] = (map[st] || 0) + 1;
+    });
+    return map;
+  }, [signals]);
+
   const filtered = signals.filter((s) => {
     // status filter: vergelijk backend state codes
     if (statusFilter !== 'all') {
@@ -164,7 +186,6 @@ export default function Home() {
               height={28}
               className='dark:invert'
             />
-
           </div>
 
           <div className='hidden gap-2 sm:flex'>
@@ -211,6 +232,29 @@ export default function Home() {
             </Button>
           </div>
         </div>
+        {/* snelle status-chips */}
+        <div className='mt-4 flex flex-wrap gap-2'>
+          {['m', 'b', 'o', 'a', 'i', 'forward to external'].map((code) => (
+            <button
+              key={code}
+              onClick={() => setStatusFilter(code)}
+              className={`rounded border px-2 py-1 text-xs ${
+                statusFilter === code
+                  ? 'border-sky-300 bg-sky-100'
+                  : 'border-slate-200 bg-white'
+              } dark:border-slate-700 dark:bg-slate-800`}
+              title={statusLabels[code] ?? code}
+            >
+              {statusLabels[code] ?? code} ({countsByState[code] ?? 0})
+            </button>
+          ))}
+          <button
+            onClick={() => setStatusFilter('all')}
+            className={`rounded border px-2 py-1 text-xs ${statusFilter === 'all' ? 'border-sky-300 bg-sky-100' : 'border-slate-200 bg-white'} dark:border-slate-700 dark:bg-slate-800`}
+          >
+            Alle ({signals.length})
+          </button>
+        </div>
       </header>
 
       <main className='mx-auto max-w-7xl'>
@@ -251,14 +295,18 @@ export default function Home() {
                 <TableCaption>Signalen overzicht</TableCaption>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Id</TableHead>
+                    <TableHead className='w-28'>Id</TableHead>
                     {/* Urgentie-icoon kolom (geen tekst, alleen klein bolletje/icoon) */}
                     <TableHead className='w-10' aria-label='Urgentie' />
-                    <TableHead>Titel</TableHead>
-                    <TableHead>Locatie</TableHead>
-                    <TableHead>Melder</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Acties</TableHead>
+                    <TableHead className='min-w-[28ch]'>Titel</TableHead>
+                    <TableHead className='hidden min-w-[24ch] md:table-cell'>
+                      Locatie
+                    </TableHead>
+                    <TableHead className='hidden lg:table-cell'>
+                      Melder
+                    </TableHead>
+                    <TableHead className='w-36'>Status</TableHead>
+                    <TableHead className='w-20 text-right'>Acties</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -290,59 +338,83 @@ export default function Home() {
                     const statusText = statusObj?.state_display ?? state ?? '—';
 
                     return (
-                      <TableRow key={displayId || Math.random()}>
-                        <TableCell className='font-mono text-sm'>
-                          {displayId}
-                        </TableCell>
+                      <SheetDemo
+                        key={displayId || Math.random()}
+                        id={String(s.id ?? s.signal_id ?? displayId)}
+                        title={title}
+                        body={String(s.text ?? '')}
+                        signal={s}
+                      >
+                        {/* TableRow is the SheetTrigger (asChild) — clicking the row opens the Sheet */}
+                        <TableRow
+                          className='cursor-pointer hover:bg-slate-50 focus:ring-2 focus:ring-sky-300 focus:outline-none'
+                          tabIndex={0}
+                          role='button'
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              (e.currentTarget as HTMLElement).click();
+                              e.preventDefault();
+                            }
+                          }}
+                        >
+                          <TableCell className='font-mono text-sm'>
+                            {displayId}
+                          </TableCell>
 
-                        {/* Urgentie-cel: vervang inhoud door jouw eigen icoon */}
-                        <TableCell className='px-2'>
-                          <span className='inline-flex h-6 w-6 items-center justify-center rounded-full bg-slate-200 dark:bg-slate-700'>
-                            {/* Vervang /icons/urgent.svg door jouw bestand in frontend/public/icons */}
-                            <img
-                              src='/icons/urgent.svg'
-                              alt='Urgentie'
-                              className='h-4 w-4'
-                            />
-                          </span>
-                        </TableCell>
+                          {/* Urgentie-cel */}
+                          <TableCell className='px-2'>
+                            <span className='inline-flex h-6 w-6 items-center justify-center rounded-full bg-slate-200 dark:bg-slate-700'>
+                              <img
+                                src='/icons/urgent.svg'
+                                alt='Urgentie'
+                                className='h-4 w-4'
+                              />
+                            </span>
+                          </TableCell>
 
-                        <TableCell>{title}</TableCell>
-                        <TableCell>{locationText}</TableCell>
-                        <TableCell>{reporterText}</TableCell>
-                        <TableCell>
-                          <span
-                            className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs ${
-                              state === 'open'
-                                ? 'bg-green-100 text-green-800'
-                                : state === 'in_progress'
-                                  ? 'bg-yellow-100 text-yellow-800'
-                                  : 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200'
-                            }`}
-                          >
-                            {statusText}
-                          </span>
-                        </TableCell>
-                        <TableCell>
-                          <div className='flex gap-2'>
-                            <SheetDemo
-                              id={String(s.id ?? s.signal_id ?? displayId)}
-                              title={title}
-                              body={String(s.text ?? '')}
+                          {/* titel met truncatie zodat rijen netjes blijven */}
+                          <TableCell className='max-w-[28ch]'>
+                            <div className='truncate' title={title}>
+                              {title}
+                            </div>
+                          </TableCell>
+                          <TableCell className='hidden md:table-cell'>
+                            {locationText}
+                          </TableCell>
+                          <TableCell className='hidden lg:table-cell'>
+                            {reporterText}
+                          </TableCell>
+
+                          <TableCell>
+                            <span
+                              className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs ${
+                                state === 'open'
+                                  ? 'bg-green-100 text-green-800'
+                                  : state === 'in_progress'
+                                    ? 'bg-yellow-100 text-yellow-800'
+                                    : 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200'
+                              }`}
                             >
-                              <Button size='sm'>Bekijk</Button>
-                            </SheetDemo>
-                            <Button
-                              size='sm'
-                              onClick={() =>
-                                console.log('Toewijzen', displayId)
-                              }
-                            >
-                              Toewijzen
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
+                              {statusText}
+                            </span>
+                          </TableCell>
+
+                          <TableCell>
+                            <div className='flex items-center justify-end gap-2'>
+                              {/* stopPropagation zodat klikken op deze knop de sheet niet opent */}
+                              <Button
+                                size='sm'
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  console.log('Toewijzen', displayId);
+                                }}
+                              >
+                                Toewijzen
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      </SheetDemo>
                     );
                   })}
                 </TableBody>
