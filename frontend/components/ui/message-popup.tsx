@@ -43,9 +43,16 @@ const SmallMap = dynamic(() => import('./SmallMap'), {
 
 export interface Note {
   id: string;
-  content: string;
-  author: string;
-  createdAt: string;
+  source: string;
+  text: string;
+  created_at: string;
+  // location: Location;
+  // category: string | any;
+  // reporter: Reporter;
+  // priority: string;
+  // state_display: string;
+  // deadline: string;
+  // notes: string;
 }
 
 interface Report {
@@ -188,13 +195,98 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
       setStatus(getStatusText(report.status));
       setPriority(getPriorityText(report.priority));
       setNotes(report.notes || []);
-      setIsEditing(false);
-      setNewNote('');
-      setIsHistoryOpen(false);
-      setIsLocationOpen(true);
-      setIsReporterOpen(true);
-      setIsMetadataOpen(false);
     }
+
+  // veilige weergave van category — backend kan object sturen
+  // const categoryText: string =
+  //   typeof category === 'string'
+  //     ? category
+  //     : category?.sub ?? category?.main ?? category?.sub_slug ?? category?.main_slug ?? JSON.stringify(category ?? '');
+  
+    const formatDate = (dateString: string) => {
+      return new Date(dateString).toLocaleDateString('nl-NL', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    };
+  
+    const formatShortDate = (dateString: string) => {
+      return new Date(dateString).toLocaleDateString('nl-NL', {
+        day: '2-digit',
+        month: 'short',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    };
+  
+    type StatusType =
+      | 'Nieuw'
+      | 'In behandeling'
+      | 'Wachten op melder'
+      | 'Opgelost'
+      | 'Geannuleerd'
+      | 'Doorgezet naar extern'
+      | 'Gemeld'
+      | 'Urgent';
+
+    const statusColors: Record<StatusType, string> = {
+      'Nieuw': 'bg-primary text-primary-foreground',
+      'In behandeling': 'bg-warning text-warning-foreground',
+      'Wachten op melder': 'bg-muted text-muted-foreground',
+      'Opgelost': 'bg-success text-success-foreground',
+      'Geannuleerd': 'bg-muted text-muted-foreground',
+      'Doorgezet naar extern': 'bg-secondary text-secondary-foreground',
+      'Gemeld': 'bg-muted text-muted-foreground',
+      'Urgent': 'bg-destructive text-destructive-foreground'
+    };
+  
+    const priorityColors = {
+      'Laag': 'text-muted-foreground',
+      'Normaal': 'text-foreground',
+      'Hoog': 'text-warning',
+      'Urgent': 'text-destructive'
+    };
+  
+    const progressColors = {
+      'Binnen de afhandeltermijn': 'text-success',
+      'Buiten de afhandeltermijn': 'text-destructive',
+      'Afgehandeld': 'text-muted-foreground'
+    };
+  
+    const getStatusProgress = (status: string) => {
+      const statusMap = {
+        'Nieuw': 10,
+        'In behandeling': 50,
+        'Wachten op melder': 30,
+        'Opgelost': 100,
+        'Geannuleerd': 0,
+        'Doorgezet naar extern': 75,
+        'Gemeld': 25,
+        'Urgent': 5
+      };
+      return statusMap[status as keyof typeof statusMap] || 0;
+    };
+  
+    // const handleSave = () => {
+    //   if (!report) return;
+    //   const updatedReport: Report = {
+    //     status,
+    //     priority,
+    //     updatedAt: new Date().toISOString(),
+    //   };
+    //   if (onUpdateReport) {
+    //     onUpdateReport(updatedReport);
+    //   }
+    //   setIsEditing(false);
+    //   setNewNote('');
+    //   setIsHistoryOpen(false);
+    //   setIsLocationOpen(true);
+    //   setIsReporterOpen(true);
+    //   setIsMetadataOpen(false);
+    // }
   }, [report]);
 
   if (!report) return null;
@@ -318,14 +410,12 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
     <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <SheetContent side="right" className="w-full sm:max-w-2xl p-0 gap-0 !flex !flex-col !h-full overflow-hidden">
         <div className="p-4 pb-3 bg-muted/30 border-b flex-shrink-0">
-          <div className="flex items-start justify-between gap-3 mb-3">
-            <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-3 mb-6">
+            <div className="flex flex-col gap-3 min-w-0">
               <div className="flex items-center gap-2 mb-2 flex-wrap">
-                {report.id && (
-                  <Badge variant="outline" className="text-xs">
-                    #{report.id}
-                  </Badge>
-                )}
+                <Badge variant="outline" className="text-xs">
+                  #{report.id}
+                </Badge>
                 <Badge className={statusColors[currentStatusText] || 'bg-muted text-muted-foreground'}>
                   {currentStatusText}
                 </Badge>
@@ -336,17 +426,19 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
                   {formatShortDate(report.created_at)}
                 </span>
               </div>
-              <SheetTitle className="leading-tight">
-                {report.text}
-              </SheetTitle>
-              <SheetDescription className="sr-only">
-                Melding details voor {report.text}
-              </SheetDescription>
-            <div className="flex gap-1">
-                <Button variant="outline"  className="h-7 px-2 text-xs">Deelmelding maken</Button>
-                <Button variant="outline"  className="h-7 px-2 text-xs">Extern doorzetten</Button>
-                <Button variant="outline"  className="h-7 px-2 text-xs">PDF maken</Button>
-            </div>
+              <div>
+                <SheetTitle className="leading-tight">
+                  {report.text}
+                </SheetTitle>
+                <SheetDescription className="sr-only">
+                  Melding details voor {report.text}
+                </SheetDescription>
+              </div>
+              <div className="flex gap-3">
+                  <Button variant="outline"  className="h-7 px-2 text-xs">Deelmelding maken</Button>
+                  <Button variant="outline"  className="h-7 px-2 text-xs">Extern doorzetten</Button>
+                  <Button variant="outline"  className="h-7 px-2 text-xs">PDF maken</Button>
+              </div>
             </div>
           </div>
           
