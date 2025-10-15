@@ -42,7 +42,7 @@ export default function Home() {
     fetch(`${API_BASE}/api/signals`, {
       headers: {
         Authorization:
-          'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImI3MDJkNTU3MTU0OGI1ZjRlZjRhNzdiYzZiMTIzMjY0NzM1OTFjYWUifQ.eyJpc3MiOiJodHRwczovL21lbGRpbmdlbi51dHJlY2h0LmRlbW8uZGVsdGExMC5jbG91ZC9kZXgiLCJzdWIiOiJFZ1ZzYjJOaGJBIiwiYXVkIjoic2lnbmFsZW4iLCJleHAiOjE3NjA0NzEyMTYsImlhdCI6MTc2MDQyODAxNiwibm9uY2UiOiJsdExIMnJmdno1dHRXZ2ZUR1dFWCtnPT0iLCJhdF9oYXNoIjoiWnFzbDBPMmxLbk1yYlE5dWJ5UTEtUSIsImVtYWlsIjoiYWRtaW5AbWVsZGluZ2VuLnV0cmVjaHQuZGVtby5kZWx0YTEwLmNsb3VkIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJhZG1pbiJ9.puwwUOfp5CXJaxFCyr51UnHIconooHtEUrH0U0q1v9Wsqz5S0QeMP42Y8ANkTX3BdIkqWCjLeE0NvbyXza-CWHJ1XxEIDRkRCJhOe86ucZ7ip1Ys8stJ-iSvK1_HDFRrjrFrEdXFDfA2C3aiiaV6oSnM729-BKO7aQa3hJISkjupGTtB6wv04WZsgTIk8yOmEB2PIHTbOWU1ee1XQ_-E8wPwz5M3YFf-l9Gn6YzJBi2y7XMDm3-Jcj9JtwHFSPU0d2vMBCWnurC9EY4ulYRiVsDg52QZ8G-t_FYK3dSGPSh4cRxGF_nz4MdFbqpK41UFAsyNH78VZs1RE2RSFXhVmw',
+          'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImI3MDJkNTU3MTU0OGI1ZjRlZjRhNzdiYzZiMTIzMjY0NzM1OTFjYWUifQ.eyJpc3MiOiJodHRwczovL21lbGRpbmdlbi51dHJlY2h0LmRlbW8uZGVsdGExMC5jbG91ZC9kZXgiLCJzdWIiOiJFZ1ZzYjJOaGJBIiwiYXVkIjoic2lnbmFsZW4iLCJleHAiOjE3NjA1NTUxMzIsImlhdCI6MTc2MDUxMTkzMiwibm9uY2UiOiIrUXA5YW9MSFNUY1BrTVJJcnN4TlJnPT0iLCJhdF9oYXNoIjoib2NqekIyTThmTUVZRHBqY2lUSTA4dyIsImVtYWlsIjoiYWRtaW5AbWVsZGluZ2VuLnV0cmVjaHQuZGVtby5kZWx0YTEwLmNsb3VkIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJhZG1pbiJ9.PXUiDjXGOVa7TRf6Pb44GCb2gdZ0pptxgJlqnm71WtQ3JJNfIkkv7XkyCEty360DjemcS7rYmbi5E_Ajb-JpjPXiwIobDzQ9_4u_JUjXcDcT3V71uBua35VHLRY5n866PIjul3iG6doFWcndtnP5vpqorYvoKqzOZ7j1rR05u3ITYukM-rRD0qi6o53hnydmjTj9ItQ63bV0wiF51payq6TgRMLjDZjS6rY3Fm8a9IgTP731sMq36BagdMRQuIHpjPZdmSpg1SAgQt6ivKzvh-CGDjBdlPTLnGu9H_69qSVNsR5rJ-jDqyZ5vvc7OVE0MeXhrl1Lr-FfgLCDnH9QyQ',
       },
     })
       .then((r) => {
@@ -343,7 +343,6 @@ export default function Home() {
                         id={String(s.id ?? s.signal_id ?? displayId)}
                         title={title}
                         body={String(s.text ?? '')}
-                        signal={s}
                       >
                         {/* TableRow is the SheetTrigger (asChild) — clicking the row opens the Sheet */}
                         <TableRow
