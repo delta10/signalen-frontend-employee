@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import 'leaflet/dist/leaflet.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -175,6 +176,19 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
 }
+/* 
+.leaflet-default-icon-path {
+  background-image: url(/leaflet/marker-icon.png);
+}
+
+.leaflet-control-layers-toggle {
+  background-image: url(/leaflet/layers.png);
+}
+
+.leaflet-retina .leaflet-control-layers-toggle {
+  background-image: url(/leaflet/layers-2x.png);
+  background-size: 26px 26px;
+} */
 
 @layer base {
   * {

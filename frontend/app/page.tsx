@@ -2,7 +2,7 @@
 
 import Image from 'next/image';
 import * as React from 'react';
-import { SheetDemo } from '../components/ui/message-popup';
+import { ReportDetailSheet } from '../components/ui/message-popup';
 import {
   Table,
   TableBody,
@@ -15,11 +15,12 @@ import {
 import { Button } from '@/components/ui/button';
 
 type Signal = {
-  id: string;
-  title?: string;
-  location?: string;
-  reporter?: string;
-  status?: 'open' | 'in_progress' | 'closed' | string;
+  id: string | number;
+  // title?: string;
+  // location?: string;
+  // reporter?: string;
+  // status?: 'open' | 'in_progress' | 'closed' | string;
+  // [key: string]: any;
 };
 
 import { Sheet } from "lucide-react";
@@ -30,6 +31,8 @@ export default function Home() {
   const [error, setError] = React.useState<string | null>(null);
   const [query, setQuery] = React.useState('');
   const [statusFilter, setStatusFilter] = React.useState<'all' | string>('all');
+  const [selectedReport, setSelectedReport] = React.useState<any>(null);
+  const [isSheetOpen, setIsSheetOpen] = React.useState(false);
 
   const fetchSignals = React.useCallback(() => {
     let mounted = true;
@@ -44,7 +47,7 @@ export default function Home() {
     fetch(`${API_BASE}/api/signals`, {
       headers: {
         Authorization:
-          'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImI3MDJkNTU3MTU0OGI1ZjRlZjRhNzdiYzZiMTIzMjY0NzM1OTFjYWUifQ.eyJpc3MiOiJodHRwczovL21lbGRpbmdlbi51dHJlY2h0LmRlbW8uZGVsdGExMC5jbG91ZC9kZXgiLCJzdWIiOiJFZ1ZzYjJOaGJBIiwiYXVkIjoic2lnbmFsZW4iLCJleHAiOjE3NTk3ODM2NTcsImlhdCI6MTc1OTc0MDQ1Nywibm9uY2UiOiJRV05pUFpsQmpDLzRLS3hMVkp5bHV3PT0iLCJhdF9oYXNoIjoiWlNiN3BHSG1QX0gzeUJGTWtUdUZtQSIsImVtYWlsIjoiYWRtaW5AbWVsZGluZ2VuLnV0cmVjaHQuZGVtby5kZWx0YTEwLmNsb3VkIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJhZG1pbiJ9.hhzsy9c6g_xUCHseJARxYfJx8LK5QNnWK2VXcXa2K9hLju2hbhh07tSEGD-7btdyDJMsB_Yz7s7f96NzIfHqNcJBd3R0BqsyKipV9Jp0YqB48deIilWcvlhH2n_FGTerF9jiciiMLcoProVilhu-nAUdIiaVqGosiuFPVodfiBYN7TMGR6sw_J_Wnu5oYhdeRj2XszaYKkVVETlaVzyesEBAFlTvWzYfjg4qxKz3-l9g5yIV6xoIk-gkKx4m81FEiUbwWd4PIZGl7Kr06ZXqiLu-E2Vbm2aMf4jpaTz9HZfY6J2bzBloBKPKbaXLHTD_JRJ_6BlHiSFyYGqeGQHjfw',
+          'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImI3MDJkNTU3MTU0OGI1ZjRlZjRhNzdiYzZiMTIzMjY0NzM1OTFjYWUifQ.eyJpc3MiOiJodHRwczovL21lbGRpbmdlbi51dHJlY2h0LmRlbW8uZGVsdGExMC5jbG91ZC9kZXgiLCJzdWIiOiJFZ1ZzYjJOaGJBIiwiYXVkIjoic2lnbmFsZW4iLCJleHAiOjE3NjA2MDQ5NzAsImlhdCI6MTc2MDU2MTc3MCwibm9uY2UiOiJLWHh5c0hjei9UMU1uVlVQZkxIV0hBPT0iLCJhdF9oYXNoIjoiSEd5TjdZcjVaNWlSY3VYS3RLbUpldyIsImVtYWlsIjoiYWRtaW5AbWVsZGluZ2VuLnV0cmVjaHQuZGVtby5kZWx0YTEwLmNsb3VkIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJhZG1pbiJ9.m5Lf7agTgfvLVU-13V3_7laP5Ihp4il-L0QxFBBh59nqE4lxHQpmPe8KupCYW31zW2kEMAQ8sDKyMvFXtCYjQqJDuEBredy2HXHa9N-AmjpxhteGEAGo7H56E5T7IN-pox7QSbM1if3JaZAJ23ZuSAF4tmiNL9SpeGAMnAXQdNkmDwYqC0HkhjLcPxI9AOnzatX31PrIWFcd0qGkbMfxWWYjbdbO-zMU1Ol91MVitRC8fJLidE7WqYncNSLC0ppBpVXfJaYwwojDP9Svj-IpozSbtxFpFCaAKQNHtN1uIjq1XBRO3dbHpVtvnIs3ee6c--EJj_sTlOnRn2gwmWmjZg',
       },
     })
       .then((r) => {
@@ -78,33 +81,33 @@ export default function Home() {
     return () => cleanup && cleanup();
   }, [fetchSignals]);
 
-  const loadMockData = () => {
-    setSignals([
-      {
-        id: 'S-001',
-        title: 'Kapotte lantaarnpaal',
-        location: 'Parkstraat 12',
-        reporter: 'J. de Boer',
-        status: 'open',
-      },
-      {
-        id: 'S-002',
-        title: 'Zwerfvuil bij speeltuin',
-        location: 'Dorpsplein',
-        reporter: 'M. van Dijk',
-        status: 'in_progress',
-      },
-      {
-        id: 'S-003',
-        title: 'Verstopte put',
-        location: 'Stationsweg 3',
-        reporter: 'A. Klaassen',
-        status: 'closed',
-      },
-    ]);
-    setError(null);
-    setLoading(false);
-  };
+  // const loadMockData = () => {
+  //   setSignals([
+  //     {
+  //       id: 'S-001',
+  //       title: 'Kapotte lantaarnpaal',
+  //       location: 'Parkstraat 12',
+  //       reporter: 'J. de Boer',
+  //       status: 'open',
+  //     },
+  //     {
+  //       id: 'S-002',
+  //       title: 'Zwerfvuil bij speeltuin',
+  //       location: 'Dorpsplein',
+  //       reporter: 'M. van Dijk',
+  //       status: 'in_progress',
+  //     },
+  //     {
+  //       id: 'S-003',
+  //       title: 'Verstopte put',
+  //       location: 'Stationsweg 3',
+  //       reporter: 'A. Klaassen',
+  //       status: 'closed',
+  //     },
+  //   ]);
+  //   setError(null);
+  //   setLoading(false);
+  // };
 
   // helper: bepaal de 'state' van een item (backend geeft object of string)
   const getState = (item: any) => {
@@ -153,6 +156,16 @@ export default function Home() {
         .includes(q)
     );
   });
+
+  const handleViewReport = (report: any) => {
+    setSelectedReport(report);
+    setIsSheetOpen(true);
+  };
+
+  const handleCloseSheet = () => {
+    setIsSheetOpen(false);
+    setSelectedReport(null);
+  };
 
   return (
     <div className='min-h-screen bg-slate-50 p-6 text-slate-900 sm:p-12 dark:bg-slate-900 dark:text-slate-100'>
@@ -224,18 +237,18 @@ export default function Home() {
               <div>Fout: {error}</div>
               <div className='mt-3 flex justify-center gap-2'>
                 <Button onClick={() => fetchSignals()}>Opnieuw proberen</Button>
-                <Button onClick={() => loadMockData()}>
+                {/* <Button onClick={() => loadMockData()}>
                   Laad voorbeelddata
-                </Button>
+                </Button> */}
               </div>
             </div>
           ) : signals.length === 0 ? (
             <div className='p-6 text-center'>
               Geen signalen gevonden
               <div className='mt-3'>
-                <Button onClick={() => loadMockData()}>
+                {/* <Button onClick={() => loadMockData()}>
                   Laad voorbeelddata
-                </Button>
+                </Button> */}
               </div>
             </div>
           ) : (
@@ -274,10 +287,10 @@ export default function Home() {
                     const locationText =
                       typeof loc === 'string'
                         ? loc
-                        : (loc?.address_text ??
-                          (loc?.address
-                            ? `${loc.address.openbare_ruimte ?? ''} ${loc.address.huisnummer ?? ''}`.trim()
-                            : 'Onbekend'));
+                        : loc?.address_text ||
+                          (loc?.address && typeof loc.address === 'object'
+                            ? `${loc.address.openbare_ruimte || ''} ${loc.address.huisnummer || ''}${loc.address.huisletter || ''}`.trim() || 'Onbekend'
+                            : 'Onbekend');
 
                     const rep = s.reporter;
                     const reporterText =
@@ -327,28 +340,9 @@ export default function Home() {
                         </TableCell>
                         <TableCell>
                           <div className='flex gap-2'>
-                            <SheetDemo
-                              id={String(s.id ?? s.signal_id ?? displayId)}
-                              source={s.source ?? ''}
-                              text={s.text ?? s.title ?? s._display ?? ''}
-                              created_at={s.created_at ?? ''}
-                              location={
-                                typeof s.location === 'string'
-                                  ? { address_text: s.location }
-                                  : s.location ?? { address_text: locationText }
-                              }
-                              category={s.category ?? ''}
-                              reporter={
-                                typeof s.reporter === 'string'
-                                  ? { email: s.reporter, phone: '' }
-                                  : s.reporter ?? { email: reporterText, phone: '' }
-                              }
-                              priority={s.priority ?? ''}
-                              state_display={s.status?.state_display ?? s.status?.state ?? ''}
-                              deadline={s.deadline ?? ''}
-                            >
-                              <Button size='sm'>Bekijk</Button>
-                            </SheetDemo>
+                            <Button size='sm' onClick={() => handleViewReport(s)}>
+                              Bekijk
+                            </Button>
                             <Button
                               size='sm'
                               onClick={() => console.log('Toewijzen', displayId)}
@@ -373,6 +367,24 @@ export default function Home() {
           <Button onClick={() => fetchSignals()}>Ververs</Button>
         </div>
       </main>
+
+      <ReportDetailSheet
+        report={selectedReport}
+        isOpen={isSheetOpen}
+        onClose={handleCloseSheet}
+        onUpdateReport={(updatedReport) => {
+          setSignals(prev => 
+            prev.map(s => {
+              const sId = String(s.id);
+              const updatedId = String(updatedReport.id);
+              return sId === updatedId ? { ...s, ...updatedReport } : s;
+            })
+          );
+        }}
+        onExpandToFull={(reportId) => {
+          console.log('Expand to full:', reportId);
+        }}
+      />
     </div>
   );
 }
