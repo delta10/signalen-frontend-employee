@@ -1,12 +1,9 @@
-'use client';
-
 import * as React from 'react';
-import { Button } from '@/components/ui/button';
-import { ListAllSignals } from '@/server/listAllSignals';
-import { useEffect } from 'react';
+import { ListSignalByID } from '@/server/listSignalByID';
 import Link from 'next/dist/client/link';
 
-interface ListSignal {
+interface FullSignal {
+    id: string;
   id_display: string;
   // title?: string;
   priority?: string;
@@ -38,8 +35,8 @@ interface ListSignal {
   };
 };
 
-async function grabSignals() {
-  const responseSignals = await ListAllSignals();
+async function grabSignals(id: string) {
+  const responseSignals = await ListSignalByID(id);
   console.log("responseSignals", responseSignals);
 
 
@@ -47,9 +44,10 @@ async function grabSignals() {
     console.error("Expected an array of signals, but got:", responseSignals);
     return [];
   }
-  const signals: ListSignal[] = [];
+  const signals: FullSignal[] = [];
   for (const s of responseSignals) {
     signals.push({
+      id: s.id,
       id_display: s.id_display,
       priority: s.priority,
       category: {
@@ -75,39 +73,13 @@ async function grabSignals() {
   return signals;
 }
 
-export default function Home() {
-  const [signals, setSignals] = React.useState<ListSignal[]>([]);
 
-
-    useEffect(() => {
-    const loadSignals = async () => {
-      const fetchedSignals = await grabSignals();
-      console.log("fetchedSignals", fetchedSignals);
-      setSignals(fetchedSignals);
-    };
-    loadSignals();
-    
-  }, []);
-
+export default async function Page({params}: {params: Promise<{ id: string }>}) {
+  const { id } = await params;
+  const signals = await grabSignals(id);
 
   return (
     <div className='min-h-screen bg-slate-50 p-6 text-slate-900 sm:p-12 dark:bg-slate-900 dark:text-slate-100'>
-      <header className='mx-auto mb-8 max-w-6xl'>
-        <div className='flex items-center justify-between gap-4'>
-          <div className='flex items-center gap-4'>
-          </div>
-
-          <div className='hidden gap-2 sm:flex'>
-            <Button onClick={() => console.log('Nieuwe melding')}>
-              Nieuwe melding
-            </Button>
-            <Button onClick={() => grabSignals()}>Ververs</Button>
-          </div>
-        </div>
-
-        <div className='mt-6'>
-        </div>
-      </header>
 
       {signals.map(signal => (
         <div
@@ -116,7 +88,7 @@ export default function Home() {
           hover:border-secondary-500 duration-300"
         >
           <Link
-            href={`/dashboard/server/${signal.id_display}/overview`}
+            href={`/overview/melding/${signal.id}`}
             className="flex items-center gap-2 text-sm flex-1"
           >
             <div>
@@ -150,12 +122,6 @@ export default function Home() {
         </div>
       ))}
 
-        <div className='mt-4 flex gap-2 sm:hidden'>
-          <Button onClick={() => console.log('Nieuwe melding')}>
-            Nieuwe melding
-          </Button>
-          <Button onClick={() => grabSignals()}>Ververs</Button>
-        </div>
     </div>
   );
 }
