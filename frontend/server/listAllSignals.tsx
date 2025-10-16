@@ -1,25 +1,28 @@
 'use server';
 
-export async function ListSignals() {
+export async function ListAllSignals() {
+    // Fetch data from API using domain and bearer tokens from environment variables
    const res = await fetch(`${process.env.DOMAIN_NAME}/signals/v1/private/signals/`, {
         method: 'GET',
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${process.env.BEARER_TOKEN}`
+            Authorization: `Bearer ${process.env.BEARER_TOKEN}`
         },
         cache: 'no-store',
     });
 
     console.log("Response status:", res.status);
 
+    let requestedData;
     let responseData;
 
     if (res.ok) {
-        responseData = await res.json();
+        requestedData = await res.json();
+        // Prepare json Data to be used as array
+        responseData = requestedData["results"];
     } else {
         const responseText = await res.text();
         console.log("Full response body:", responseText);
-        // You might want to parse this as JSON if possible
         try {
             responseData = JSON.parse(responseText);
         } catch (e) {

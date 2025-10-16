@@ -1,25 +1,11 @@
 'use client';
 
-import Image from 'next/image';
 import * as React from 'react';
-import { SheetDemo } from './message';
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-//import { List } from 'lucide-react';
-import { ListSignals } from '../server/listSignals';
-//import { Sign } from 'crypto';
+import { ListAllSignals } from '@/server/listAllSignals';
 import { useEffect } from 'react';
 import Link from 'next/dist/client/link';
 
-const filtered: ListSignal[] = []; // Placeholder for filtered signals
 interface ListSignal {
   id_display: string;
   // title?: string;
@@ -53,16 +39,16 @@ interface ListSignal {
 };
 
 async function grabSignals() {
-  const testServers = await ListSignals();
-  console.log("testServers", testServers);
+  const responseSignals = await ListAllSignals();
+  console.log("responseSignals", responseSignals);
 
-  if (!Array.isArray(testServers)) {
-    //toastr.error("Failed to fetch servers", "Error");
-    console.error("Expected an array of signals, but got:", testServers);
+
+  if (!Array.isArray(responseSignals)) {
+    console.error("Expected an array of signals, but got:", responseSignals);
     return [];
   }
   const signals: ListSignal[] = [];
-  for (const s of testServers) {
+  for (const s of responseSignals) {
     signals.push({
       id_display: s.id_display,
       priority: s.priority,
@@ -76,71 +62,32 @@ async function grabSignals() {
       },
       created_at: s.created_at,
       assigned_user_email: s.assigned_user_email,
-      directing_department: {
-        name: s.directing_department.name
-      },
+      //directing_department: {
+      //  name: s.directing_department.name
+      //},
       status: {
         text: s.status.text,
         state_display: s.status.state_display
       }
       });
   }
+
   return signals;
 }
 
 export default function Home() {
   const [signals, setSignals] = React.useState<ListSignal[]>([]);
-  //const [loading, setLoading] = React.useState(true);
-  //const [error, setError] = React.useState<string | null>(null);
-  const [query, setQuery] = React.useState('');
-  const [statusFilter, setStatusFilter] = React.useState<'all' | string>('all');
+
 
     useEffect(() => {
     const loadSignals = async () => {
       const fetchedSignals = await grabSignals();
       console.log("fetchedSignals", fetchedSignals);
-      setSignals(Array.isArray(fetchedSignals) ? fetchedSignals : []);
+      setSignals(fetchedSignals);
     };
     loadSignals();
+    
   }, []);
-
-  const loadMockData = () => {
-    setSignals([
-      {
-        id_display: 'S-001',
-        location: {
-          address_text: 'Parkstraat 12',
-        },
-        assigned_user_email: 'J. de Boer',
-        status: {
-          state_display: 'open',
-          text: 'Kapotte lantaarnpaal',
-        },
-      },
-      {
-        id_display: 'S-002',
-        location: {
-          address_text: 'Dorpsplein',
-        },
-        assigned_user_email: 'M. van Dijk',
-        status: {
-          state_display: 'in_progress',
-          text: 'Zwerfvuil bij speeltuin',
-        },
-      },
-      {
-        id_display: 'S-003',
-        location: {
-          address_text: 'Stationsweg 3',
-        },
-        assigned_user_email: 'A. Klaassen',
-        status: {
-          state_display: 'closed',
-          text: 'Gevallen boom verwijderd',
-        },
-      },
-    ]);
-  };
 
 
   return (
@@ -148,14 +95,6 @@ export default function Home() {
       <header className='mx-auto mb-8 max-w-6xl'>
         <div className='flex items-center justify-between gap-4'>
           <div className='flex items-center gap-4'>
-            <Image
-              src='/next.svg'
-              alt='Logo'
-              width={140}
-              height={28}
-              className='dark:invert'
-            />
-
           </div>
 
           <div className='hidden gap-2 sm:flex'>
@@ -163,45 +102,10 @@ export default function Home() {
               Nieuwe melding
             </Button>
             <Button onClick={() => grabSignals()}>Ververs</Button>
-            <Button onClick={() => loadMockData()}>Load Mock Data</Button>
           </div>
         </div>
 
-        <div className='mt-4 flex flex-col gap-3 sm:flex-row sm:items-center'>
-          <input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder='Zoek op id, titel, locatie of melder…'
-            className='w-full rounded border border-slate-200 bg-white px-3 py-2 focus:ring-2 focus:ring-sky-400 focus:outline-none sm:w-1/3 dark:border-slate-700 dark:bg-slate-800'
-          />
-          <div className='flex gap-2'>
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className='rounded border border-slate-200 bg-white px-2 py-2 focus:outline-none dark:border-slate-700 dark:bg-slate-800'
-            >
-              <option value='all'>Alle statussen</option>
-              <option value='open'>Gemeld</option>
-              <option value='afwachting'>In afwachting van behandeling</option>
-              <option value='reactie_gevraagd'>Reactie gevraagd</option>
-              <option value='ingepland'>Ingepland</option>
-              <option value='in_progress'>In behandeling</option>
-              <option value='verzoek_afhandeling_extern'>
-                Extern: verzoek tot afhandeling
-              </option>
-              <option value='door_extern'>Doorgezet naar extern</option>
-              <option value='closed'>Afgehandeld</option>
-              <option value='geannuleerd'>Geannuleerd</option>
-            </select>
-            <Button
-              onClick={() => {
-                setQuery('');
-                setStatusFilter('all');
-              }}
-            >
-              Reset
-            </Button>
-          </div>
+        <div className='mt-6'>
         </div>
       </header>
 
