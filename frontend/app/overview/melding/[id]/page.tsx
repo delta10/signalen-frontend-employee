@@ -166,6 +166,8 @@ export default async function Page({params}: {params: Promise<{ id: string }>}) 
             <span className="text-secondary-300">{signal.location?.stadsdeel}</span>
             <span className="text-secondary-300">{signal.location?.area_name}</span>
             <span className="text-secondary-300">{signal.location?.address_text}</span>
+            <span className="text-secondary-300">{signal.location?.geometrie?.type}</span>
+            <span className="text-secondary-300">{String(signal.location?.geometrie?.coordinates)}</span>
             <span className="text-secondary-300">{signal.category?.main}</span>
             <span className="text-secondary-300">{signal.category?.sub}</span>
             <span className="text-secondary-300">{signal.reporter?.email}</span>
