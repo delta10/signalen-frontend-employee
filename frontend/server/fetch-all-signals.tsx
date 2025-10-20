@@ -29,6 +29,6 @@ export async function FetchAllSignals() {
         console.log(res)
         throw new Error(`Failed to list signals: ${responseData?.error || "Unknown error"} - Status: ${res.status}`);
     }
-
+    // Return response data as array
     return responseData as Array;
 }

@@ -1,7 +1,7 @@
 'use server';
 
 export async function FetchSignalByID(id: string) {
-    // Fetch data from API using domain and bearer tokens from environment variables
+    // Fetch data from API using signal ID, domain and bearer tokens from environment variables
    const res = await fetch(`${process.env.DOMAIN_NAME}/signals/v1/private/signals/${id}`, {
         method: 'GET',
         headers: {
@@ -28,6 +28,6 @@ export async function FetchSignalByID(id: string) {
         console.log(res)
         throw new Error(`Failed to list signals: ${responseData?.error || "Unknown error"} - Status: ${res.status}`);
     }
-
+    // Return response data as array
     return responseData as Array;
 }
