@@ -2,12 +2,12 @@
 
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
-import { ListAllSignals } from '@/server/listAllSignals';
+import { FetchAllSignals } from '@/server/fetch-all-signals';
 import { useEffect } from 'react';
 import Link from 'next/dist/client/link';
 
 interface ListSignal {
-    id: string;
+  id: string;
   id_display: string;
   // title?: string;
   priority?: string;
@@ -39,8 +39,8 @@ interface ListSignal {
   };
 };
 
-async function grabSignals() {
-  const responseSignals = await ListAllSignals();
+async function fetchSignals() {
+  const responseSignals = await FetchAllSignals();
   console.log("responseSignals", responseSignals);
 
 
@@ -83,7 +83,7 @@ export default function Home() {
 
     useEffect(() => {
     const loadSignals = async () => {
-      const fetchedSignals = await grabSignals();
+      const fetchedSignals = await fetchSignals();
       console.log("fetchedSignals", fetchedSignals);
       setSignals(fetchedSignals);
     };

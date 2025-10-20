@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { ListSignalByID } from '@/server/listSignalByID';
+import { FetchSignalByID } from '@/server/fetch-signal-by-id';
 import Link from 'next/dist/client/link';
 
 interface FullSignal {
-    id: string;
+  id: string;
   id_display: string;
   // title?: string;
   priority?: string;
@@ -35,8 +35,8 @@ interface FullSignal {
   };
 };
 
-async function grabSignals(id: string) {
-  const responseSignals = await ListSignalByID(id);
+async function fetchSignalByID(id: string) {
+  const responseSignals = await FetchSignalByID(id);
   console.log("responseSignals", responseSignals);
 
 
@@ -76,7 +76,7 @@ async function grabSignals(id: string) {
 
 export default async function Page({params}: {params: Promise<{ id: string }>}) {
   const { id } = await params;
-  const signals = await grabSignals(id);
+  const signals = await fetchSignalByID(id);
 
   return (
     <div className='min-h-screen bg-slate-50 p-6 text-slate-900 sm:p-12 dark:bg-slate-900 dark:text-slate-100'>
