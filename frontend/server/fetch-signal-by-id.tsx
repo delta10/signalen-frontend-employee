@@ -1,33 +1,27 @@
-'use server';
+"use server";
 
-export async function FetchSignalByID(id: string) {
-    // Fetch data from API using signal ID, domain and bearer tokens from environment variables
-   const res = await fetch(`${process.env.DOMAIN_NAME}/signals/v1/private/signals/${id}`, {
-        method: 'GET',
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${process.env.BEARER_TOKEN}`
-        },
-        cache: 'no-store',
-    });
+import { FullSignal } from "@/interfaces/full-signal";
+import axios from "axios";
 
-    let responseData;
+export async function FetchSignalByID(ID: string): Promise<FullSignal | null> {
+  const domainName = process.env.DOMAIN_NAME;
+  const bearerToken = process.env.BEARER_TOKEN;
 
-    if (res.ok) {
-        responseData = await res.json();
-        // Prepare json Data to be used as array
-        responseData = [responseData];
-    } else {
-        const responseText = await res.text();
-        console.log("Full response body:", responseText);
-        try {
-            responseData = JSON.parse(responseText);
-        } catch (e) {
-            console.log("Failed to parse response as JSON:", e);
-        }
-        console.log(res)
-        throw new Error(`Failed to list signals: ${responseData?.error || "Unknown error"} - Status: ${res.status}`);
-    }
-    // Return response data as array
-    return responseData as Array;
+  const response = axios<FullSignal>({
+    method: 'get',
+    url: `/signals/v1/private/signals/${ID}`,
+    baseURL: `${domainName}`,
+    responseType: 'json',
+    headers: {
+        Authorization: `Bearer ${bearerToken}`
+    },
+  }).then((response) => {
+    return response.data;
+  });
+
+  if (!response) {
+    throw new Error('Failed to fetch signal by ID');
+  }
+
+  return response;
 }
