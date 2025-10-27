@@ -2,9 +2,10 @@
 
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
-import { FetchAllSignals } from '@/components/server/fetch-all-signals';
+import { FetchListSignals } from '@/server/fetch-list-signals';
 import { useEffect } from 'react';
 import Link from 'next/dist/client/link';
+//import { List } from 'lucide-react';
 
 interface ListSignal {
   id: string;
@@ -39,14 +40,8 @@ interface ListSignal {
 };
 
 async function fetchSignals() {
-  const responseSignals = await FetchAllSignals();
-  console.log("responseSignals", responseSignals);
+  const responseSignals = await FetchListSignals();
 
-
-  if (!Array.isArray(responseSignals)) {
-    console.error("Expected an array of signals, but got:", responseSignals);
-    return [];
-  }
   const signals: ListSignal[] = [];
   for (const s of responseSignals) {
     signals.push({
@@ -82,7 +77,6 @@ export default function Home() {
     useEffect(() => {
     const loadSignals = async () => {
       const fetchedSignals = await fetchSignals();
-      console.log("fetchedSignals", fetchedSignals);
       setSignals(fetchedSignals);
     };
     loadSignals();
