@@ -120,8 +120,8 @@ async function fetchSignalByID(id: string) {
         text: s.notes?.text,
         created_by: s.notes?.created_by,
       },
-      //directing_department: s.directing_department,
-      //routing_department: s.routing_department,
+      directing_department: s.directing_department,
+      routing_department: s.routing_department,
       assigned_user_email: s.assigned_user_email,
       });
   }
@@ -172,8 +172,8 @@ export default async function Page({params}: {params: Promise<{ id: string }>}) 
             <span className="text-secondary-300">{String(signal.has_attachments)}</span>
             <span className="text-secondary-300">{signal.notes?.text}</span>
             <span className="text-secondary-300">{signal.notes?.created_by}</span>
-            {/* <span className="text-secondary-300">{signal.directing_department}</span>
-            <span className="text-secondary-300">{signal.routing_department}</span> */}
+            <span className="text-secondary-300">{signal.directing_department}</span>
+            <span className="text-secondary-300">{signal.routing_department}</span>
             <span className="text-secondary-300">{signal.assigned_user_email}</span>
           </Link>
         </div>

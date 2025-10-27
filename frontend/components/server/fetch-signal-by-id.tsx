@@ -59,13 +59,8 @@ interface FullSignal {
     created_by?: string;
   }
 
-  // directing_department?: {
-  //   name?: string
-  // };
-
-  // routing_department?: {
-  //   name?: string
-  // };
+  directing_department?: string;
+  routing_department?: string;
 
   assigned_user_email?: string;
 };

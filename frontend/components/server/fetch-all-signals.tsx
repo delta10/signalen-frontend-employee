@@ -15,9 +15,6 @@ interface ListSignal {
   };
   created_at?: string;
   assigned_user_email?: string;
-  directing_department?: {
-    name?: string
-  };
   status?: {
     text?: string;
     state_display?: 'Gemeld' |
@@ -31,6 +28,8 @@ interface ListSignal {
                     'Geannuleerd' |
                     string;
   };
+  directing_department?: string;
+  routing_department?: string;
 };
 
 export async function FetchAllSignals() {
