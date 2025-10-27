@@ -57,20 +57,13 @@ interface FullSignal {
   incident_date_start?: string;
   incident_date_end?: string;
   has_attachments?: boolean;
+  directing_department?: string;
+  routing_department?: string;
+  assigned_user_email?: string;
   notes?: {
     text?: string;
     created_by?: string;
-  }
-
-  // directing_department?: {
-  //   name?: string
-  // };
-
-  // routing_department?: {
-  //   name?: string
-  // };
-
-  assigned_user_email?: string;
+  };
 };
 
 async function fetchSignalByID(id: string) {
@@ -90,33 +83,33 @@ async function fetchSignalByID(id: string) {
       source: s.source,
       text: s.text,
       status: {
-        text: s.status.text,
-        state_display: s.status.state_display
+        text: s.status?.text,
+        state_display: s.status?.state_display
       },
-      location: {
-        stadsdeel: s.location.stadsdeel,
-        area_name: s.location.area_name,
-        address_text: s.location.address_text,
+      location:{
+        stadsdeel: s.location?.stadsdeel,
+        area_name: s.location?.area_name,
+        address_text: s.location?.address_text,
         geometrie: {
-          type: s.location.geometrie.type,
-          coordinates: s.location.geometrie.coordinates,
+          type: s.location?.geometrie?.type,
+          coordinates: s.location?.geometrie?.coordinates,
         },
       },
       category: {
-        main: s.category.main,
-        sub: s.category.sub,
+        main: s.category?.main,
+        sub: s.category?.sub,
       },
       reporter: {
-        email: s.reporter.email,
-        phone: s.reporter.phone,
-        sharing_allowed: s.reporter.sharing_allowed,
-        allows_contact: s.reporter.allows_contact,
+        email: s.reporter?.email,
+        phone: s.reporter?.phone,
+        sharing_allowed: s.reporter?.sharing_allowed,
+        allows_contact: s.reporter?.allows_contact,
       },
       priority: {
-        priority: s.priority.priority,
+        priority: s.priority?.priority,
       },
       type: {
-        code: s.type.code,
+        code: s.type?.code,
       },
       created_at: s.created_at,
       updated_at: s.updated_at,
@@ -124,15 +117,11 @@ async function fetchSignalByID(id: string) {
       incident_date_end: s.incident_date_end,
       has_attachments: s.has_attachments,
       notes: {
-        text: s.notes.text,
-        created_by: s.notes.created_by,
+        text: s.notes?.text,
+        created_by: s.notes?.created_by,
       },
-      // directing_department: {
-      //   name: s.directing_department.name
-      // },
-      // routing_department: {
-      //   name: s.routing_department.name
-      // },
+      //directing_department: s.directing_department,
+      //routing_department: s.routing_department,
       assigned_user_email: s.assigned_user_email,
       });
   }
@@ -183,8 +172,8 @@ export default async function Page({params}: {params: Promise<{ id: string }>}) 
             <span className="text-secondary-300">{String(signal.has_attachments)}</span>
             <span className="text-secondary-300">{signal.notes?.text}</span>
             <span className="text-secondary-300">{signal.notes?.created_by}</span>
-            <span className="text-secondary-300">{signal.directing_department?.name}</span>
-            <span className="text-secondary-300">{signal.routing_department?.name}</span>
+            {/* <span className="text-secondary-300">{signal.directing_department}</span>
+            <span className="text-secondary-300">{signal.routing_department}</span> */}
             <span className="text-secondary-300">{signal.assigned_user_email}</span>
           </Link>
         </div>

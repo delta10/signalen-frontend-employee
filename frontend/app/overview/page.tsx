@@ -55,12 +55,12 @@ async function fetchSignals() {
       id_display: s.id_display,
       priority: s.priority,
       category: {
-        main: s.category.main,
-        sub: s.category.sub,
+        main: s.category?.main,
+        sub: s.category?.sub,
       },
       location: {
-        area_name: s.location.area_name,
-        address_text: s.location.address_text,
+        area_name: s.location?.area_name,
+        address_text: s.location?.address_text,
       },
       created_at: s.created_at,
       assigned_user_email: s.assigned_user_email,
@@ -68,8 +68,8 @@ async function fetchSignals() {
       //  name: s.directing_department.name
       //},
       status: {
-        text: s.status.text,
-        state_display: s.status.state_display
+        text: s.status?.text,
+        state_display: s.status?.state_display
       }
       });
   }
