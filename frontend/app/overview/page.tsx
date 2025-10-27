@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
-import { FetchAllSignals } from '@/server/fetch-all-signals';
+import { FetchAllSignals } from '@/components/server/fetch-all-signals';
 import { useEffect } from 'react';
 import Link from 'next/dist/client/link';
 

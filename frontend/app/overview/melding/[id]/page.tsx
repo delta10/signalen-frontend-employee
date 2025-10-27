@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FetchSignalByID } from '@/server/fetch-signal-by-id';
+import { FetchSignalByID } from '@/components/server/fetch-signal-by-id';
 import Link from 'next/dist/client/link';
 
 interface FullSignal {
