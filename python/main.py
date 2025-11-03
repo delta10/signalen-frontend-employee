@@ -6,9 +6,11 @@ import uvicorn
 import torch
 import os
 from dotenv import load_dotenv
+import numpy
+
 load_dotenv()
 
-model = SentenceTransformer('all-MiniLM-L6-v2')
+model = SentenceTransformer('intfloat/multilingual-e5-base')
 
 
 auth_token = os.getenv('AUTH_TOKEN')
@@ -17,17 +19,17 @@ if auth_token:
 else:
     raise Exception('No auth token found')
 
-#-----------------------
+
 app = FastAPI()
 
 
-async def get_duplicates():
+async def build_embeddings():
 
 
-    #res = requests.get('https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/private/signals/', headers=headers)
+    #res = requests.get(os.getenv('URL_BACKEND'), headers=headers)
     #response = json.loads(res.text)
 
-    with open('meldingen-synthetisch.json', 'r') as file:  #Dummy dataset
+    with open('meldingen-synthetisch.json', 'r') as file:  #Dummy dataset for testing
         response = json.load(file)
 
 
@@ -35,27 +37,50 @@ async def get_duplicates():
         return "Error: " + str(response)    
 
         
-    meldingen = []
-    meldingen_ids = []
-    results = []
-    debug = []
+    meldingen, meldingen_ids = [], []
 
     for result in response['results']:
-        """if result['status']['state_display'] == 'Geannuleerd': #skip de geannuleerde meldingen
+        try:
+            """if result['status']['state_display'] == 'Geannuleerd': #filter out the cancelled reports       # uncomment this when making a request to the backend
+                continue
+            if result['status']['state_display'] == 'Afgehandeld': #filter out the handled reports
+                continue
+            if result['has_parent']: #filter out the sub-reports
+                continue"""
+            meldingen.append(result['text'])
+            meldingen_ids.append(result['id'])
+        except KeyError as e:
+            print(f"Error processing signal. Signal ID: {result['id']}: due to missing fields: {e}")
             continue
-        if result['status']['state_display'] == 'Afgehandeld': #skip de afgehandelde meldingen
+        except Exception as e:
+            print(f"Error processing signal. Signal ID: {result['id']}: unexpected error: {e}")
             continue
-        if result['has_parent']: #skip de deelmeldingen 
-            continue"""
-        meldingen.append(result['text'])
-        meldingen_ids.append(result['id'])
 
-    embeddings = model.encode(meldingen, show_progress_bar=True, convert_to_tensor=True)
+    embeddings = model.encode(meldingen, normalize_embeddings=True, show_progress_bar=True, convert_to_tensor=True)  #show progress bar for debugging
+    numpy.save("embeddings.npy", embeddings)
+
+    with open("meldingen-text.json", "w") as file:
+        json.dump({"meldingen": meldingen, "meldingen_ids": meldingen_ids}, file)
+    return embeddings, meldingen, meldingen_ids
+
+async def load_embeddings():
+    if not os.path.exists("embeddings.npy") or not os.path.exists("meldingen-text.json"):
+        return await build_embeddings()
+    embeddings = numpy.load("embeddings.npy")
+    with open("meldingen-text.json", "r") as file:
+        data = json.load(file)
+    return embeddings, data["meldingen"], data["meldingen_ids"]
+
+async def get_duplicates():
+    embeddings, meldingen, meldingen_ids = await load_embeddings()
+
+    results = []
+    debug = [] # only for debugging
 
     cosine_scores = util.cos_sim(embeddings, embeddings)
 
-    threshold = 0.8
-    mask = torch.triu(cosine_scores, diagonal=1) > threshold
+    threshold = 0.95 # only pairs more similar than the threshold are processed and sent in the response
+    mask = (torch.triu(cosine_scores, diagonal=1) > threshold) # & (torch.triu(cosine_scores, diagonal=1) < 1.0) # uncomment for debugging to eliminate identical pairs
     pairs = mask.nonzero(as_tuple=False)
 
 
@@ -66,43 +91,39 @@ async def get_duplicates():
             "signal_text_1": meldingen[i],
             "signal_id_2": meldingen_ids[j],
             "signal_text_2": meldingen[j],
-            "text_score": score
+            "text_score": score # flaot between 0 and 1 indcitating similarity of the descriptions
         })
         results.append({
             "signal_id_1": meldingen_ids[i],
             "signal_id_2": meldingen_ids[j],
-            "text_score": score
+            "text_score": score # flaot between 0 and 1 indcitating similarity of the descriptions
         })
 
     # print(debug)
 
-    # Convert arrays to JSON format
+    # Convert arrays to JSON 
     json_response = {
-        "results": debug,
         "count": len(results),
-        "signals_processed": len(meldingen)
+        "signals_processed": len(meldingen),
+        "results": debug
     }
 
-    with open('response.json', 'w') as file:
-        json.dump(json_response, file)
-    
-    return
+    return json_response
 
 
 
-@app.get("/duplicates")
+@app.get("/duplicates") #call this to calculate the cosine similarity and return everything above the threshold
 async def root():
-    with open('response.json', 'r') as file:
-        response = json.load(file)
+    response = await get_duplicates()
     return response
 
 
 
 
-@app.get("/start")
+@app.get("/load-embeddings") #call this to embed all the reports and save the embeddings to a numpy file
 async def root():
-    await get_duplicates()
-    print("Duplicates processed on startup")
+    await load_embeddings()
+    return {"message": "Embeddings loaded successfully", "status": 200}
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8080) # change port to 8080 because 8000 is already used by the backend
