@@ -7,8 +7,13 @@ import torch
 import os
 from dotenv import load_dotenv
 import numpy
+import pickle
+from sklearn.neighbors import KDTree
 
 load_dotenv()
+
+mean_latitude = 52.0919 # mean latitude of Utrecht/Netherlands
+meters_per_degree_latitude = 111320.0 # meters per degree latitude at the mean latitude
 
 model = SentenceTransformer('intfloat/multilingual-e5-base')
 
@@ -23,9 +28,7 @@ else:
 app = FastAPI()
 
 
-async def build_embeddings():
-
-
+async def get_all_signals():
     #res = requests.get(os.getenv('URL_BACKEND'), headers=headers)
     #response = json.loads(res.text)
 
@@ -38,6 +41,7 @@ async def build_embeddings():
 
         
     meldingen, meldingen_ids = [], []
+    #coordinates = [] # uncomment this when making a request to the backend
 
     for result in response['results']:
         try:
@@ -49,31 +53,66 @@ async def build_embeddings():
                 continue"""
             meldingen.append(result['text'])
             meldingen_ids.append(result['id'])
+            #coordinates.append(result['location']['geometrie']['coordinates']) # uncomment this when making a request to the backend
         except KeyError as e:
             print(f"Error processing signal. Signal ID: {result['id']}: due to missing fields: {e}")
             continue
         except Exception as e:
             print(f"Error processing signal. Signal ID: {result['id']}: unexpected error: {e}")
             continue
+    
+    #coordinates = numpy.asarray((coordinates)) # uncomment this when making a request to the backend
+
+    # this section is for generating dummy coordinates
+    import random
+    # Generate 7200 random coordinate points between the given coordinates
+    def generate_random_coordinates(num_points=7200):
+        # Convert coordinates to decimal degrees
+        lat_min = 52.01473  # 52°01'47.3"N
+        lat_max = 52.14028  # 52°08'25.0"N
+        lon_min = 4.96503   # 4°57'54.1"E
+        lon_max = 5.19019   # 5°11'24.7"E
+        
+        coordinates = []
+        for _ in range(num_points):
+            lat = random.uniform(lat_min, lat_max)
+            lon = random.uniform(lon_min, lon_max)
+            coordinates.append([lon, lat])
+        
+        return numpy.asarray(coordinates)
+
+    coordinates = generate_random_coordinates()
+    # this section is for generating dummy coordinates
+
+    return meldingen, meldingen_ids, coordinates
+
+async def build_embeddings(): # build the embeddings for the text descriptions and the KD-Tree for the locations
+    meldingen, meldingen_ids, coordinates = await get_all_signals()
+    locations_xy = await coordinates_to_xy(coordinates)
+    tree = KDTree(locations_xy)
+    with open("kdtree.pkl", "wb") as f:
+        pickle.dump({"tree": tree, "locations": locations_xy, "meldingen_ids": meldingen_ids}, f)
 
     embeddings = model.encode(meldingen, normalize_embeddings=True, show_progress_bar=True, convert_to_tensor=True)  #show progress bar for debugging
-    numpy.save("embeddings.npy", embeddings)
+    numpy.save("embeddings.npy", embeddings.cpu().numpy())
 
     with open("meldingen-text.json", "w") as file:
         json.dump({"meldingen": meldingen, "meldingen_ids": meldingen_ids}, file)
     return embeddings, meldingen, meldingen_ids
 
 async def load_embeddings():
-    if not os.path.exists("embeddings.npy") or not os.path.exists("meldingen-text.json"):
+    if not os.path.exists("embeddings.npy") or not os.path.exists("meldingen-text.json") or not os.path.exists("kdtree.pkl"):
         return await build_embeddings()
     embeddings = numpy.load("embeddings.npy")
     with open("meldingen-text.json", "r") as file:
         data = json.load(file)
     return embeddings, data["meldingen"], data["meldingen_ids"]
 
-async def get_duplicates():
+async def get_text_similarity():
     embeddings, meldingen, meldingen_ids = await load_embeddings()
 
+
+    embeddings = torch.from_numpy(embeddings)
     results = []
     debug = [] # only for debugging
 
@@ -110,18 +149,70 @@ async def get_duplicates():
 
     return json_response
 
+async def coordinates_to_xy(coordinates):
+    longitude = coordinates[:, 0]
+    latitude = coordinates[:, 1]
+    longitude = numpy.asarray(longitude, dtype=numpy.float64)
+    latitude = numpy.asarray(latitude, dtype=numpy.float64)
+    mean_latitude_radians = numpy.radians(mean_latitude)
+    meters_per_degree_longitude = meters_per_degree_latitude * numpy.cos(mean_latitude_radians)
+
+    x = longitude * meters_per_degree_longitude
+    y = latitude * meters_per_degree_latitude
+    return numpy.column_stack((x, y))
 
 
-@app.get("/duplicates") #call this to calculate the cosine similarity and return everything above the threshold
-async def root():
-    response = await get_duplicates()
+async def get_location_similarity():
+    if not os.path.exists("kdtree.pkl"):
+        return {"error": "KD-Tree not found. Please run the load-embeddings endpoint first."}
+    with open("kdtree.pkl", "rb") as f:
+        data = pickle.load(f)
+        tree = data["tree"]
+        locations = data["locations"]
+        meldingen_ids = data["meldingen_ids"]
+    
+    radius = 100 # meters
+    results = []
+    debug = [] # only for debugging
+    for i in range(len(locations)):
+        indices, distances = tree.query_radius([locations[i]], r=radius, return_distance=True)
+        for j, distance in zip(indices[0], distances[0]): # zip to iterate over the indices and distances simultaneously
+            if i != j and i < j:
+                results.append({
+                    "signal_id_1": meldingen_ids[i],
+                    "signal_id_2": meldingen_ids[j],
+                })
+                debug.append({
+                    "signal_id_1": meldingen_ids[i],
+                    "signal_id_2": meldingen_ids[j],
+                    "distance": float(distance)
+                })
+
+    json_response = {
+        "count": len(results),
+        "signals_processed": len(meldingen_ids),
+        "results": debug
+    }
+    return json_response
+
+
+
+
+
+@app.get("/text-duplicates") #call this to calculate the cosine similarity of the descriptions and return everything above the threshold
+async def text_duplicates():
+    response = await get_text_similarity()
+    return response
+
+@app.get("/location-duplicates") #call this to calculate the location similarity and return everything within the radius of another
+async def location_duplicates():
+    response = await get_location_similarity()
     return response
 
 
 
-
 @app.get("/load-embeddings") #call this to embed all the reports and save the embeddings to a numpy file
-async def root():
+async def load_embeddings_endpoint():
     await load_embeddings()
     return {"message": "Embeddings loaded successfully", "status": 200}
 
