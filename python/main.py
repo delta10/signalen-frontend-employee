@@ -32,7 +32,7 @@ async def get_all_signals():
     #res = requests.get(os.getenv('URL_BACKEND'), headers=headers)
     #response = json.loads(res.text)
 
-    with open('meldingen-synthetisch.json', 'r') as file:  #Dummy dataset for testing
+    with open('meldingen-synthetisch-coordinates.json', 'r') as file:  #Dummy dataset for testing
         response = json.load(file)
 
 
@@ -41,7 +41,7 @@ async def get_all_signals():
 
         
     meldingen, meldingen_ids = [], []
-    #coordinates = [] # uncomment this when making a request to the backend
+    coordinates = [] # uncomment this when making a request to the backend
 
     for result in response['results']:
         try:
@@ -53,7 +53,7 @@ async def get_all_signals():
                 continue"""
             meldingen.append(result['text'])
             meldingen_ids.append(result['id'])
-            #coordinates.append(result['location']['geometrie']['coordinates']) # uncomment this when making a request to the backend
+            coordinates.append(result['location']['geometrie']['coordinates']) # uncomment this when making a request to the backend
         except KeyError as e:
             print(f"Error processing signal. Signal ID: {result['id']}: due to missing fields: {e}")
             continue
@@ -61,30 +61,11 @@ async def get_all_signals():
             print(f"Error processing signal. Signal ID: {result['id']}: unexpected error: {e}")
             continue
     
-    #coordinates = numpy.asarray((coordinates)) # uncomment this when making a request to the backend
-
-    # this section is for generating dummy coordinates
-    import random
-    # Generate 7200 random coordinate points between the given coordinates
-    def generate_random_coordinates(num_points=7200):
-        # Convert coordinates to decimal degrees
-        lat_min = 52.01473  # 52°01'47.3"N
-        lat_max = 52.14028  # 52°08'25.0"N
-        lon_min = 4.96503   # 4°57'54.1"E
-        lon_max = 5.19019   # 5°11'24.7"E
-        
-        coordinates = []
-        for _ in range(num_points):
-            lat = random.uniform(lat_min, lat_max)
-            lon = random.uniform(lon_min, lon_max)
-            coordinates.append([lon, lat])
-        
-        return numpy.asarray(coordinates)
-
-    coordinates = generate_random_coordinates()
-    # this section is for generating dummy coordinates
-
+    
+    coordinates = numpy.asarray((coordinates)) # uncomment this when making a request to the backend
+    
     return meldingen, meldingen_ids, coordinates
+
 
 async def build_embeddings(): # build the embeddings for the text descriptions and the KD-Tree for the locations
     meldingen, meldingen_ids, coordinates = await get_all_signals()
