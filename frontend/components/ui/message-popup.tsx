@@ -23,7 +23,18 @@ import {
   ChevronDown,
   History,
   ArrowUpRight,
-  File
+  File,
+  TriangleAlert, 
+  Minus,
+  LucideIcon, 
+  MoreVertical,
+  FilePlus,
+  Share2,
+  BadgeAlert,
+  CircleCheck,
+  CirclePlay,
+  RotateCcw,
+  CircleX
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -35,17 +46,19 @@ import { Separator } from '@/components/ui/separator';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import dynamic from 'next/dynamic';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
 
 const SmallMap = dynamic(() => import('./SmallMap'), {
   ssr: false,
   loading: () => <div className="h-64 w-full rounded-lg bg-gray-100 flex items-center justify-center text-sm text-muted-foreground">Kaart laden...</div>
 });
 
-export interface Note {
-  id: string;
-  source: string;
-  text: string;
-  created_at: string;
+// Notitie interface
+// export interface Note {
+//   id: string;
+//   source: string;
+//   text: string;
+//   created_at: string;
   // location: Location;
   // category: string | any;
   // reporter: Reporter;
@@ -53,112 +66,113 @@ export interface Note {
   // state_display: string;
   // deadline: string;
   // notes: string;
-}
+// }
 
+// Melding API data
 interface Report {
     "_links": {
         "self": {
           "href": "https://api.example.com/signals/v1/private/signals/1"
         }
       },
-      "_display": "string",
-      "id": 0,
-      "id_display": "string",
-      "signal_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-      "source": "string",
-      "text": "string",
-      "text_extra": "string",
+      "_display": string,
+      "id": number,
+      "id_display": string,
+      "signal_id": string,
+      "source": string,
+      "text": string,
+      "text_extra": string,
       "status": {
-        "text": "string",
-        "user": "user@example.com",
-        "state": "m",
-        "state_display": "string",
+        "text": string,
+        "user": string,
+        "state": string,
+        "state_display": string,
         "target_api": "sigmax",
-        "extra_properties": "string",
-        "send_email": true,
-        "created_at": "2025-10-13T12:33:29.088Z",
-        "email_override": "user@example.com"
+        "extra_properties": string,
+        "send_email": boolean,
+        "created_at": string,
+        "email_override": string
       },
       "location": {
-        "id": 0,
-        "stadsdeel": "A",
-        "buurt_code": "string",
-        "area_type_code": "string",
-        "area_code": "string",
-        "area_name": "string",
-        "address": "string",
-        "address_text": "string",
-        "postcode": "string",
+        "id": number,
+        "stadsdeel": string,
+        "buurt_code": string,
+        "area_type_code": string,
+        "area_code": string,
+        "area_name": string,
+        "address": string,
+        "address_text": string,
+        "postcode": string,
         "geometrie": {
           "type": "Point",
           "coordinates": [
-            12.9721,
-            77.5933
+            number,
+            number
           ]
         },
-        "extra_properties": "string",
-        "created_by": "user@example.com",
-        "bag_validated": true
+        "extra_properties": string,
+        "created_by": string,
+        "bag_validated": boolean
       },
       "category": {
-        "sub": "string",
-        "sub_slug": "string",
-        "main": "string",
-        "main_slug": "string",
+        "sub": string,
+        "sub_slug": string,
+        "main": string,
+        "main_slug": string,
         "category_url": "https://api.example.com/signals/v1/public/terms/categories/1/sub_categories/2/",
-        "departments": "string",
-        "created_by": "user@example.com",
-        "text": "string",
-        "deadline": "2025-10-13T12:33:29.088Z",
-        "deadline_factor_3": "2025-10-13T12:33:29.088Z"
+        "departments": string,
+        "created_by": string,
+        "text": string,
+        "deadline": string,
+        "deadline_factor_3": string
       },
       "reporter": {
-        "email": "user@example.com",
-        "phone": "string",
-        "sharing_allowed": true,
-        "allows_contact": true
+        "email": string,
+        "phone": string,
+        "sharing_allowed": boolean,
+        "allows_contact": boolean
       },
       "priority": {
-        "priority": "string",
-        "created_by": "user@example.com"
+        "priority": string,
+        "created_by": string
       },
       "type": {
-        "code": "str",
-        "created_at": "2025-10-13T12:33:29.088Z",
-        "created_by": "user@example.com"
+        "code": string,
+        "created_at": string,
+        "created_by": string
       },
-      "created_at": "2025-10-13T12:33:29.088Z",
-      "updated_at": "2025-10-13T12:33:29.088Z",
-      "incident_date_start": "2025-10-13T12:33:29.088Z",
-      "incident_date_end": "2025-10-13T12:33:29.088Z",
-      "operational_date": "2025-10-13T12:33:29.088Z",
-      "has_attachments": "string",
-      "extra_properties": "string",
+      "created_at": string,
+      "updated_at": string,
+      "incident_date_start": string,
+      "incident_date_end": string,
+      "operational_date": string,
+      "has_attachments": string,
+      "extra_properties": string,
       "notes": [
         {
-          "text": "string",
-          "created_by": "user@example.com"
+          "text": string,
+          "created_by": string
         }
       ],
       "directing_departments": [
         {
-          "id": 0,
-          "code": "string",
-          "name": "string",
-          "is_intern": true
+          "id": number,
+          "code": string,
+          "name": string,
+          "is_intern": boolean
         }
       ],
       "routing_departments": [
         {
-          "id": 0,
-          "code": "string",
-          "name": "string",
-          "is_intern": true
+          "id": number,
+          "code": string,
+          "name": string,
+          "is_intern": boolean
         }
       ],
-      "has_parent": "string",
-      "has_children": "string",
-      "assigned_user_email": "user@example.com"
+      "has_parent": string,
+      "has_children": string,
+      "assigned_user_email": string
 }
 
 interface ReportDetailSheetProps {
@@ -175,131 +189,39 @@ const getStatusText = (status: Report['status'] | string): string => {
 };
 
 const getPriorityText = (priority: Report['priority'] | string): string => {
-  if (typeof priority === 'string') return priority;
-  return priority?.priority || 'Normaal';
+  const priorityString = typeof priority === 'string' ? priority : priority?.priority;
+
+  switch (priorityString?.toLowerCase()) {
+    case 'low':
+      return 'Laag';
+    case 'high':
+      return 'Hoog';
+    case 'normal':
+    default:
+      return 'Normaal';
+  }
 };
 
 export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onExpandToFull }: ReportDetailSheetProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [newNote, setNewNote] = useState('');
-  const [status, setStatus] = useState(report?.status || 'Nieuw');
-  const [priority, setPriority] = useState(report?.priority || 'Normaal');
+  const [status, setStatus] = useState(report?.status.state_display || 'In Behandeling');
+  const [priority, setPriority] = useState(report?.priority.priority || 'Normaal');
   const [notes, setNotes] = useState(report?.notes || []);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isLocationOpen, setIsLocationOpen] = useState(true);
   const [isReporterOpen, setIsReporterOpen] = useState(true);
-  const [isMetadataOpen, setIsMetadataOpen] = useState(false);
+  // const [isMetadataOpen, setIsMetadataOpen] = useState(false);
 
   React.useEffect(() => {
     if (report) {
-      setStatus(getStatusText(report.status));
-      setPriority(getPriorityText(report.priority));
+      setStatus(getStatusText(report.status.state_display));
+      setPriority(getPriorityText(report.priority.priority));
       setNotes(report.notes || []);
     }
-
-  // veilige weergave van category — backend kan object sturen
-  // const categoryText: string =
-  //   typeof category === 'string'
-  //     ? category
-  //     : category?.sub ?? category?.main ?? category?.sub_slug ?? category?.main_slug ?? JSON.stringify(category ?? '');
-  
-    const formatDate = (dateString: string) => {
-      return new Date(dateString).toLocaleDateString('nl-NL', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-    };
-  
-    const formatShortDate = (dateString: string) => {
-      return new Date(dateString).toLocaleDateString('nl-NL', {
-        day: '2-digit',
-        month: 'short',
-        hour: '2-digit',
-        minute: '2-digit'
-      });
-    };
-  
-    type StatusType =
-      | 'Nieuw'
-      | 'In behandeling'
-      | 'Wachten op melder'
-      | 'Opgelost'
-      | 'Geannuleerd'
-      | 'Doorgezet naar extern'
-      | 'Gemeld'
-      | 'Urgent';
-
-    const statusColors: Record<StatusType, string> = {
-      'Nieuw': 'bg-primary text-primary-foreground',
-      'In behandeling': 'bg-warning text-warning-foreground',
-      'Wachten op melder': 'bg-muted text-muted-foreground',
-      'Opgelost': 'bg-success text-success-foreground',
-      'Geannuleerd': 'bg-muted text-muted-foreground',
-      'Doorgezet naar extern': 'bg-secondary text-secondary-foreground',
-      'Gemeld': 'bg-muted text-muted-foreground',
-      'Urgent': 'bg-destructive text-destructive-foreground'
-    };
-  
-    const priorityColors = {
-      'Laag': 'text-muted-foreground',
-      'Normaal': 'text-foreground',
-      'Hoog': 'text-warning',
-      'Urgent': 'text-destructive'
-    };
-  
-    const progressColors = {
-      'Binnen de afhandeltermijn': 'text-success',
-      'Buiten de afhandeltermijn': 'text-destructive',
-      'Afgehandeld': 'text-muted-foreground'
-    };
-  
-    const getStatusProgress = (status: string) => {
-      const statusMap = {
-        'Nieuw': 10,
-        'In behandeling': 50,
-        'Wachten op melder': 30,
-        'Opgelost': 100,
-        'Geannuleerd': 0,
-        'Doorgezet naar extern': 75,
-        'Gemeld': 25,
-        'Urgent': 5
-      };
-      return statusMap[status as keyof typeof statusMap] || 0;
-    };
-  
-    // const handleSave = () => {
-    //   if (!report) return;
-    //   const updatedReport: Report = {
-    //     status,
-    //     priority,
-    //     updatedAt: new Date().toISOString(),
-    //   };
-    //   if (onUpdateReport) {
-    //     onUpdateReport(updatedReport);
-    //   }
-    //   setIsEditing(false);
-    //   setNewNote('');
-    //   setIsHistoryOpen(false);
-    //   setIsLocationOpen(true);
-    //   setIsReporterOpen(true);
-    //   setIsMetadataOpen(false);
-    // }
   }, [report]);
 
   if (!report) return null;
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('nl-NL', {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
-  };
 
   const formatAddress = (address: any): string => {
     if (typeof address === 'string') {
@@ -331,68 +253,87 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
     });
   };
 
-  const statusColors: Record<string, string> = {
-    'Nieuw': 'bg-primary text-primary-foreground',
-    'In behandeling': 'bg-warning text-warning-foreground',
-    'Wachten op melder': 'bg-muted text-muted-foreground',
-    'Opgelost': 'bg-success text-success-foreground',
-    'Geannuleerd': 'bg-muted text-muted-foreground',
-    'Doorgezet naar extern': 'bg-secondary text-secondary-foreground',
-    'Gemeld': 'bg-muted text-muted-foreground',
-    'Urgent': 'bg-destructive text-destructive-foreground'
+  const statusIcons: Record<string, LucideIcon> = {
+    'Gemeld': BadgeAlert,
+    'In afwachting van behandeling': Clock,
+    'Reactie gevraagd': MessageSquare,
+    'Ingepland': Calendar,
+    'In behandeling': CirclePlay,
+    'Extern: verzoek tot afhandeling': ExternalLink,
+    'Afgehandeld': CircleCheck,
+    'Heropend': RotateCcw,
+    'Geannuleerd': CircleX,
   };
 
-  const priorityColors: Record<string, string> = {
-    'Laag': 'text-muted-foreground',
-    'Normaal': 'text-foreground',
-    'Hoog': 'text-warning',
-    'Urgent': 'text-destructive'
+  const statusVariants: Record<string, any> = {
+    'Gemeld': 'gemeld',
+    'In afwachting van behandeling': 'afwachting_behandeling',
+    'Reactie gevraagd': 'reactie_gevraagd',
+    'Ingepland': 'ingepland',
+    'In behandeling': 'in_behandeling',
+    'Extern: verzoek tot afhandeling': 'extern_verzoek',
+    'Afgehandeld': 'afgehandeld',
+    'Heropend': 'heropend',
+    'Geannuleerd': 'geannuleerd',
   };
 
-  // const handleSave = () => {
-  //   const updatedReport = { 
-  //     ...report, 
-  //     status,
-  //     priority,
-  //     updatedAt: new Date().toISOString() 
-  //   };
-  //   if (onUpdateReport) {
-  //     onUpdateReport(updatedReport);
-  //   }
-  //   setIsEditing(false);
-  // };
+  interface PriorityDetails {
+  icon: LucideIcon;
+  color: string;
+  text: string;
+  variant: "laag" | "normaal" | "hoog";
+}
 
-  // const addNote = () => {
-  //   if (newNote.trim()) {
-  //     const newNoteObj: Note = {
-  //       id: `note-${Date.now()}`,
-  //       content: newNote.trim(),
-  //       author: 'Huidige gebruiker',
-  //       createdAt: new Date().toISOString(),
-  //     };
-      
-  //     const updatedNotes = [...notes, newNoteObj];
-  //     setNotes(updatedNotes);
-      
-  //     const updatedReport = { 
-  //       ...report, 
-  //       notes: updatedNotes, 
-  //       updatedAt: new Date().toISOString() 
-  //     };
-      
-  //     if (onUpdateReport) {
-  //       onUpdateReport(updatedReport);
-  //     }
-      
-  //     setNewNote('');
-  //   }
-  // };
+  const priorityColors: Record<string, PriorityDetails> = {
+    'low': {
+      icon: Minus,
+      color: 'bg-muted-foreground text-secondary',
+      text: 'Laag',
+      variant: 'laag',
+    },
+    'normal': {
+      icon: Activity,
+      color: 'text-foreground',
+      text: 'Normaal',
+      variant: 'normaal',
+    },
+    'high': {
+      icon: TriangleAlert,
+      color: 'bg-high text-5xl',
+      text: 'Hoog',
+      variant: 'hoog',
+    },
+  };
+
+  const handleSave = () => {
+    const updatedReport: Report = { 
+      ...report, 
+      status: {
+        ...report.status,
+        text: status as string,
+        state_display: status as string,
+      },
+      priority: typeof priority === 'string' 
+        ? { priority: priority, created_by: report.priority.created_by }
+        : priority,
+      updated_at: new Date().toISOString() 
+    };
+    if (onUpdateReport) {
+      onUpdateReport(updatedReport);
+    }
+    setIsEditing(false);
+  };
+
+  // Notitie toevoegen functie - WIP
+  // [functie]
 
   const currentStatusText = getStatusText(report.status.state_display);
-  const currentPriorityText = getPriorityText(report.priority);
+  // const currentPriorityText = getPriorityText(report.priority.priority);
 
+
+  // Locatie en coordinates
   const openInMaps = () => {
-    const address = encodeURIComponent(report.location.address);
+    const address = encodeURIComponent(report.location.address_text);
     window.open(`https://maps.google.com?q=${address}`, '_blank');
   };
 
@@ -406,18 +347,58 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
     }
   };
 
+  const handleOpenChange = (open: boolean) => {
+  if (!open && isEditing) {
+    return;
+  }
+  if (!open) {
+    onClose();
+  }
+};
+
   return (
-    <Sheet open={isOpen} onOpenChange={(open) => !open && onClose()}>
+    <Sheet open={isOpen} onOpenChange={handleOpenChange}>
       <SheetContent side="right" className="w-full sm:max-w-2xl p-0 gap-0 !flex !flex-col !h-full overflow-hidden">
         <div className="p-4 pb-3 bg-muted/30 border-b flex-shrink-0">
           <div className="flex items-start justify-between gap-3 mb-6">
+
+            {/* Navigatiebalk */}
             <div className="flex flex-col gap-3 min-w-0">
               <div className="flex items-center gap-2 mb-2 flex-wrap">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-6 w-6 shrink-0" disabled={isEditing}>
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-48 bg-background shadow-sm rounded-md p-1 flex flex-col gap-1">
+                    <DropdownMenuItem className='flex items-center text-sm hover:bg-accent hover:text-primary-foreground duration-200 rounded-sm p-2 cursor-pointer' onClick={() => console.log('Deelmelding maken')}>
+                      <FilePlus className="mr-2 h-4 w-4 opacity-70" />
+                      Deelmelding maken
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className='flex items-center text-sm hover:bg-accent hover:text-primary-foreground duration-200 rounded-sm p-2 cursor-pointer' onClick={() => console.log('Extern doorzetten')}>
+                      <Share2 className="mr-2 h-4 w-4 opacity-70" />
+                      Extern doorzetten
+                    </DropdownMenuItem>
+                    <DropdownMenuItem className='flex items-center text-sm hover:bg-accent hover:text-primary-foreground duration-200 rounded-sm p-2 cursor-pointer' onClick={() => console.log('PDF maken')}>
+                      <FileText className="mr-2 h-4 w-4 opacity-70" />
+                      PDF maken
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <Badge variant="outline" className="text-xs">
                   #{report.id}
                 </Badge>
-                <Badge className={statusColors[currentStatusText] || 'bg-muted text-muted-foreground'}>
-                  {currentStatusText}
+                <Badge 
+                  variant={statusVariants[currentStatusText] || 'default'}
+                  className="flex items-center gap-1.5 w-fit"
+                >
+                  {statusIcons[currentStatusText] && 
+                    React.createElement(statusIcons[currentStatusText], { 
+                      className: 'h-3.5 w-3.5'
+                    })
+                  }
+                  <span>{report.status.state_display}</span>
                 </Badge>
                 <Badge variant="outline" >
                   {report.category.main}
@@ -434,20 +415,16 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
                   Melding details voor {report.text}
                 </SheetDescription>
               </div>
-              <div className="flex gap-3">
-                  <Button variant="outline"  className="h-7 px-2 text-xs">Deelmelding maken</Button>
-                  <Button variant="outline"  className="h-7 px-2 text-xs">Extern doorzetten</Button>
-                  <Button variant="outline"  className="h-7 px-2 text-xs">PDF maken</Button>
-              </div>
             </div>
           </div>
           
-          {/* Prominent expand button */}
+          {/* Grote expand button */}
           <Button
             variant="outline"
             
             onClick={handleExpandToFull}
-            className="w-full flex items-center justify-center gap-2 hover:bg-primary hover:text-primary-foreground hover:border-primary dark:hover:bg-primary/90 dark:hover:border-primary dark:hover:shadow-lg dark:hover:shadow-primary/20 transition-all duration-200"
+            disabled={isEditing}
+            className="w-full flex items-center justify-center border border-border gap-2 hover:bg-primary hover:text-primary-foreground hover:border-primary dark:hover:bg-primary/90 dark:hover:border-primary dark:hover:shadow-lg dark:hover:shadow-primary/20 transition-all duration-200"
           >
             <ArrowUpRight className="h-4 w-4" />
             Open volledige weergave
@@ -456,40 +433,115 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
 
         <div className="flex-1 overflow-y-auto">
           <div className="p-4 space-y-4 pb-6">
-            {/* Quick Status Edit */}
+
+            {/* Snel Status bewerken */}
             <Card>
-              <CardContent className="p-3">
-                <div className="flex items-center gap-3">
+              <CardHeader className="pb-2">
+                <div className="flex items-center justify-between">
+                  <CardTitle className="text-base">Basisinformatie</CardTitle>
+                  {!isEditing ? (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setIsEditing(true)}
+                      className="h-8"
+                    >
+                      <Edit className="h-3.5 w-3.5 mr-1.5" />
+                      Bewerken
+                    </Button>
+                  ) : (
+                    <div className="flex gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                          setStatus(report.status.state_display);
+                          setPriority(report.priority.priority);
+                          setIsEditing(false);
+                        }}
+                        className="h-8"
+                      >
+                        Annuleren
+                      </Button>
+                      <Button
+                        variant="default"
+                        size="sm"
+                        onClick={handleSave}
+                        className="h-8"
+                      >
+                        Opslaan
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </CardHeader>
+              <CardContent className="p-3 pt-0">
+                <div className="flex items-center gap-20">
+
+                  {/* Status */}
                   <div className="flex-1 min-w-0">
                     <div className="text-xs text-muted-foreground mb-1">Status</div>
                     {isEditing ? (
-                      <Select value={report.status.text} onValueChange={setStatus}>
+                      <Select value={report.status.state_display} onValueChange={setStatus}>
                         <SelectTrigger className="h-8">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Nieuw">Nieuw</SelectItem>
+                          <SelectItem value="Gemeld">Gemeld</SelectItem>
+                          <SelectItem value="In afwachting van behandeling">In afwachting van behandeling</SelectItem>
+                          <SelectItem value="Reactie gevraagd">Reactie gevraagd</SelectItem>
+                          <SelectItem value="Ingepland">Ingepland</SelectItem>
                           <SelectItem value="In behandeling">In behandeling</SelectItem>
-                          <SelectItem value="Wachten op melder">Wachten op melder</SelectItem>
-                          <SelectItem value="Opgelost">Opgelost</SelectItem>
+                          <SelectItem value="Extern: verzoek tot afhandeling">Extern: verzoek tot afhandeling</SelectItem>
+                          <SelectItem value="Afgehandeld">Afgehandeld</SelectItem>
+                          <SelectItem value="Heropend">Heropend</SelectItem>
                           <SelectItem value="Geannuleerd">Geannuleerd</SelectItem>
-                          <SelectItem value="Doorgezet naar extern">Doorgezet naar extern</SelectItem>
                         </SelectContent>
                       </Select>
                     ) : (
-                    <Badge className={statusColors[currentStatusText] || 'bg-muted text-muted-foreground'}>
-                      {currentStatusText}
-                    </Badge>
+                        <Badge 
+                          variant={statusVariants[currentStatusText] || 'default'}
+                          className="flex items-center gap-1.5 w-fit"
+                        >
+                          {statusIcons[currentStatusText] && 
+                            React.createElement(statusIcons[currentStatusText], { 
+                              className: 'h-3.5 w-3.5'
+                            })
+                          }
+                          <span>{report.status.state_display}</span>
+                        </Badge>
                     )}
                   </div>
+
+                  {/* Prioriteit */}
                   <div className="flex-1 min-w-0">
                     <div className="text-xs text-muted-foreground mb-1">Prioriteit</div>
-                    <div className={`flex items-center gap-1 ${priorityColors[currentPriorityText] || 'text-foreground'}`}>
-                      {(priority === 'Hoog' || priority === 'Urgent') && <AlertTriangle className="h-3 w-3" />}
-                      <Badge variant={priority === 'Hoog' || priority === 'Urgent' ? 'destructive' : 'outline'} >
-                        {typeof priority === 'string' ? priority : priority.priority}
+                    {isEditing ? (
+                      <Select value={report.priority.priority} onValueChange={setPriority}>
+                        <SelectTrigger className="h-8">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="low">Laag</SelectItem>
+                          <SelectItem value="normal">Normaal</SelectItem>
+                          <SelectItem value="high">Hoog</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <Badge 
+                        variant={priorityColors[report.priority.priority]?.variant || 'outline'} 
+                        className="flex items-center gap-1.5 w-fit"
+                      >
+                        {priorityColors[report.priority.priority] && (
+                          <>
+                            {React.createElement(priorityColors[report.priority.priority].icon, { 
+                              className: 'h-3.5 w-3.5'
+                            })}
+                            <span>{priorityColors[report.priority.priority].text}</span>
+                          </>
+                        )}
                       </Badge>
-                    </div>
+                    )}
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-xs text-muted-foreground mb-1">Subcategorie</div>
@@ -502,7 +554,7 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
               </CardContent>
             </Card>
 
-            {/* 1. Description First (Most Important) */}
+            {/* Beschrijving */}
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2">
@@ -517,31 +569,32 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
               </CardContent>
             </Card>
 
-            {/* 2. Location (Collapsible) */}
-            {/* <Collapsible open={isLocationOpen} onOpenChange={setIsLocationOpen}> */}
+            {/* Locatie */}
+            <Collapsible open={isLocationOpen} onOpenChange={setIsLocationOpen}>
               <Card className='min-h-96'>
                 <CardHeader className="">
                   <div className="flex items-center justify-between">
-                    {/* <CollapsibleTrigger className="flex items-center gap-2 flex-1"> */}
+                    <CollapsibleTrigger className="flex items-center gap-2 flex-1">
                       <div className='flex gap-2'>
                         <MapPin className="h-4 w-4" />
                         <CardTitle className="text-base">
                           Locatie
                         </CardTitle>
                       </div>
-                      {/* <div className="ml-auto flex items-center gap-2">
+                      <div className="ml-auto flex items-center gap-2">
                         {isLocationOpen ? (
                           <ChevronDown className="h-4 w-4 text-muted-foreground" />
                         ) : (
                           <ChevronRight className="h-4 w-4 text-muted-foreground" />
                         )}
-                      </div> */}
-                    {/* </CollapsibleTrigger> */}
+                      </div>
+                    </CollapsibleTrigger>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           openInMaps();
                         }}
+                        disabled={isEditing}
                         className="ml-2 h-6 px-2 text-xs rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-1"
                       >
                       <ExternalLink className="h-3 w-3" />
@@ -549,7 +602,7 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
                     </button>
                   </div>
                 </CardHeader>
-                {/* <CollapsibleContent> */}
+                <CollapsibleContent>
                   <CardContent className="space-y-3 pt-0 flex gap-20 justify-between">
                     <div>
                       <div>
@@ -570,11 +623,11 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
                       <SmallMap lon={lon} lat={lat}/>
                     </div>
                   </CardContent>
-                {/* </CollapsibleContent> */}
+                </CollapsibleContent>
               </Card>
-            {/* </Collapsible> */}
+            </Collapsible>
 
-            {/* 3. Reporter Information (Collapsible) */}
+            {/* Melder informatie */}
             <Collapsible open={isReporterOpen} onOpenChange={setIsReporterOpen}>
               <Card>
                 <CardHeader className="pb-3">
@@ -592,13 +645,6 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
                 </CardHeader>
                 <CollapsibleContent>
                   <CardContent className="space-y-3 pt-0">
-                    {/* <div>
-                      <div className="text-xs text-muted-foreground mb-1">Naam</div>
-                      <div className="flex items-center gap-2">
-                        <User className="h-4 w-4 text-muted-foreground" />
-                        <span className="text-sm">{report.reporter.email}</span>
-                      </div>
-                    </div> */}
                     <div>
                       <div className="text-xs text-muted-foreground mb-1">E-mail</div>
                       <div className="flex items-center gap-2">
@@ -633,6 +679,7 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
                         </span>
                       </div>
                     </div>
+                    {/* Meldhistorie - WIP */}
                     {/* {report.reporter.stats && (
                       <div>
                         <div className="text-xs text-muted-foreground mb-1">Meldhistorie</div>
@@ -656,7 +703,7 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
               </Card>
             </Collapsible>
 
-            {/* Assignment & Routing */}
+            {/* Toewijzing & Afhandeling */}
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2">
@@ -668,9 +715,6 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
                 <div>
                   <div className="text-xs text-muted-foreground mb-1">Toegewezen aan</div>
                   <div className="text-sm">{report.assigned_user_email || 'Onbekend'}</div>
-                  {/* {report.category.departments && (
-                    <div className="text-xs text-muted-foreground mt-0.5">{report.category.departments}</div>
-                  )} */}
                 </div>
                 <div>
                   <div className="text-xs text-muted-foreground mb-1">Verantwoordelijke afdeling</div>
@@ -698,8 +742,7 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
               </CardContent>
             </Card>
 
-            {/* Sub-reports - WIP */}
-
+            {/* Deelmeldingen - WIP */}
               <Card>
                 <CardHeader className="pb-3">
                   <CardTitle className="text-base flex items-center gap-2">
@@ -738,7 +781,7 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
               </Card>
 
 
-            {/* History Timeline (Collapsible) - WIP*/}
+            {/* Geschiedenis - WIP*/}
             <Collapsible open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
               <Card>
                 <CardHeader className="pb-3">
@@ -789,7 +832,7 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
               </Card>
             </Collapsible>
 
-            {/* Add File - WIP */}
+            {/* Bestand toevoegen - WIP */}
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2">
@@ -800,7 +843,7 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
               <CardContent className="space-y-3">
                 <Button 
                   // onClick={addFile} 
-                  disabled={!newNote.trim()}
+                  disabled={!newNote.trim() || isEditing}
                   className="w-full"
                 >
                   <Plus className="h-4 w-4 mr-2" />
@@ -809,7 +852,7 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
               </CardContent>
             </Card>
 
-            {/* Add Note - WIP */}
+            {/* Notitie toevoegen - WIP */}
             <Card>
               <CardHeader className="pb-3">
                 <CardTitle className="text-base flex items-center gap-2">
@@ -826,7 +869,7 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
                 />
                 <Button 
                   // onClick={addNote} 
-                  disabled={!newNote.trim()}
+                  disabled={!newNote.trim() || isEditing}
                   
                   className="w-full"
                 >

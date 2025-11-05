@@ -28,14 +28,16 @@ const SmallMap = ({ lon, lat }) => {
 
       const map = L.map(MAP_CONTAINER_ID).setView([lat, lon], 13);
 
+      map.attributionControl.setPrefix(false);
+
       L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '© OpenStreetMap contributors',
+        attribution: 'Leaflet | © OpenStreetMap contributors',
         maxZoom: 19,
       }).addTo(map);
 
       L.marker([lat, lon])
         .addTo(map)
-        .bindPopup('De Locatie')
+        // .bindPopup('De Locatie')
         .openPopup();
 
       return () => {

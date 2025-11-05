@@ -17,7 +17,45 @@ const badgeVariants = cva(
           "border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
           "text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
+        
+        // Status badges     
+        afgehandeld:
+          "bg-afgehandeld text-background",
+        in_behandeling:
+          "bg-in-behandeling text-background",
+        gemeld:
+          "bg-gemeld text-background",
+        afwachting_behandeling:
+          "bg-in-afwachting-van-behandeling text-background",
+        reactie_gevraagd:
+          "bg-reactie-gevraagd text-background",
+        ingepland:
+          "bg-ingepland text-background",
+        extern_verzoek:
+          "bg-extern text-background",
+        heropend:
+          "bg-heropend text-background",
+        geannuleerd:
+          "bg-geannuleerd text-background",
+
+
+        // Priority badges
+        laag: 
+          "bg-muted border text-muted-foreground",
+        normaal: 
+          "bg-muted border text-muted-foreground",
+        hoog: 
+          "bg-high border border-high-border text-high-border",
+
+
       },
+      size: {
+        xs: "px-1.5 py-0.5 text-[10px] [&>svg]:size-2.5",
+        sm: "px-2 py-0.5 text-[11px] [&>svg]:size-2.5",
+        default: "px-2 py-0.5 text-xs [&>svg]:size-3",
+        lg: "px-3 py-1 text-sm [&>svg]:size-3.5",
+      },
+
     },
     defaultVariants: {
       variant: "default",

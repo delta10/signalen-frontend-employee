@@ -1,0 +1,1559 @@
+{
+  "_links": {
+    "self": {
+      "href": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/private/signals/"
+    },
+    "next": {
+      "href": null
+    },
+    "previous": {
+      "href": null
+    }
+  },
+  "count": 16,
+  "results": [
+    {
+      "_links": {
+        "self": {
+          "href": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/private/signals/16"
+        }
+      },
+      "_display": "16 - m - None - 2025-09-21T22:54:04.077169+02:00",
+      "id": 16,
+      "id_display": "SIG-16",
+      "signal_id": "3bda8887-701e-4c3c-9585-310536806592",
+      "source": "Interne melding",
+      "text": "bom op utrecht centraal",
+      "text_extra": "",
+      "status": {
+        "text": null,
+        "user": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "state": "m",
+        "state_display": "Gemeld",
+        "target_api": null,
+        "extra_properties": null,
+        "send_email": false,
+        "created_at": "2025-09-21T22:54:04.092066+02:00",
+        "email_override": null
+      },
+      "location": {
+        "id": 16,
+        "stadsdeel": null,
+        "buurt_code": null,
+        "area_type_code": null,
+        "area_code": null,
+        "area_name": null,
+        "address": {
+          "postcode": "3521AG",
+          "huisletter": "",
+          "huisnummer": 9,
+          "woonplaats": "Utrecht",
+          "openbare_ruimte": "Mineurslaan",
+          "huisnummer_toevoeging": ""
+        },
+        "address_text": "Mineurslaan 9 3521AG Utrecht",
+        "postcode": "3521AG",
+        "geometrie": {
+          "type": "Point",
+          "coordinates": [
+            5.106582641601563,
+            52.087762118616034
+          ]
+        },
+        "extra_properties": {
+          "original_address": {
+            "postcode": "3521AG",
+            "huisletter": "",
+            "huisnummer": 9,
+            "woonplaats": "Utrecht",
+            "openbare_ruimte": "Mineurslaan",
+            "huisnummer_toevoeging": ""
+          }
+        },
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "bag_validated": true
+      },
+      "category": {
+        "sub": "Onveilige verkeerssituatie",
+        "sub_slug": "onveilige-verkeerssituatie",
+        "main": "Wegen, verkeer en straatmeubilair",
+        "main_slug": "wegen-verkeer-en-straatmeubilair",
+        "category_url": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/public/terms/categories/wegen-verkeer-en-straatmeubilair/sub_categories/onveilige-verkeerssituatie",
+        "departments": "",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "text": null,
+        "deadline": null,
+        "deadline_factor_3": null
+      },
+      "reporter": {
+        "email": "test@gmail.com",
+        "phone": "5354",
+        "sharing_allowed": true,
+        "allows_contact": true
+      },
+      "priority": {
+        "priority": "high",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud"
+      },
+      "type": {
+        "code": "SIG",
+        "created_at": "2025-09-21T22:54:04.117432+02:00",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud"
+      },
+      "created_at": "2025-09-21T22:54:04.077169+02:00",
+      "updated_at": "2025-09-21T22:54:04.120837+02:00",
+      "incident_date_start": "2025-09-21T22:50:21+02:00",
+      "incident_date_end": null,
+      "operational_date": null,
+      "has_attachments": false,
+      "extra_properties": null,
+      "notes": [],
+      "routing_departments": null,
+      "has_parent": true,
+      "has_children": false,
+      "assigned_user_email": null
+    },
+    {
+      "_links": {
+        "self": {
+          "href": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/private/signals/15"
+        }
+      },
+      "_display": "15 - forward to external - None - 2025-09-21T22:50:21.989552+02:00",
+      "id": 15,
+      "id_display": "SIG-15",
+      "signal_id": "bffdeb56-ce5d-46d4-8843-06aad4d674ae",
+      "source": "Contactformulier",
+      "text": "bom op utrecht centraal",
+      "text_extra": "",
+      "status": {
+        "text": "er ligt bom op de toiletten op utrecht centraal.",
+        "user": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "state": "forward to external",
+        "state_display": "Doorgezet naar extern",
+        "target_api": null,
+        "extra_properties": null,
+        "send_email": true,
+        "created_at": "2025-09-21T22:56:51.365020+02:00",
+        "email_override": "test@gmail.com"
+      },
+      "location": {
+        "id": 15,
+        "stadsdeel": null,
+        "buurt_code": null,
+        "area_type_code": null,
+        "area_code": null,
+        "area_name": null,
+        "address": {
+          "postcode": "3521AG",
+          "huisletter": "",
+          "huisnummer": 9,
+          "woonplaats": "Utrecht",
+          "openbare_ruimte": "Mineurslaan",
+          "huisnummer_toevoeging": ""
+        },
+        "address_text": "Mineurslaan 9 3521AG Utrecht",
+        "postcode": "3521AG",
+        "geometrie": {
+          "type": "Point",
+          "coordinates": [
+            5.106582641601563,
+            52.087762118616034
+          ]
+        },
+        "extra_properties": {
+          "original_address": {
+            "postcode": "3521AG",
+            "huisnummer": "9",
+            "woonplaats": "Utrecht",
+            "openbare_ruimte": "Mineurslaan"
+          }
+        },
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "bag_validated": true
+      },
+      "category": {
+        "sub": "Onveilige verkeerssituatie",
+        "sub_slug": "onveilige-verkeerssituatie",
+        "main": "Wegen, verkeer en straatmeubilair",
+        "main_slug": "wegen-verkeer-en-straatmeubilair",
+        "category_url": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/public/terms/categories/wegen-verkeer-en-straatmeubilair/sub_categories/onveilige-verkeerssituatie",
+        "departments": "",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "text": null,
+        "deadline": null,
+        "deadline_factor_3": null
+      },
+      "reporter": {
+        "email": "test@gmail.com",
+        "phone": "5354",
+        "sharing_allowed": true,
+        "allows_contact": true
+      },
+      "priority": {
+        "priority": "high",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud"
+      },
+      "type": {
+        "code": "SIG",
+        "created_at": "2025-09-21T22:50:22.038094+02:00",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud"
+      },
+      "created_at": "2025-09-21T22:50:21.989552+02:00",
+      "updated_at": "2025-09-21T22:56:51.541181+02:00",
+      "incident_date_start": "2025-09-21T22:50:21+02:00",
+      "incident_date_end": null,
+      "operational_date": null,
+      "has_attachments": false,
+      "extra_properties": null,
+      "notes": [
+        {
+          "text": "Automatische e-mail bij doorzetten is verzonden aan externe partij.",
+          "created_by": null
+        },
+        {
+          "text": "Automatische e-mail bij registratie van de melding is verzonden aan de melder.",
+          "created_by": null
+        }
+      ],
+      "routing_departments": null,
+      "has_parent": false,
+      "has_children": true,
+      "assigned_user_email": null
+    },
+    {
+      "_links": {
+        "self": {
+          "href": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/private/signals/14"
+        }
+      },
+      "_display": "14 - m - None - 2025-09-15T10:42:04.366805+02:00",
+      "id": 14,
+      "id_display": "SIG-14",
+      "signal_id": "cfdf7fdf-9b2a-4a9e-8f90-27247162aeae",
+      "source": "Interne melding",
+      "text": "adssa",
+      "text_extra": "",
+      "status": {
+        "text": null,
+        "user": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "state": "m",
+        "state_display": "Gemeld",
+        "target_api": null,
+        "extra_properties": null,
+        "send_email": false,
+        "created_at": "2025-09-15T10:42:04.384713+02:00",
+        "email_override": null
+      },
+      "location": {
+        "id": 14,
+        "stadsdeel": null,
+        "buurt_code": null,
+        "area_type_code": null,
+        "area_code": null,
+        "area_name": null,
+        "address": null,
+        "address_text": "",
+        "postcode": null,
+        "geometrie": {
+          "type": "Point",
+          "coordinates": [
+            5.142974853515626,
+            52.1098789403549
+          ]
+        },
+        "extra_properties": null,
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "bag_validated": false
+      },
+      "category": {
+        "sub": "overig",
+        "sub_slug": "overig",
+        "main": "overig",
+        "main_slug": "overig",
+        "category_url": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/public/terms/categories/overig/sub_categories/overig",
+        "departments": "",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "text": null,
+        "deadline": null,
+        "deadline_factor_3": null
+      },
+      "reporter": {
+        "email": "test@gmail.com",
+        "phone": "",
+        "sharing_allowed": false,
+        "allows_contact": true
+      },
+      "priority": {
+        "priority": "normal",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud"
+      },
+      "type": {
+        "code": "SIG",
+        "created_at": "2025-09-15T10:42:04.417300+02:00",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud"
+      },
+      "created_at": "2025-09-15T10:42:04.366805+02:00",
+      "updated_at": "2025-09-15T10:42:04.421315+02:00",
+      "incident_date_start": "2025-09-09T08:17:31+02:00",
+      "incident_date_end": null,
+      "operational_date": null,
+      "has_attachments": false,
+      "extra_properties": null,
+      "notes": [],
+      "routing_departments": null,
+      "has_parent": true,
+      "has_children": false,
+      "assigned_user_email": null
+    },
+    {
+      "_links": {
+        "self": {
+          "href": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/private/signals/13"
+        }
+      },
+      "_display": "13 - a - None - 2025-09-11T11:41:04.889113+02:00",
+      "id": 13,
+      "id_display": "SIG-13",
+      "signal_id": "e05ae1e5-491d-4b5a-b583-569d33e435e1",
+      "source": "Fysieke post",
+      "text": "Slechte  feedback onvangen.",
+      "text_extra": "",
+      "status": {
+        "text": "h",
+        "user": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "state": "a",
+        "state_display": "Geannuleerd",
+        "target_api": null,
+        "extra_properties": null,
+        "send_email": false,
+        "created_at": "2025-10-06T11:48:31.041783+02:00",
+        "email_override": null
+      },
+      "location": {
+        "id": 13,
+        "stadsdeel": null,
+        "buurt_code": null,
+        "area_type_code": null,
+        "area_code": null,
+        "area_name": null,
+        "address": null,
+        "address_text": "",
+        "postcode": null,
+        "geometrie": {
+          "type": "Point",
+          "coordinates": [
+            5.176620483398438,
+            52.08631268882676
+          ]
+        },
+        "extra_properties": null,
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "bag_validated": false
+      },
+      "category": {
+        "sub": "overig",
+        "sub_slug": "overig",
+        "main": "overig",
+        "main_slug": "overig",
+        "category_url": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/public/terms/categories/overig/sub_categories/overig",
+        "departments": "",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "text": null,
+        "deadline": null,
+        "deadline_factor_3": null
+      },
+      "reporter": {
+        "email": "feedback@hu.nl",
+        "phone": "099",
+        "sharing_allowed": true,
+        "allows_contact": true
+      },
+      "priority": {
+        "priority": "normal",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud"
+      },
+      "type": {
+        "code": "SIG",
+        "created_at": "2025-09-11T11:41:04.933919+02:00",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud"
+      },
+      "created_at": "2025-09-11T11:41:04.889113+02:00",
+      "updated_at": "2025-10-06T11:48:31.045653+02:00",
+      "incident_date_start": "2025-09-11T11:41:04+02:00",
+      "incident_date_end": null,
+      "operational_date": null,
+      "has_attachments": true,
+      "extra_properties": null,
+      "notes": [
+        {
+          "text": "Bijlage toegevoegd door melder: kanbeter_feedback.png",
+          "created_by": null
+        },
+        {
+          "text": "Automatische e-mail bij registratie van de melding is verzonden aan de melder.",
+          "created_by": null
+        }
+      ],
+      "routing_departments": null,
+      "has_parent": false,
+      "has_children": false,
+      "assigned_user_email": null
+    },
+    {
+      "_links": {
+        "self": {
+          "href": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/private/signals/12"
+        }
+      },
+      "_display": "12 - o - None - 2025-09-09T10:14:37.142463+02:00",
+      "id": 12,
+      "id_display": "SIG-12",
+      "signal_id": "18cd21f0-7ec6-4d29-b0e4-210a038ad94c",
+      "source": "online",
+      "text": "Grote hoop stront",
+      "text_extra": "",
+      "status": {
+        "text": "Toppie",
+        "user": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "state": "o",
+        "state_display": "Afgehandeld",
+        "target_api": null,
+        "extra_properties": null,
+        "send_email": true,
+        "created_at": "2025-09-09T10:17:56.614833+02:00",
+        "email_override": null
+      },
+      "location": {
+        "id": 12,
+        "stadsdeel": null,
+        "buurt_code": null,
+        "area_type_code": null,
+        "area_code": null,
+        "area_name": null,
+        "address": {
+          "postcode": "3584DM",
+          "huisletter": "",
+          "huisnummer": 603,
+          "woonplaats": "Utrecht",
+          "openbare_ruimte": "Cambridgelaan",
+          "huisnummer_toevoeging": ""
+        },
+        "address_text": "Cambridgelaan 603 3584DM Utrecht",
+        "postcode": "3584DM",
+        "geometrie": {
+          "type": "Point",
+          "coordinates": [
+            5.17246738,
+            52.08177847
+          ]
+        },
+        "extra_properties": {
+          "original_address": {
+            "postcode": "3584DM",
+            "huisnummer": "603",
+            "woonplaats": "Utrecht",
+            "openbare_ruimte": "Cambridgelaan"
+          }
+        },
+        "created_by": null,
+        "bag_validated": true
+      },
+      "category": {
+        "sub": "overig",
+        "sub_slug": "overig",
+        "main": "overig",
+        "main_slug": "overig",
+        "category_url": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/public/terms/categories/overig/sub_categories/overig",
+        "departments": "",
+        "created_by": null,
+        "text": null,
+        "deadline": null,
+        "deadline_factor_3": null
+      },
+      "reporter": {
+        "email": "",
+        "phone": "",
+        "sharing_allowed": true,
+        "allows_contact": true
+      },
+      "priority": {
+        "priority": "normal",
+        "created_by": null
+      },
+      "type": {
+        "code": "SIG",
+        "created_at": "2025-09-09T10:14:37.186613+02:00",
+        "created_by": null
+      },
+      "created_at": "2025-09-09T10:14:37.142463+02:00",
+      "updated_at": "2025-09-09T10:17:56.618560+02:00",
+      "incident_date_start": "2025-09-09T10:14:36+02:00",
+      "incident_date_end": null,
+      "operational_date": null,
+      "has_attachments": false,
+      "extra_properties": null,
+      "notes": [],
+      "routing_departments": null,
+      "has_parent": false,
+      "has_children": false,
+      "assigned_user_email": null
+    },
+    {
+      "_links": {
+        "self": {
+          "href": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/private/signals/11"
+        }
+      },
+      "_display": "11 - m - None - 2025-09-09T08:17:31.926415+02:00",
+      "id": 11,
+      "id_display": "SIG-11",
+      "signal_id": "f5c8d766-04d8-4239-a7aa-72d8210bea4f",
+      "source": "online",
+      "text": "adssa",
+      "text_extra": "",
+      "status": {
+        "text": null,
+        "user": null,
+        "state": "m",
+        "state_display": "Gemeld",
+        "target_api": null,
+        "extra_properties": null,
+        "send_email": false,
+        "created_at": "2025-09-09T08:17:31.943760+02:00",
+        "email_override": null
+      },
+      "location": {
+        "id": 11,
+        "stadsdeel": null,
+        "buurt_code": null,
+        "area_type_code": null,
+        "area_code": null,
+        "area_name": null,
+        "address": null,
+        "address_text": "",
+        "postcode": null,
+        "geometrie": {
+          "type": "Point",
+          "coordinates": [
+            5.142974853515626,
+            52.1098789403549
+          ]
+        },
+        "extra_properties": null,
+        "created_by": null,
+        "bag_validated": false
+      },
+      "category": {
+        "sub": "overig",
+        "sub_slug": "overig",
+        "main": "overig",
+        "main_slug": "overig",
+        "category_url": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/public/terms/categories/overig/sub_categories/overig",
+        "departments": "",
+        "created_by": null,
+        "text": null,
+        "deadline": null,
+        "deadline_factor_3": null
+      },
+      "reporter": {
+        "email": "test@gmail.com",
+        "phone": "",
+        "sharing_allowed": false,
+        "allows_contact": true
+      },
+      "priority": {
+        "priority": "normal",
+        "created_by": null
+      },
+      "type": {
+        "code": "SIG",
+        "created_at": "2025-09-09T08:17:31.970345+02:00",
+        "created_by": null
+      },
+      "created_at": "2025-09-09T08:17:31.926415+02:00",
+      "updated_at": "2025-09-09T08:17:32.096517+02:00",
+      "incident_date_start": "2025-09-09T08:17:31+02:00",
+      "incident_date_end": null,
+      "operational_date": null,
+      "has_attachments": false,
+      "extra_properties": null,
+      "notes": [
+        {
+          "text": "Automatische e-mail bij registratie van de melding is verzonden aan de melder.",
+          "created_by": null
+        }
+      ],
+      "routing_departments": null,
+      "has_parent": false,
+      "has_children": true,
+      "assigned_user_email": null
+    },
+    {
+      "_links": {
+        "self": {
+          "href": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/private/signals/10"
+        }
+      },
+      "_display": "10 - a - None - 2025-09-09T08:06:45.870124+02:00",
+      "id": 10,
+      "id_display": "SIG-10",
+      "signal_id": "84ce44fe-1d8c-4583-9de5-104e53919d13",
+      "source": "online",
+      "text": "s",
+      "text_extra": "",
+      "status": {
+        "text": "",
+        "user": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "state": "a",
+        "state_display": "Geannuleerd",
+        "target_api": null,
+        "extra_properties": null,
+        "send_email": false,
+        "created_at": "2025-09-09T10:19:29.252091+02:00",
+        "email_override": null
+      },
+      "location": {
+        "id": 10,
+        "stadsdeel": null,
+        "buurt_code": null,
+        "area_type_code": null,
+        "area_code": null,
+        "area_name": null,
+        "address": {
+          "postcode": "3515EE",
+          "huisletter": "",
+          "huisnummer": 10,
+          "woonplaats": "Utrecht",
+          "openbare_ruimte": "Dodt van Flensburglaan",
+          "huisnummer_toevoeging": ""
+        },
+        "address_text": "Dodt van Flensburglaan 10 3515EE Utrecht",
+        "postcode": "3515EE",
+        "geometrie": {
+          "type": "Point",
+          "coordinates": [
+            5.11791229248047,
+            52.10545084165791
+          ]
+        },
+        "extra_properties": {
+          "original_address": {
+            "postcode": "3515EE",
+            "huisnummer": "10",
+            "woonplaats": "Utrecht",
+            "openbare_ruimte": "Dodt van Flensburglaan"
+          }
+        },
+        "created_by": null,
+        "bag_validated": true
+      },
+      "category": {
+        "sub": "overig",
+        "sub_slug": "overig",
+        "main": "overig",
+        "main_slug": "overig",
+        "category_url": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/public/terms/categories/overig/sub_categories/overig",
+        "departments": "",
+        "created_by": null,
+        "text": null,
+        "deadline": null,
+        "deadline_factor_3": null
+      },
+      "reporter": {
+        "email": "",
+        "phone": "",
+        "sharing_allowed": true,
+        "allows_contact": true
+      },
+      "priority": {
+        "priority": "normal",
+        "created_by": null
+      },
+      "type": {
+        "code": "SIG",
+        "created_at": "2025-09-09T08:06:45.960396+02:00",
+        "created_by": null
+      },
+      "created_at": "2025-09-09T08:06:45.870124+02:00",
+      "updated_at": "2025-09-09T10:19:29.255892+02:00",
+      "incident_date_start": "2025-09-09T08:06:45+02:00",
+      "incident_date_end": null,
+      "operational_date": null,
+      "has_attachments": false,
+      "extra_properties": null,
+      "notes": [],
+      "routing_departments": null,
+      "has_parent": false,
+      "has_children": false,
+      "assigned_user_email": null
+    },
+    {
+      "_links": {
+        "self": {
+          "href": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/private/signals/9"
+        }
+      },
+      "_display": "9 - m - None - 2025-09-08T13:05:17.887946+02:00",
+      "id": 9,
+      "id_display": "SIG-9",
+      "signal_id": "d3cc518e-482e-4398-8f06-339a69454996",
+      "source": "Interne melding",
+      "text": "afdagf",
+      "text_extra": "",
+      "status": {
+        "text": null,
+        "user": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "state": "m",
+        "state_display": "Gemeld",
+        "target_api": null,
+        "extra_properties": null,
+        "send_email": false,
+        "created_at": "2025-09-08T13:05:17.903394+02:00",
+        "email_override": null
+      },
+      "location": {
+        "id": 9,
+        "stadsdeel": null,
+        "buurt_code": null,
+        "area_type_code": null,
+        "area_code": null,
+        "area_name": null,
+        "address": {
+          "postcode": "3521GH",
+          "huisletter": "",
+          "huisnummer": 46,
+          "woonplaats": "Utrecht",
+          "openbare_ruimte": "Vondellaan",
+          "huisnummer_toevoeging": ""
+        },
+        "address_text": "Vondellaan 46 3521GH Utrecht",
+        "postcode": "3521GH",
+        "geometrie": {
+          "type": "Point",
+          "coordinates": [
+            5.120637219880407,
+            52.0785018880184
+          ]
+        },
+        "extra_properties": {
+          "original_address": {
+            "postcode": "3521GH",
+            "huisletter": "",
+            "huisnummer": 46,
+            "woonplaats": "Utrecht",
+            "openbare_ruimte": "Vondellaan",
+            "huisnummer_toevoeging": ""
+          }
+        },
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "bag_validated": true
+      },
+      "category": {
+        "sub": "Afvalbak",
+        "sub_slug": "afvalbak",
+        "main": "Afval",
+        "main_slug": "afval",
+        "category_url": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/public/terms/categories/afval/sub_categories/afvalbak",
+        "departments": "",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "text": null,
+        "deadline": null,
+        "deadline_factor_3": null
+      },
+      "reporter": {
+        "email": "",
+        "phone": "",
+        "sharing_allowed": false,
+        "allows_contact": true
+      },
+      "priority": {
+        "priority": "normal",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud"
+      },
+      "type": {
+        "code": "SIG",
+        "created_at": "2025-09-08T13:05:17.931131+02:00",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud"
+      },
+      "created_at": "2025-09-08T13:05:17.887946+02:00",
+      "updated_at": "2025-09-08T13:05:17.934679+02:00",
+      "incident_date_start": "2025-09-08T11:46:30+02:00",
+      "incident_date_end": null,
+      "operational_date": null,
+      "has_attachments": false,
+      "extra_properties": null,
+      "notes": [],
+      "routing_departments": null,
+      "has_parent": true,
+      "has_children": false,
+      "assigned_user_email": null
+    },
+    {
+      "_links": {
+        "self": {
+          "href": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/private/signals/8"
+        }
+      },
+      "_display": "8 - m - None - 2025-09-08T11:46:30.477060+02:00",
+      "id": 8,
+      "id_display": "SIG-8",
+      "signal_id": "a3326db0-7284-44b2-abc6-699161353b9f",
+      "source": "Contactformulier",
+      "text": "afdagf",
+      "text_extra": "",
+      "status": {
+        "text": null,
+        "user": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "state": "m",
+        "state_display": "Gemeld",
+        "target_api": null,
+        "extra_properties": null,
+        "send_email": false,
+        "created_at": "2025-09-08T11:46:30.506039+02:00",
+        "email_override": null
+      },
+      "location": {
+        "id": 8,
+        "stadsdeel": null,
+        "buurt_code": null,
+        "area_type_code": null,
+        "area_code": null,
+        "area_name": null,
+        "address": {
+          "postcode": "3521GH",
+          "huisletter": "",
+          "huisnummer": 46,
+          "woonplaats": "Utrecht",
+          "openbare_ruimte": "Vondellaan",
+          "huisnummer_toevoeging": ""
+        },
+        "address_text": "Vondellaan 46 3521GH Utrecht",
+        "postcode": "3521GH",
+        "geometrie": {
+          "type": "Point",
+          "coordinates": [
+            5.120637219880407,
+            52.0785018880184
+          ]
+        },
+        "extra_properties": {
+          "original_address": {
+            "postcode": "3521GH",
+            "huisnummer": "46",
+            "woonplaats": "Utrecht",
+            "openbare_ruimte": "Vondellaan"
+          }
+        },
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "bag_validated": true
+      },
+      "category": {
+        "sub": "Afvalbak",
+        "sub_slug": "afvalbak",
+        "main": "Afval",
+        "main_slug": "afval",
+        "category_url": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/public/terms/categories/afval/sub_categories/afvalbak",
+        "departments": "",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "text": null,
+        "deadline": null,
+        "deadline_factor_3": null
+      },
+      "reporter": {
+        "email": "",
+        "phone": "",
+        "sharing_allowed": false,
+        "allows_contact": true
+      },
+      "priority": {
+        "priority": "normal",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud"
+      },
+      "type": {
+        "code": "SIG",
+        "created_at": "2025-09-08T11:46:30.539637+02:00",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud"
+      },
+      "created_at": "2025-09-08T11:46:30.477060+02:00",
+      "updated_at": "2025-09-08T11:46:30.544487+02:00",
+      "incident_date_start": "2025-09-08T11:46:30+02:00",
+      "incident_date_end": null,
+      "operational_date": null,
+      "has_attachments": false,
+      "extra_properties": null,
+      "notes": [],
+      "routing_departments": null,
+      "has_parent": false,
+      "has_children": true,
+      "assigned_user_email": null
+    },
+    {
+      "_links": {
+        "self": {
+          "href": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/private/signals/7"
+        }
+      },
+      "_display": "7 - ingepland - None - 2025-09-08T11:40:14.620232+02:00",
+      "id": 7,
+      "id_display": "SIG-7",
+      "signal_id": "423ecc11-0060-49ed-ac45-cdbd09f28de8",
+      "source": "Receptie",
+      "text": "Verwerken van meldingen duurt lang",
+      "text_extra": "",
+      "status": {
+        "text": "f",
+        "user": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "state": "ingepland",
+        "state_display": "Ingepland",
+        "target_api": null,
+        "extra_properties": null,
+        "send_email": false,
+        "created_at": "2025-10-06T12:42:27.498651+02:00",
+        "email_override": null
+      },
+      "location": {
+        "id": 7,
+        "stadsdeel": null,
+        "buurt_code": null,
+        "area_type_code": null,
+        "area_code": null,
+        "area_name": null,
+        "address": null,
+        "address_text": "",
+        "postcode": null,
+        "geometrie": {
+          "type": "Point",
+          "coordinates": [
+            5.108210742473603,
+            52.08947277466199
+          ]
+        },
+        "extra_properties": null,
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "bag_validated": false
+      },
+      "category": {
+        "sub": "overig",
+        "sub_slug": "overig",
+        "main": "overig",
+        "main_slug": "overig",
+        "category_url": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/public/terms/categories/overig/sub_categories/overig",
+        "departments": "",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "text": null,
+        "deadline": null,
+        "deadline_factor_3": null
+      },
+      "reporter": {
+        "email": "",
+        "phone": "",
+        "sharing_allowed": true,
+        "allows_contact": true
+      },
+      "priority": {
+        "priority": "normal",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud"
+      },
+      "type": {
+        "code": "COM",
+        "created_at": "2025-09-08T11:40:14.670205+02:00",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud"
+      },
+      "created_at": "2025-09-08T11:40:14.620232+02:00",
+      "updated_at": "2025-10-06T12:42:27.502700+02:00",
+      "incident_date_start": "2025-09-08T11:40:14+02:00",
+      "incident_date_end": null,
+      "operational_date": null,
+      "has_attachments": false,
+      "extra_properties": null,
+      "notes": [],
+      "routing_departments": null,
+      "has_parent": false,
+      "has_children": false,
+      "assigned_user_email": null
+    },
+    {
+      "_links": {
+        "self": {
+          "href": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/private/signals/6"
+        }
+      },
+      "_display": "6 - closure requested - None - 2025-09-08T11:39:23.914271+02:00",
+      "id": 6,
+      "id_display": "SIG-6",
+      "signal_id": "460f1658-384f-495f-a880-59be18b88d58",
+      "source": "Social media",
+      "text": "Op de campus is een boom omgewaaid",
+      "text_extra": "",
+      "status": {
+        "text": "d",
+        "user": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "state": "closure requested",
+        "state_display": "Extern: verzoek tot afhandeling",
+        "target_api": null,
+        "extra_properties": null,
+        "send_email": false,
+        "created_at": "2025-10-06T11:42:48.932299+02:00",
+        "email_override": null
+      },
+      "location": {
+        "id": 6,
+        "stadsdeel": null,
+        "buurt_code": null,
+        "area_type_code": null,
+        "area_code": null,
+        "area_name": null,
+        "address": null,
+        "address_text": "",
+        "postcode": null,
+        "geometrie": {
+          "type": "Point",
+          "coordinates": [
+            5.173530578613282,
+            52.08811123305744
+          ]
+        },
+        "extra_properties": null,
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "bag_validated": false
+      },
+      "category": {
+        "sub": "Boom",
+        "sub_slug": "boom",
+        "main": "Openbaar groen en water",
+        "main_slug": "openbaar-groen-en-water",
+        "category_url": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/public/terms/categories/openbaar-groen-en-water/sub_categories/boom",
+        "departments": "",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "text": null,
+        "deadline": null,
+        "deadline_factor_3": null
+      },
+      "reporter": {
+        "email": "marvin.meer@live.nl",
+        "phone": "",
+        "sharing_allowed": true,
+        "allows_contact": true
+      },
+      "priority": {
+        "priority": "normal",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud"
+      },
+      "type": {
+        "code": "SIG",
+        "created_at": "2025-09-08T11:39:23.966589+02:00",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud"
+      },
+      "created_at": "2025-09-08T11:39:23.914271+02:00",
+      "updated_at": "2025-10-06T11:42:48.936003+02:00",
+      "incident_date_start": "2025-09-08T11:39:23+02:00",
+      "incident_date_end": null,
+      "operational_date": null,
+      "has_attachments": false,
+      "extra_properties": null,
+      "notes": [
+        {
+          "text": "E-mail met vraag verstuurd aan melder",
+          "created_by": null
+        },
+        {
+          "text": "Automatische e-mail bij registratie van de melding is verzonden aan de melder.",
+          "created_by": null
+        }
+      ],
+      "routing_departments": null,
+      "has_parent": false,
+      "has_children": false,
+      "assigned_user_email": null
+    },
+    {
+      "_links": {
+        "self": {
+          "href": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/private/signals/5"
+        }
+      },
+      "_display": "5 - m - None - 2025-09-08T11:14:21.889132+02:00",
+      "id": 5,
+      "id_display": "SIG-5",
+      "signal_id": "4f24c1b1-f1a1-46f1-a30e-069e5f60f4c8",
+      "source": "Contactformulier",
+      "text": "Er ligt braaksel op het toilet van Utrecht centraal spoor 19",
+      "text_extra": "",
+      "status": {
+        "text": null,
+        "user": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "state": "m",
+        "state_display": "Gemeld",
+        "target_api": null,
+        "extra_properties": null,
+        "send_email": false,
+        "created_at": "2025-09-08T11:14:21.907010+02:00",
+        "email_override": null
+      },
+      "location": {
+        "id": 5,
+        "stadsdeel": null,
+        "buurt_code": null,
+        "area_type_code": null,
+        "area_code": null,
+        "area_name": null,
+        "address": {
+          "postcode": "3511CE",
+          "huisletter": "C",
+          "huisnummer": 11,
+          "woonplaats": "Utrecht",
+          "openbare_ruimte": "Stationshal",
+          "huisnummer_toevoeging": ""
+        },
+        "address_text": "Stationshal 11C 3511CE Utrecht",
+        "postcode": "3511CE",
+        "geometrie": {
+          "type": "Point",
+          "coordinates": [
+            5.109500885009766,
+            52.08891618606337
+          ]
+        },
+        "extra_properties": {
+          "original_address": {
+            "postcode": "3511CE",
+            "huisnummer": "11C",
+            "woonplaats": "Utrecht",
+            "openbare_ruimte": "Stationshal"
+          }
+        },
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "bag_validated": true
+      },
+      "category": {
+        "sub": "Overig Afval",
+        "sub_slug": "overig-afval",
+        "main": "Afval",
+        "main_slug": "afval",
+        "category_url": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/public/terms/categories/afval/sub_categories/overig-afval",
+        "departments": "",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "text": null,
+        "deadline": null,
+        "deadline_factor_3": null
+      },
+      "reporter": {
+        "email": "marvin.meer@live.nl",
+        "phone": "",
+        "sharing_allowed": true,
+        "allows_contact": true
+      },
+      "priority": {
+        "priority": "normal",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud"
+      },
+      "type": {
+        "code": "SIG",
+        "created_at": "2025-09-08T11:14:21.933698+02:00",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud"
+      },
+      "created_at": "2025-09-08T11:14:21.889132+02:00",
+      "updated_at": "2025-09-08T11:14:22.052699+02:00",
+      "incident_date_start": "2025-09-08T11:14:21+02:00",
+      "incident_date_end": null,
+      "operational_date": null,
+      "has_attachments": false,
+      "extra_properties": null,
+      "notes": [
+        {
+          "text": "Automatische e-mail bij registratie van de melding is verzonden aan de melder.",
+          "created_by": null
+        }
+      ],
+      "routing_departments": null,
+      "has_parent": false,
+      "has_children": false,
+      "assigned_user_email": null
+    },
+    {
+      "_links": {
+        "self": {
+          "href": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/private/signals/4"
+        }
+      },
+      "_display": "4 - i - None - 2025-09-08T11:12:41.250570+02:00",
+      "id": 4,
+      "id_display": "SIG-4",
+      "signal_id": "febb5c74-4721-4972-84c7-3c7baa4c02eb",
+      "source": "Receptie",
+      "text": "fiets staat fout geparkeerd",
+      "text_extra": "",
+      "status": {
+        "text": "",
+        "user": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "state": "i",
+        "state_display": "In afwachting van behandeling",
+        "target_api": null,
+        "extra_properties": null,
+        "send_email": false,
+        "created_at": "2025-09-08T11:48:31.272767+02:00",
+        "email_override": null
+      },
+      "location": {
+        "id": 4,
+        "stadsdeel": null,
+        "buurt_code": null,
+        "area_type_code": null,
+        "area_code": null,
+        "area_name": null,
+        "address": null,
+        "address_text": "",
+        "postcode": null,
+        "geometrie": {
+          "type": "Point",
+          "coordinates": [
+            5.106582641601563,
+            52.08873220454144
+          ]
+        },
+        "extra_properties": null,
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "bag_validated": false
+      },
+      "category": {
+        "sub": "Fiets",
+        "sub_slug": "fiets",
+        "main": "Overlast Openbare Ruimte",
+        "main_slug": "overlast-openbare-ruimte",
+        "category_url": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/public/terms/categories/overlast-openbare-ruimte/sub_categories/fiets",
+        "departments": "",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "text": null,
+        "deadline": null,
+        "deadline_factor_3": null
+      },
+      "reporter": {
+        "email": "marvin.meer@live.nl",
+        "phone": "",
+        "sharing_allowed": true,
+        "allows_contact": true
+      },
+      "priority": {
+        "priority": "low",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud"
+      },
+      "type": {
+        "code": "SIG",
+        "created_at": "2025-09-08T11:12:41.291530+02:00",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud"
+      },
+      "created_at": "2025-09-08T11:12:41.250570+02:00",
+      "updated_at": "2025-09-08T11:48:31.276616+02:00",
+      "incident_date_start": "2025-09-08T11:12:41+02:00",
+      "incident_date_end": null,
+      "operational_date": null,
+      "has_attachments": false,
+      "extra_properties": null,
+      "notes": [
+        {
+          "text": "Automatische e-mail bij registratie van de melding is verzonden aan de melder.",
+          "created_by": null
+        }
+      ],
+      "routing_departments": null,
+      "has_parent": false,
+      "has_children": false,
+      "assigned_user_email": null
+    },
+    {
+      "_links": {
+        "self": {
+          "href": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/private/signals/3"
+        }
+      },
+      "_display": "3 - a - None - 2025-09-08T11:11:17.574775+02:00",
+      "id": 3,
+      "id_display": "SIG-3",
+      "signal_id": "444a6f77-f098-4ade-88e0-badcd9681c9a",
+      "source": "Interne melding",
+      "text": "De vuilnisbak bij is opgeblazen en staat in de brand",
+      "text_extra": "",
+      "status": {
+        "text": "Hoofdmelding is afgehandeld",
+        "user": null,
+        "state": "a",
+        "state_display": "Geannuleerd",
+        "target_api": null,
+        "extra_properties": null,
+        "send_email": false,
+        "created_at": "2025-09-08T11:13:08.257901+02:00",
+        "email_override": null
+      },
+      "location": {
+        "id": 3,
+        "stadsdeel": null,
+        "buurt_code": null,
+        "area_type_code": null,
+        "area_code": null,
+        "area_name": null,
+        "address": {
+          "postcode": "3521GH",
+          "huisletter": "",
+          "huisnummer": 46,
+          "woonplaats": "Utrecht",
+          "openbare_ruimte": "Vondellaan",
+          "huisnummer_toevoeging": ""
+        },
+        "address_text": "Vondellaan 46 3521GH Utrecht",
+        "postcode": "3521GH",
+        "geometrie": {
+          "type": "Point",
+          "coordinates": [
+            5.1206374168396,
+            52.07852589373603
+          ]
+        },
+        "extra_properties": {
+          "original_address": {
+            "postcode": "3521GH",
+            "huisletter": "",
+            "huisnummer": 46,
+            "woonplaats": "Utrecht",
+            "openbare_ruimte": "Vondellaan",
+            "huisnummer_toevoeging": ""
+          }
+        },
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "bag_validated": true
+      },
+      "category": {
+        "sub": "Gevaarlijk afval",
+        "sub_slug": "gevaarlijk-afval",
+        "main": "Afval",
+        "main_slug": "afval",
+        "category_url": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/public/terms/categories/afval/sub_categories/gevaarlijk-afval",
+        "departments": "",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "text": null,
+        "deadline": null,
+        "deadline_factor_3": null
+      },
+      "reporter": {
+        "email": "",
+        "phone": "",
+        "sharing_allowed": true,
+        "allows_contact": true
+      },
+      "priority": {
+        "priority": "high",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud"
+      },
+      "type": {
+        "code": "SIG",
+        "created_at": "2025-09-08T11:11:17.616753+02:00",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud"
+      },
+      "created_at": "2025-09-08T11:11:17.574775+02:00",
+      "updated_at": "2025-09-08T11:13:08.265958+02:00",
+      "incident_date_start": "2025-09-08T11:09:00+02:00",
+      "incident_date_end": null,
+      "operational_date": null,
+      "has_attachments": false,
+      "extra_properties": null,
+      "notes": [],
+      "routing_departments": null,
+      "has_parent": true,
+      "has_children": false,
+      "assigned_user_email": null
+    },
+    {
+      "_links": {
+        "self": {
+          "href": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/private/signals/2"
+        }
+      },
+      "_display": "2 - b - None - 2025-09-08T11:10:38.286536+02:00",
+      "id": 2,
+      "id_display": "SIG-2",
+      "signal_id": "907a7e61-a8aa-4c58-a76f-47d196a070fd",
+      "source": "Telefonisch",
+      "text": "Rook bij vaartsche rijn",
+      "text_extra": "",
+      "status": {
+        "text": "",
+        "user": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "state": "b",
+        "state_display": "In behandeling",
+        "target_api": null,
+        "extra_properties": null,
+        "send_email": false,
+        "created_at": "2025-09-08T11:22:51.939776+02:00",
+        "email_override": null
+      },
+      "location": {
+        "id": 2,
+        "stadsdeel": null,
+        "buurt_code": null,
+        "area_type_code": null,
+        "area_code": null,
+        "area_name": null,
+        "address": null,
+        "address_text": "",
+        "postcode": null,
+        "geometrie": {
+          "type": "Point",
+          "coordinates": [
+            5.122268199920655,
+            52.07789143162056
+          ]
+        },
+        "extra_properties": null,
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "bag_validated": false
+      },
+      "category": {
+        "sub": "Overig Overlast Openbare Ruimte",
+        "sub_slug": "overig-overlast-openbare-ruimte",
+        "main": "Overlast Openbare Ruimte",
+        "main_slug": "overlast-openbare-ruimte",
+        "category_url": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/public/terms/categories/overlast-openbare-ruimte/sub_categories/overig-overlast-openbare-ruimte",
+        "departments": "",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "text": null,
+        "deadline": null,
+        "deadline_factor_3": null
+      },
+      "reporter": {
+        "email": "",
+        "phone": "",
+        "sharing_allowed": true,
+        "allows_contact": true
+      },
+      "priority": {
+        "priority": "high",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud"
+      },
+      "type": {
+        "code": "SIG",
+        "created_at": "2025-09-08T11:10:38.334375+02:00",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud"
+      },
+      "created_at": "2025-09-08T11:10:38.286536+02:00",
+      "updated_at": "2025-09-08T11:22:51.943687+02:00",
+      "incident_date_start": "2025-09-08T11:10:38+02:00",
+      "incident_date_end": null,
+      "operational_date": null,
+      "has_attachments": false,
+      "extra_properties": null,
+      "notes": [],
+      "routing_departments": null,
+      "has_parent": false,
+      "has_children": false,
+      "assigned_user_email": null
+    },
+    {
+      "_links": {
+        "self": {
+          "href": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/private/signals/1"
+        }
+      },
+      "_display": "1 - o - None - 2025-09-08T11:09:00.486526+02:00",
+      "id": 1,
+      "id_display": "SIG-1",
+      "signal_id": "9e5b49ae-47ab-4c2f-938b-f84ecc16e7de",
+      "source": "Social media",
+      "text": "De vuilnisbak bij is opgeblazen en staat in de brand",
+      "text_extra": "",
+      "status": {
+        "text": "uylufyfylufuyi;fiy",
+        "user": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "state": "o",
+        "state_display": "Afgehandeld",
+        "target_api": null,
+        "extra_properties": null,
+        "send_email": true,
+        "created_at": "2025-09-08T11:13:08.224294+02:00",
+        "email_override": null
+      },
+      "location": {
+        "id": 1,
+        "stadsdeel": null,
+        "buurt_code": null,
+        "area_type_code": null,
+        "area_code": null,
+        "area_name": null,
+        "address": {
+          "postcode": "3521GH",
+          "huisletter": "",
+          "huisnummer": 46,
+          "woonplaats": "Utrecht",
+          "openbare_ruimte": "Vondellaan",
+          "huisnummer_toevoeging": ""
+        },
+        "address_text": "Vondellaan 46 3521GH Utrecht",
+        "postcode": "3521GH",
+        "geometrie": {
+          "type": "Point",
+          "coordinates": [
+            5.1206374168396,
+            52.07852589373603
+          ]
+        },
+        "extra_properties": {
+          "original_address": {
+            "postcode": "3521GH",
+            "huisnummer": "46",
+            "woonplaats": "Utrecht",
+            "openbare_ruimte": "Vondellaan"
+          }
+        },
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "bag_validated": true
+      },
+      "category": {
+        "sub": "Gevaarlijk afval",
+        "sub_slug": "gevaarlijk-afval",
+        "main": "Afval",
+        "main_slug": "afval",
+        "category_url": "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/public/terms/categories/afval/sub_categories/gevaarlijk-afval",
+        "departments": "",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud",
+        "text": null,
+        "deadline": null,
+        "deadline_factor_3": null
+      },
+      "reporter": {
+        "email": "",
+        "phone": "",
+        "sharing_allowed": true,
+        "allows_contact": true
+      },
+      "priority": {
+        "priority": "high",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud"
+      },
+      "type": {
+        "code": "SIG",
+        "created_at": "2025-09-08T11:09:00.533862+02:00",
+        "created_by": "admin@meldingen.utrecht.demo.delta10.cloud"
+      },
+      "created_at": "2025-09-08T11:09:00.486526+02:00",
+      "updated_at": "2025-09-08T12:57:13.512401+02:00",
+      "incident_date_start": "2025-09-08T11:09:00+02:00",
+      "incident_date_end": null,
+      "operational_date": null,
+      "has_attachments": false,
+      "extra_properties": null,
+      "notes": [
+        {
+          "text": "Geen actie nodig",
+          "created_by": "admin@meldingen.utrecht.demo.delta10.cloud"
+        },
+        {
+          "text": "Automatische e-mail bij doorzetten is verzonden aan externe partij.",
+          "created_by": null
+        }
+      ],
+      "routing_departments": null,
+      "has_parent": false,
+      "has_children": true,
+      "assigned_user_email": null
+    }
+  ]
+}
