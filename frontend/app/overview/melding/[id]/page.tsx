@@ -1,82 +1,25 @@
 import * as React from 'react';
 import { FetchSignalByID } from '@/server/fetch-signal-by-id';
 import Link from 'next/link';
+//import { Button } from '@/components/ui/button';
+import { PatchSignalData } from '@/server/patch-signal-data';
+import { FullSignal } from '@/interfaces/full-signal';
+import { Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+ } from '@/components/ui/select';
 
-interface FullSignal {
-  id: string;
-  id_display: string;
-  source?: string;
-  text?: string;
+async function handleStateChange(signal: FullSignal, value: string) {
 
-  status?: {
-    text?: string;
-    state_display?: 'Gemeld' |
-                    'In behandeling' |
-                    'afgehandeld' |
-                    'In afwachting van behandeling' |
-                    'Doorgezet naar extern' |
-                    'Reactie gevraagd' |
-                    'Ingepland' |
-                    'Extern: verzoek tot afhandeling' |
-                    'Geannuleerd' |
-                    string;
-  };
-
-  location?: {
-    stadsdeel?: string;
-    area_name?: string;
-    address_text?: string;
-    geometrie?: {
-      type?: string;
-      coordinates?: Array<number>;
-    };
-  };
-
-  category?: {
-    main?: string;
-    sub?: string;
-  };
-
-  reporter?: {
-    email?: string;
-    phone?: string;
-    sharing_allowed?: boolean;
-    allows_contact?: boolean;
-  };
-
-  priority?: {
-    priority?: string;
-  }
-
-  type?: {
-    code?: string;
-  };
-
-  created_at?: string;
-  updated_at?: string;
-  incident_date_start?: string;
-  incident_date_end?: string;
-  has_attachments?: boolean;
-  directing_department?: string;
-  routing_department?: string;
-  assigned_user_email?: string;
-  notes?: {
-    text?: string;
-    created_by?: string;
-  };
-};
-
+          PatchSignalData(signal.id, value);
+}
 async function fetchSignalByID(id: string) {
-  const responseSignals = await FetchSignalByID(id);
-  console.log("responseSignals", responseSignals);
+  const responseSignal = await FetchSignalByID(id);
 
-
-  if (!Array.isArray(responseSignals)) {
-    console.error("Expected an array of signals, but got:", responseSignals);
-    return [];
-  }
   const signals: FullSignal[] = [];
-  for (const s of responseSignals) {
+  for (const s of responseSignal) {
     signals.push({
       id: s.id,
       id_display: s.id_display,
@@ -143,6 +86,137 @@ export default async function Page({params}: {params: Promise<{ id: string }>}) 
           className="flex items-center justify-between bg-secondary-700 border border-transparent rounded-lg px-5 py-4
           hover:border-secondary-500 duration-300"
         >
+
+
+
+
+    {/* <div className="w-full max-w-md">
+      <form id="form-rhf-input" onSubmit={form.handleSubmit(onSubmit)}>
+        <FieldGroup>
+          <FieldSet>
+            <FieldLegend>Payment Method</FieldLegend>
+            <FieldDescription>
+              All transactions are secure and encrypted
+            </FieldDescription>
+            <FieldGroup>
+              <Field>
+                <FieldLabel htmlFor="checkout-7j9-card-name-43j">
+                  Name on Card
+                </FieldLabel>
+                <Input
+                  id="checkout-7j9-card-name-43j"
+                  placeholder="Evil Rabbit"
+                  required
+                />
+              </Field>
+              <Field>
+                <FieldLabel htmlFor="checkout-7j9-card-number-uw1">
+                  Card Number
+                </FieldLabel>
+                <Input
+                  id="checkout-7j9-card-number-uw1"
+                  placeholder="1234 5678 9012 3456"
+                  required
+                />
+                <FieldDescription>
+                  Enter your 16-digit card number
+                </FieldDescription>
+              </Field>
+              <div className="grid grid-cols-3 gap-4">
+                <Field>
+                  <FieldLabel htmlFor="checkout-exp-month-ts6">
+                    Month
+                  </FieldLabel>
+                  <Select defaultValue="">
+                    <SelectTrigger id="checkout-exp-month-ts6">
+                      <SelectValue key={signal.category?.main} />
+                    </SelectTrigger>
+                    <SelectContent>
+            <SelectItem value="Gemeld">Gemeld</SelectItem>
+          <SelectItem value="Geannuleerd">Geannuleerd</SelectItem>
+          <SelectItem value="Ingepland">Ingepland</SelectItem>
+          <SelectItem value="In behandeling">In behandeling</SelectItem>
+          <SelectItem value="Afgehandeld">Afgehandeld</SelectItem>
+          <SelectItem value="In afwachting van behandeling">In afwachting van behandeling</SelectItem>
+          <SelectItem value="Doorgezet naar extern">Doorgezet naar extern</SelectItem>
+          <SelectItem value="Reactie gevraagd">Reactie gevraagd</SelectItem>
+          <SelectItem value="Ingepland">Ingepland</SelectItem>
+          <SelectItem value="Extern: verzoek tot afhandeling">Extern: verzoek tot afhandeling</SelectItem>
+          <SelectItem value="Geannuleerd">Geannuleerd</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="checkout-7j9-exp-year-f59">
+                    Year
+                  </FieldLabel>
+                  <Select defaultValue="">
+                    <SelectTrigger id="checkout-7j9-exp-year-f59">
+                      <SelectValue placeholder="YYYY" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="2024">2024</SelectItem>
+                      <SelectItem value="2025">2025</SelectItem>
+                      <SelectItem value="2026">2026</SelectItem>
+                      <SelectItem value="2027">2027</SelectItem>
+                      <SelectItem value="2028">2028</SelectItem>
+                      <SelectItem value="2029">2029</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor="checkout-7j9-cvv">CVV</FieldLabel>
+                  <Input id="checkout-7j9-cvv" placeholder="123" required />
+                </Field>
+              </div>
+            </FieldGroup>
+          </FieldSet>
+          <FieldSeparator />
+          <FieldSet>
+            <FieldLegend>Billing Address</FieldLegend>
+            <FieldDescription>
+              The billing address associated with your payment method
+            </FieldDescription>
+            <FieldGroup>
+              <Field orientation="horizontal">
+                <Checkbox
+                  id="checkout-7j9-same-as-shipping-wgm"
+                  defaultChecked
+                />
+                <FieldLabel
+                  htmlFor="checkout-7j9-same-as-shipping-wgm"
+                  className="font-normal"
+                >
+                  Same as shipping address
+                </FieldLabel>
+              </Field>
+            </FieldGroup>
+          </FieldSet>
+          <FieldSet>
+            <FieldGroup>
+              <Field>
+                <FieldLabel htmlFor="checkout-7j9-optional-comments">
+                  Comments
+                </FieldLabel>
+                <Textarea
+                  id="checkout-7j9-optional-comments"
+                  placeholder="Add any additional comments"
+                  className="resize-none"
+                />
+              </Field>
+            </FieldGroup>
+          </FieldSet>
+          <Field orientation="horizontal">
+            <Button type="submit">Submit</Button>
+            <Button variant="outline" type="button">
+              Cancel
+            </Button>
+          </Field>
+        </FieldGroup>
+      </form>
+    </div> */}
+
+
           <Link
             href={`/overview/melding/${signal.id}`}
             className="flex items-center gap-2 text-sm flex-1"
