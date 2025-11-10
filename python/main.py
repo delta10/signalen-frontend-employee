@@ -122,7 +122,28 @@ async def update_embeddings():
 
     return
 
-async def load_embeddings():
+async def load_embeddings(meldingen_ids):
+    cursor.execute("SELECT COUNT(*) FROM embeddings")
+    count = cursor.fetchone()[0]
+    if count == 0:
+        await build_embeddings()
+    await update_embeddings() #remove when embeddings are updated with each new signal
+    unique_ids = list(set(meldingen_ids)) if meldingen_ids else []
+    
+    if not unique_ids:
+        return [], numpy.array([], dtype=numpy.float32)
+    
+    cursor.execute(
+        "SELECT id, embedding::real[] FROM embeddings WHERE id = ANY(%s)",
+        (unique_ids,)
+    )
+    rows = cursor.fetchall()
+    ids = [row[0] for row in rows]
+    embeddings = numpy.array([row[1] for row in rows], dtype=numpy.float32)
+    return ids, embeddings
+
+
+async def load_all_embeddings():
     cursor.execute("SELECT COUNT(*) FROM embeddings")
     count = cursor.fetchone()[0]
     if count == 0:
@@ -135,8 +156,8 @@ async def load_embeddings():
     meldingen_ids = [row[0] for row in rows]
     return embeddings, meldingen, meldingen_ids
 
-async def get_text_similarity():
-    embeddings, meldingen, meldingen_ids = await load_embeddings()
+async def all_text_results():
+    embeddings, meldingen, meldingen_ids = await load_all_embeddings()
 
 
     embeddings = torch.from_numpy(embeddings)
@@ -165,9 +186,6 @@ async def get_text_similarity():
             "text_score": score # flaot between 0 and 1 indcitating similarity of the descriptions
         })
 
-    # print(debug)
-
-    # Convert arrays to JSON 
     json_response = {
         "count": len(results),
         "signals_processed": len(meldingen),
@@ -177,14 +195,13 @@ async def get_text_similarity():
     return json_response
 
 
-async def get_location_similarity():
+async def all_location_results():
     cursor.execute("SELECT id FROM embeddings")
     meldingen_ids = [row[0] for row in cursor.fetchall()]
-    count = len(meldingen_ids)
 
     radius = 10 # meters
     results = []
-    debug = [] # only for debugging
+    distances = [] #for debugging
     for id in meldingen_ids:
         cursor.execute(
             """
@@ -200,29 +217,52 @@ async def get_location_similarity():
         )
         rows = cursor.fetchall()
         for row in rows:
-            results.append({
-                "signal_id_1": id,
-                "signal_id_2": row[0]
-            })
-            debug.append({
-                "signal_id_1": id,
-                "signal_id_2": row[0],
-                "distance": row[1]
-            })
+            results.append([id, row[0]])
+            distances.append(row[1])
    
+    return results, distances
 
-    json_response = {
-        "count": len(results),
-        "signals_processed": count,
-        "results": debug
-    }
-    return json_response
+async def get_text_similarity(location_duplicates, distances):
+    unique_ids = list(set([id for pair in location_duplicates for id in pair]))
+    ids, embeddings = await load_embeddings(unique_ids)
+    
+    id_to_index = {id: idx for idx, id in enumerate(ids)}
+    
+    results = []
+    embeddings = torch.from_numpy(embeddings)
+    
+    for i, pair in enumerate(location_duplicates):
+        id1, id2 = pair[0], pair[1]
+        idx1 = id_to_index.get(id1)
+        idx2 = id_to_index.get(id2)
+        
+        # Get embeddings and reshape to 2D (batch_size=1, embedding_dim)
+        emb1 = embeddings[idx1].unsqueeze(0)  # Shape: (1, embedding_dim)
+        emb2 = embeddings[idx2].unsqueeze(0)  # Shape: (1, embedding_dim)
+        
+        cosine_score = util.cos_sim(emb1, emb2)[0][0].item()
+        if cosine_score < 0.85:
+            continue
+        results.append({
+                "signal_id_1": id1,
+                "signal_id_2": id2,
+                "text_score": round(cosine_score, 3),
+                "distance": distances[i]
+        })
 
+    return results
 
 
 async def get_duplicates():
     #Get all signals in a range of 100m and cross reference their text score to a certain threshold
-    return
+    location_duplicates, distances = await all_location_results()
+    results = await get_text_similarity(location_duplicates, distances)
+
+    json_response = {
+        "count": len(results),
+        "results": results
+    }
+    return json_response
 
 
 
@@ -235,19 +275,19 @@ async def root():
 
 @app.get("/text-duplicates") #call this to calculate the cosine similarity of the descriptions and return everything above the threshold
 async def text_duplicates():
-    response = await get_text_similarity()
+    response = await all_text_results()
     return response
 
 @app.get("/location-duplicates") #call this to calculate the location similarity and return everything within the radius of another
 async def location_duplicates():
-    response = await get_location_similarity()
+    response = await all_location_results()
     return response
 
 
 
 @app.get("/load-embeddings") #call this to embed all the reports and save the embeddings to a database
 async def load_embeddings_endpoint():
-    await load_embeddings()
+    await load_all_embeddings()
     return {"message": "Embeddings loaded successfully", "status": 200}
 
 @app.get("/build-embeddings")
