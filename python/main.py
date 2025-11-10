@@ -7,13 +7,19 @@ import torch
 import os
 from dotenv import load_dotenv
 import numpy
-import pickle
-from sklearn.neighbors import KDTree
+import psycopg2
+from psycopg2.extras import execute_values
 
 load_dotenv()
 
-mean_latitude = 52.0919 # mean latitude of Utrecht/Netherlands
-meters_per_degree_latitude = 111320.0 # meters per degree latitude at the mean latitude
+conn = psycopg2.connect(database=os.getenv('DATABASE_NAME'),
+                        host=os.getenv('DATABASE_HOST'),
+                        user=os.getenv('DATABASE_USER'),
+                        password=os.getenv('DATABASE_PASSWORD'),
+                        port=os.getenv('DATABASE_PORT'))
+cursor = conn.cursor()
+
+
 
 model = SentenceTransformer('intfloat/multilingual-e5-base')
 
@@ -28,6 +34,7 @@ else:
 app = FastAPI()
 
 
+
 async def get_all_signals():
     #res = requests.get(os.getenv('URL_BACKEND'), headers=headers)
     #response = json.loads(res.text)
@@ -40,8 +47,7 @@ async def get_all_signals():
         return "Error: " + str(response)    
 
         
-    meldingen, meldingen_ids = [], []
-    coordinates = [] # uncomment this when making a request to the backend
+    meldingen, meldingen_ids, coordinates = [], [], []
 
     for result in response['results']:
         try:
@@ -53,7 +59,7 @@ async def get_all_signals():
                 continue"""
             meldingen.append(result['text'])
             meldingen_ids.append(result['id'])
-            coordinates.append(result['location']['geometrie']['coordinates']) # uncomment this when making a request to the backend
+            coordinates.append(result['location']['geometrie']['coordinates'])
         except KeyError as e:
             print(f"Error processing signal. Signal ID: {result['id']}: due to missing fields: {e}")
             continue
@@ -62,32 +68,72 @@ async def get_all_signals():
             continue
     
     
-    coordinates = numpy.asarray((coordinates)) # uncomment this when making a request to the backend
     
     return meldingen, meldingen_ids, coordinates
 
 
-async def build_embeddings(): # build the embeddings for the text descriptions and the KD-Tree for the locations
+async def build_embeddings(): # build the embeddings for the text descriptions and insert them with the coordinates in the db
     meldingen, meldingen_ids, coordinates = await get_all_signals()
-    locations_xy = await coordinates_to_xy(coordinates)
-    tree = KDTree(locations_xy)
-    with open("kdtree.pkl", "wb") as f:
-        pickle.dump({"tree": tree, "locations": locations_xy, "meldingen_ids": meldingen_ids}, f)
+    embeddings = model.encode(meldingen, normalize_embeddings=True, show_progress_bar=True, convert_to_tensor=False)  #show progress bar for debugging
 
-    embeddings = model.encode(meldingen, normalize_embeddings=True, show_progress_bar=True, convert_to_tensor=True)  #show progress bar for debugging
-    numpy.save("embeddings.npy", embeddings.cpu().numpy())
+    data = [(meldingen_ids[i], embedding.tolist(), meldingen[i], coordinates[i][0], coordinates[i][1]) for i, embedding in enumerate(embeddings)]
+    try:
+        execute_values(cursor, 
+            "INSERT INTO embeddings (id, embedding, description, location) VALUES %s", 
+            data, 
+            template="(%s, %s, %s, ST_Transform(ST_SetSRID(ST_MakePoint(%s, %s), 4326), 28992))",
+            page_size=1000)
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        raise e
 
-    with open("meldingen-text.json", "w") as file:
-        json.dump({"meldingen": meldingen, "meldingen_ids": meldingen_ids}, file)
-    return embeddings, meldingen, meldingen_ids
+    return
+
+async def update_embeddings():
+    cursor.execute("SELECT id FROM embeddings")
+    existing_meldingen_ids = set([row[0] for row in cursor.fetchall()]) 
+    meldingen, meldingen_ids, coordinates = await get_all_signals()
+    
+    new_meldingen, new_meldingen_ids, new_coordinates = [], [], []
+    
+    for i, melding_id in enumerate(meldingen_ids):
+        if melding_id not in existing_meldingen_ids:
+            new_meldingen.append(meldingen[i])
+            new_meldingen_ids.append(melding_id)
+            new_coordinates.append(coordinates[i])
+    
+    if not new_meldingen_ids:
+        return
+    
+    embeddings = model.encode(new_meldingen, normalize_embeddings=True, show_progress_bar=True, convert_to_tensor=False)
+
+    data = [(new_meldingen_ids[i], embedding.tolist(), new_meldingen[i], new_coordinates[i][0], new_coordinates[i][1]) for i, embedding in enumerate(embeddings)]
+    try:
+        execute_values(cursor, 
+            "INSERT INTO embeddings (id, embedding, description, location) VALUES %s", 
+            data, 
+            template="(%s, %s, %s, ST_Transform(ST_SetSRID(ST_MakePoint(%s, %s), 4326), 28992))",
+            page_size=1000)
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
+        raise e
+
+    return
 
 async def load_embeddings():
-    if not os.path.exists("embeddings.npy") or not os.path.exists("meldingen-text.json") or not os.path.exists("kdtree.pkl"):
+    cursor.execute("SELECT COUNT(*) FROM embeddings")
+    count = cursor.fetchone()[0]
+    if count == 0:
         return await build_embeddings()
-    embeddings = numpy.load("embeddings.npy")
-    with open("meldingen-text.json", "r") as file:
-        data = json.load(file)
-    return embeddings, data["meldingen"], data["meldingen_ids"]
+    await update_embeddings()
+    cursor.execute("SELECT id, embedding::real[], description FROM embeddings")
+    rows = cursor.fetchall()
+    embeddings = numpy.array([row[1] for row in rows], dtype=numpy.float32)
+    meldingen = [row[2] for row in rows]
+    meldingen_ids = [row[0] for row in rows]
+    return embeddings, meldingen, meldingen_ids
 
 async def get_text_similarity():
     embeddings, meldingen, meldingen_ids = await load_embeddings()
@@ -130,53 +176,60 @@ async def get_text_similarity():
 
     return json_response
 
-async def coordinates_to_xy(coordinates):
-    longitude = coordinates[:, 0]
-    latitude = coordinates[:, 1]
-    longitude = numpy.asarray(longitude, dtype=numpy.float64)
-    latitude = numpy.asarray(latitude, dtype=numpy.float64)
-    mean_latitude_radians = numpy.radians(mean_latitude)
-    meters_per_degree_longitude = meters_per_degree_latitude * numpy.cos(mean_latitude_radians)
-
-    x = longitude * meters_per_degree_longitude
-    y = latitude * meters_per_degree_latitude
-    return numpy.column_stack((x, y))
-
 
 async def get_location_similarity():
-    if not os.path.exists("kdtree.pkl"):
-        return {"error": "KD-Tree not found. Please run the load-embeddings endpoint first."}
-    with open("kdtree.pkl", "rb") as f:
-        data = pickle.load(f)
-        tree = data["tree"]
-        locations = data["locations"]
-        meldingen_ids = data["meldingen_ids"]
-    
-    radius = 100 # meters
+    cursor.execute("SELECT id FROM embeddings")
+    meldingen_ids = [row[0] for row in cursor.fetchall()]
+    count = len(meldingen_ids)
+
+    radius = 10 # meters
     results = []
     debug = [] # only for debugging
-    for i in range(len(locations)):
-        indices, distances = tree.query_radius([locations[i]], r=radius, return_distance=True)
-        for j, distance in zip(indices[0], distances[0]): # zip to iterate over the indices and distances simultaneously
-            if i != j and i < j:
-                results.append({
-                    "signal_id_1": meldingen_ids[i],
-                    "signal_id_2": meldingen_ids[j],
-                })
-                debug.append({
-                    "signal_id_1": meldingen_ids[i],
-                    "signal_id_2": meldingen_ids[j],
-                    "distance": float(distance)
-                })
+    for id in meldingen_ids:
+        cursor.execute(
+            """
+            SELECT b.id,
+                (b.location <-> a.location) AS distance
+            FROM embeddings a
+            JOIN embeddings b ON b.id <> a.id
+            WHERE a.id = %s
+            AND ST_DWithin(b.location, a.location, %s)
+            ORDER BY b.location <-> a.location;
+            """,
+            (id, radius),
+        )
+        rows = cursor.fetchall()
+        for row in rows:
+            results.append({
+                "signal_id_1": id,
+                "signal_id_2": row[0]
+            })
+            debug.append({
+                "signal_id_1": id,
+                "signal_id_2": row[0],
+                "distance": row[1]
+            })
+   
 
     json_response = {
         "count": len(results),
-        "signals_processed": len(meldingen_ids),
+        "signals_processed": count,
         "results": debug
     }
     return json_response
 
 
+
+async def get_duplicates():
+    #Get all signals in a range of 100m and cross reference their text score to a certain threshold
+    return
+
+
+
+@app.get("/")
+async def root():
+    response = await get_duplicates()
+    return response
 
 
 
@@ -192,10 +245,16 @@ async def location_duplicates():
 
 
 
-@app.get("/load-embeddings") #call this to embed all the reports and save the embeddings to a numpy file
+@app.get("/load-embeddings") #call this to embed all the reports and save the embeddings to a database
 async def load_embeddings_endpoint():
     await load_embeddings()
     return {"message": "Embeddings loaded successfully", "status": 200}
+
+@app.get("/build-embeddings")
+async def build_embeddings_endpoint():
+    await build_embeddings()
+    return {"message": "Embeddings built successfully", "status": 200}
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8080) # change port to 8080 because 8000 is already used by the backend

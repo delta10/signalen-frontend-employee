@@ -1,7 +1,2 @@
 .env
 __pycache__/
-
-embeddings.npy
-meldingen-text.json
-response.json
-kdtree.pkl
