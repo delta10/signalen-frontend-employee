@@ -40,6 +40,8 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "3",
+    "@playwright/experimental-ct-react": "1.56.1",
+    "@playwright/test": "1.56.1",
     "@tailwindcss/postcss": "4",
     "@types/node": "20",
     "@types/react": "19",

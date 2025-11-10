@@ -47,7 +47,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import dynamic from 'next/dynamic';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
-
+import UploadFile from './bestand-upload';
 const SmallMap = dynamic(() => import('./SmallMap'), {
   ssr: false,
   loading: () => <div className="h-64 w-full rounded-lg bg-gray-100 flex items-center justify-center text-sm text-muted-foreground">Kaart laden...</div>
@@ -69,7 +69,7 @@ const SmallMap = dynamic(() => import('./SmallMap'), {
 // }
 
 // Melding API data
-interface Report {
+export interface Report {
     "_links": {
         "self": {
           "href": "https://api.example.com/signals/v1/private/signals/1"
@@ -146,7 +146,8 @@ interface Report {
       "incident_date_start": string,
       "incident_date_end": string,
       "operational_date": string,
-      "has_attachments": string,
+      "has_attachments": boolean,
+      attachments?: Attachment[];
       "extra_properties": string,
       "notes": [
         {
@@ -173,6 +174,22 @@ interface Report {
       "has_parent": string,
       "has_children": string,
       "assigned_user_email": string
+}
+
+// Attachment interface
+export interface Attachment {
+  _display: string;
+  _links: {
+    self: {
+      href: string;
+    };
+  };
+  location: string;
+  is_image: boolean;
+  created_at: string;
+  created_by: string;
+  public: boolean;
+  caption: string;
 }
 
 interface ReportDetailSheetProps {
@@ -211,13 +228,14 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [isLocationOpen, setIsLocationOpen] = useState(true);
   const [isReporterOpen, setIsReporterOpen] = useState(true);
-  // const [isMetadataOpen, setIsMetadataOpen] = useState(false);
+  const [isFilesOpen, setIsFilesOpen] = useState(false);
 
   React.useEffect(() => {
     if (report) {
       setStatus(getStatusText(report.status.state_display));
       setPriority(getPriorityText(report.priority.priority));
       setNotes(report.notes || []);
+      setIsFilesOpen(false);
     }
   }, [report]);
 
@@ -833,24 +851,22 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
             </Collapsible>
 
             {/* Bestand toevoegen - WIP */}
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
-                  <File className="h-4 w-4" />
-                  Bestand toevoegen
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Button 
-                  // onClick={addFile} 
-                  disabled={!newNote.trim() || isEditing}
-                  className="w-full"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Bestand toevoegen
-                </Button>
-              </CardContent>
-            </Card>
+            <Collapsible open={isFilesOpen} onOpenChange={setIsFilesOpen}>
+              <UploadFile 
+                attachments={report?.attachments || []}
+                hasAttachments={report?.has_attachments || false}
+                onAttachmentsUpdate={(attachments) => {
+                  // Update the parent component through the callback
+                  if (onUpdateReport) {
+                    onUpdateReport({
+                      ...report,
+                      has_attachments: attachments.length > 0,
+                      attachments: attachments,
+                    });
+                  }
+               }}
+              />
+            </Collapsible>
 
             {/* Notitie toevoegen - WIP */}
             <Card>
