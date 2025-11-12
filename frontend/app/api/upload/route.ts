@@ -2,12 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
   const apiToken = process.env.API_TOKEN;
-  const apiUrl = 'https://api.meldingen.utrecht.demo.delta10.cloud/signals/media/attachments';
-
+  const apiUrl = process.env.API_URL;
   // Snelheidscontrole voor de configuratie: als de token ontbreekt, stuur 500.
   if (!apiToken) {
     return NextResponse.json(
-      { error: 'Server configuration error: API token missing.' }, 
+      { error: 'Serverconfiguratiefout: API-token ontbreekt.' }, 
       { status: 500 }
     );
   }
@@ -17,11 +16,10 @@ export async function POST(request: NextRequest) {
     const file = formData.get('file');
 
     if (!file || typeof file === 'string') {
-      return NextResponse.json({ error: 'No file provided' }, { status: 400 });
+      return NextResponse.json({ error: 'Geen bestand opgegeven' }, { status: 400 });
     }
 
     // Lees de file-inhoud als een ArrayBuffer en maak een nieuwe Blob aan.
-    // Dit is nodig om de File uit de request te kunnen hergebruiken in een nieuwe fetch.
     const fileBuffer = await file.arrayBuffer();
     const fileBlob = new Blob([fileBuffer], { type: file.type });
 
@@ -34,11 +32,6 @@ export async function POST(request: NextRequest) {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${apiToken}`,
-        
-        // Headers toegevoegd om CSRF- en Referer-controles te omzeilen.
-        'Referer': 'https://api.meldingen.utrecht.demo.delta10.cloud/',
-        'X-Requested-With': 'XMLHttpRequest', 
-        'X-CSRFToken': 'CSRF-bypass-token', 
       },
       body: apiFormData,
     });
@@ -53,14 +46,14 @@ export async function POST(request: NextRequest) {
       } catch (e) {
         // Als de foutmelding geen JSON is (zoals de 403 HTML die we zagen)
         return NextResponse.json(
-          { error: errorText || 'Upload failed due to external API error' },
+          { error: errorText || 'Upload mislukt door een externe API-fout' },
           { status: response.status }
         );
       }
       
       // Als de foutmelding wel JSON is
       return NextResponse.json(
-        { error: errorJson.message || errorJson.error || 'Upload failed' },
+        { error: errorJson.message || errorJson.error || 'Upload mislukt' },
         { status: response.status }
       );
     }
@@ -76,7 +69,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     // Catch-all voor onverwachte fouten (netwerkfout, ArrayBuffer-fout, etc.)
     return NextResponse.json(
-      { error: 'Internal server error during upload process' },
+      { error: 'Interne serverfout tijdens het uploadproces' },
       { status: 500 }
     );
   }

@@ -41,7 +41,7 @@ export default function UploadFile({
     setUploadError(null);
 
     try {
-      // Upload each file
+      // Upload elk bestand
       const uploadPromises = Array.from(files).map(async (file) => {
         const formData = new FormData();
         formData.append('file', file);
@@ -51,12 +51,12 @@ export default function UploadFile({
           body: formData,
         });
 
-        // Check content type FIRST before any parsing
+        // Controleer content type EERST voor het parsen
         const contentType = response.headers.get('content-type') || '';
         const isJson = contentType.includes('application/json');
 
         if (!response.ok) {
-          // For non-OK responses, show user-friendly message
+          // Voor niet-OK responses, toon gebruiksvriendelijke melding
           if (response.status === 403) {
             throw new Error('Server fout: 403 niet geautoriseerd');
           } else if (isJson) {
@@ -71,7 +71,7 @@ export default function UploadFile({
           }
         }
 
-        // Only parse JSON if content type is correct
+        // Parse alleen JSON als content type correct is
         if (isJson) {
           const result = await response.json();
           return result.attachment;
@@ -85,16 +85,16 @@ export default function UploadFile({
       
       setLocalAttachments(updatedAttachments);
       
-      // Notify parent component
+      // Informeer parent component
       if (onAttachmentsUpdate) {
         onAttachmentsUpdate(updatedAttachments);
       }
 
-      // Reset file input
+      // Reset bestandsinvoer
       e.target.value = '';
     } catch (error) {
       console.error('Upload error:', error);
-      // Only show the error message, never the full error object
+      // Toon alleen de foutmelding, nooit het volledige error object
       const errorMessage = error instanceof Error ? error.message : 'Upload mislukt';
       setUploadError(errorMessage);
     } finally {
@@ -112,14 +112,14 @@ export default function UploadFile({
   };
 
   const formatFileSize = (location: string) => {
-    // Try to extract size from URL or return placeholder
+    // Probeer grootte uit URL te halen of retourneer placeholder
     return 'N/A';
   };
 
   const getFileName = (location: string) => {
-    // Extract filename from location URL
+    // Haal bestandsnaam uit locatie URL
     const parts = location.split('/');
-    return parts[parts.length - 1] || 'Unnamed file';
+    return parts[parts.length - 1] || 'Naamloos bestand';
   };
 
   return (
@@ -130,7 +130,7 @@ export default function UploadFile({
             <CollapsibleTrigger className="flex items-center gap-2 flex-1">
               <FileText className="h-4 w-4" />
               <CardTitle className="text-base">
-                Bestanden & Foto's
+                Bestanden & Foto&#39;s
               </CardTitle>
               <div className="ml-auto flex items-center gap-2">
                 {isFilesOpen ? (
@@ -144,7 +144,7 @@ export default function UploadFile({
         </CardHeader>
         <CollapsibleContent>
           <CardContent className="space-y-3">
-            {/* Existing attachments */}
+            {/* Bestaande bijlagen */}
             {hasAttachments && localAttachments.length > 0 ? (
               <div className="space-y-2 mb-3">
                 <div className="text-xs text-muted-foreground">
@@ -156,7 +156,7 @@ export default function UploadFile({
                       key={attachment._links.self.href} 
                       className="relative group border rounded-md overflow-hidden bg-muted/30"
                     >
-                      {/* Remove button */}
+                      {/* Verwijder knop */}
                       <button
                         onClick={() => handleRemoveAttachment(index)}
                         className="absolute top-2 right-2 z-10 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -203,7 +203,7 @@ export default function UploadFile({
             
             <Separator />
             
-            {/* Upload new files */}
+            {/* Upload nieuwe bestanden */}
             <div>
               <label 
                 htmlFor="file-upload"
@@ -226,7 +226,7 @@ export default function UploadFile({
                         Klik om bestanden te uploaden
                       </p>
                       <p className="text-xs text-muted-foreground mt-1">
-                        Foto's, PDF, of documenten
+                        Foto&#39;s, PDF, of documenten
                       </p>
                     </>
                   )}

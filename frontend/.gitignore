@@ -19,7 +19,7 @@
 
 # production
 /build
-page.tsx
+/app/page.tsx
 
 # misc
 .DS_Store
