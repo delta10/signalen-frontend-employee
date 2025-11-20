@@ -14,6 +14,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
+import { Signal, getState, statusFilterMap, statusLabels } from '@/lib/signal-utils';
 
 type Signal = {
   id: string;
@@ -40,10 +41,10 @@ export default function Home() {
       process.env.NEXT_PUBLIC_API_BASE ||
       'https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/private/signals/?page=1&page_size=50'
     ).replace(/\/$/, '');
-    fetch(`${API_BASE}/api/signals`, {
+    fetch(API_BASE, {
       headers: {
         Authorization:
-          'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImEwYjBjMzRlODIyN2ZjMDJkMGU0OWY5YWZiNWFkM2VhODEwODcyMWIifQ.eyJpc3MiOiJodHRwczovL21lbGRpbmdlbi51dHJlY2h0LmRlbW8uZGVsdGExMC5jbG91ZC9kZXgiLCJzdWIiOiJFZ1ZzYjJOaGJBIiwiYXVkIjoic2lnbmFsZW4iLCJleHAiOjE3NjI4MTE0MzEsImlhdCI6MTc2Mjc2ODIzMSwibm9uY2UiOiJMVHFHZFVIMWc2S1M0QVpkNDBzSGxBPT0iLCJhdF9oYXNoIjoidTVKYkYydW83RVhhVjUwaG4yT0NudyIsImVtYWlsIjoiYWRtaW5AbWVsZGluZ2VuLnV0cmVjaHQuZGVtby5kZWx0YTEwLmNsb3VkIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJhZG1pbiJ9.oFp6ovGAO3voulIwT8XY2_su0EYxWLzDyGaQXDliE9XogQgkT0ntcg8mtIrqVZCtwPk9DfiSJgP9qkFLuUYnQg52K8-HkdCT8Vi_nj9Q9izfJCeYndANdbcOkdRpF8UBthDHOgw8tqgWFEnHSZPxUhaxk6cVTna00QBL3gYKeZicKkVzkdE_JNLUv-zgyfh4LqOFBtmdx5NScmH7cBhVyQSfpfpg9jjtt4Idbifw7uvg12dJDi62WwKBaRL3lurRDtyyuyIXDvwcnAuQGYIgLDDnwDLJg5RmZnI8tgy9yanrrvQLDtXE88DB6pWt-vgsOXNkyl5r3ANTP0DPR33zYw',
+          'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjBhZDhjMTlhY2MzZGYzYTEwYjEwYjI3MTdiZTllMjFiNTVjOWE3NzcifQ.eyJpc3MiOiJodHRwczovL21lbGRpbmdlbi51dHJlY2h0LmRlbW8uZGVsdGExMC5jbG91ZC9kZXgiLCJzdWIiOiJFZ1ZzYjJOaGJBIiwiYXVkIjoic2lnbmFsZW4iLCJleHAiOjE3NjM2Nzg3NDEsImlhdCI6MTc2MzYzNTU0MSwibm9uY2UiOiJFWmlkTzlFTHVYTklpSVpCUGdlUUNBPT0iLCJhdF9oYXNoIjoibkl1ZDh4OUltWDNGYzhiNzMxa3otUSIsImVtYWlsIjoiYWRtaW5AbWVsZGluZ2VuLnV0cmVjaHQuZGVtby5kZWx0YTEwLmNsb3VkIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJhZG1pbiJ9.QPDDkcsLlifNPzLny21MIzWoz7KPYO8-79EoSDgi8ImFZXm-nKUB0rZmYH6OsqT1tXea1qCKxz08kzMFhLq5iBTUXVHCsu-yQy9vUwExFtCHm_AQd29nobXIwG7FsY6fFWvHYDz1XcW0Rd6Ai1f6Pt4_44QXRbi9T8JoErWkwtEJqOQHomxx23o5bh3No-hlWtfMvYVEA2vp6vRIjOrHxBYqhz13GSDa3tOJ1PDF97IrA7AUFo48kz7L9UMSV5lmcygdaW41f68HOBSUsU9LgoyGa6Qo6rQ3z7twey_7zLAaqBp-PdU2Tfzed3IJF7x9NTJ4WC2y-QS72Dr-me0IPg',
       },
     })
       .then((r) => {
@@ -261,13 +262,20 @@ export default function Home() {
       <main className='mx-auto max-w-7xl'>
         <div className='mb-4 flex items-center justify-between'>
           <h2 className='text-xl font-semibold'>Signalen overzicht</h2>
-          <Link href='/map' passHref>
+          <Link
+            href={{
+              pathname: '/map',
+              query: { q: query, status: statusFilter },
+            }}
+            passHref
+          >
             <Button variant='outline'>Toon kaart</Button>
           </Link>
         </div>
-
         {loading ? (
-          <div className='rounded-md bg-white p-6 text-center shadow-sm dark:bg-slate-800'>Laden…</div>
+          <div className='rounded-md bg-white p-6 text-center shadow-sm dark:bg-slate-800'>
+            Laden…
+          </div>
         ) : error ? (
           <div className='rounded-md bg-white p-4 shadow-sm dark:bg-slate-800'>
             <div className='p-6 text-center text-red-600'>
@@ -279,160 +287,164 @@ export default function Home() {
                 </Button>
               </div>
             </div>
-          ) : (
-            <section className='rounded-md bg-white p-4 shadow-sm dark:bg-slate-800'>
-              {signals.length === 0 ? (
-                <div className='p-6 text-center'>
-              Geen signalen gevonden
-              <div className='mt-3'>
-                <Button onClick={() => loadMockData()}>
-                  Laad voorbeelddata
-                </Button>
+          </div>
+        ) : (
+          // START van de 'else'-tak voor de hoofdcontent
+          <section className='rounded-md bg-white p-4 shadow-sm dark:bg-slate-800'>
+            {signals.length === 0 ? (
+              <div className='p-6 text-center'>
+                Geen signalen gevonden
+                <div className='mt-3'>
+                  <Button onClick={() => loadMockData()}>
+                    Laad voorbeelddata
+                  </Button>
+                </div>
               </div>
-            </div>
-              ) : (
-                <>
+            ) : (
+              // START van de 'else'-tak voor de tabel
+              <>
                 <div className='mb-3 flex items-center justify-between'>
-                <div className='text-sm text-slate-600 dark:text-slate-400'>
-                  Totaal: {signals.length}
+                  <div className='text-sm text-slate-600 dark:text-slate-400'>
+                    Totaal: {signals.length}
+                  </div>
+                  <div className='text-sm text-slate-600 dark:text-slate-400'>
+                    Getoond: {filtered.length}
+                  </div>
                 </div>
-                <div className='text-sm text-slate-600 dark:text-slate-400'>
-                  Getoond: {filtered.length}
-                </div>
-              </div>
 
                 <Table>
-                <TableCaption>Signalen overzicht</TableCaption>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className='w-28'>Id</TableHead>
-                    {/* Urgentie-icoon kolom (geen tekst, alleen klein bolletje/icoon) */}
-                    <TableHead className='w-10' aria-label='Urgentie' />
-                    <TableHead className='min-w-[28ch]'>Titel</TableHead>
-                    <TableHead className='hidden min-w-[24ch] md:table-cell'>
-                      Locatie
-                    </TableHead>
-                    <TableHead className='hidden lg:table-cell'>
-                      Melder
-                    </TableHead>
-                    <TableHead className='w-36'>Status</TableHead>
-                    <TableHead className='w-20 text-right'>Acties</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filtered.map((s: any) => {
-                    // veilige weergavewaarden (backend kan objecten teruggeven)
-                    const displayId =
-                      s.id ?? (s.id !== undefined ? String(s.id) : '');
-                    const title = s.title ?? s.text ?? s._display ?? '—';
+                  <TableCaption>Signalen overzicht</TableCaption>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className='w-28'>Id</TableHead>
+                      {/* Urgentie-icoon kolom (geen tekst, alleen klein bolletje/icoon) */}
+                      <TableHead className='w-10' aria-label='Urgentie' />
+                      <TableHead className='min-w-[28ch]'>Titel</TableHead>
+                      <TableHead className='hidden min-w-[24ch] md:table-cell'>
+                        Locatie
+                      </TableHead>
+                      <TableHead className='hidden lg:table-cell'>
+                        Melder
+                      </TableHead>
+                      <TableHead className='w-36'>Status</TableHead>
+                      <TableHead className='w-20 text-right'>Acties</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filtered.map((s: any) => {
+                      // veilige weergavewaarden (backend kan objecten teruggeven)
+                      const displayId =
+                        s.id ?? (s.id !== undefined ? String(s.id) : '');
+                      const title = s.title ?? s.text ?? s._display ?? '—';
 
-                    const loc = s.location;
-                    const locationText =
-                      typeof loc === 'string'
-                        ? loc
-                        : (loc?.address_text ??
-                          (loc?.address
-                            ? `${loc.address.openbare_ruimte ?? ''} ${loc.address.huisnummer ?? ''}`.trim()
-                            : 'Onbekend'));
+                      const loc = s.location;
+                      const locationText =
+                        typeof loc === 'string'
+                          ? loc
+                          : (loc?.address_text ??
+                            (loc?.address
+                              ? `${loc.address.openbare_ruimte ?? ''} ${loc.address.huisnummer ?? ''}`.trim()
+                              : 'Onbekend'));
 
-                    const rep = s.reporter;
-                    const reporterText =
-                      typeof rep === 'string'
-                        ? rep
-                        : rep?.email || rep?.phone || 'Anoniem';
+                      const rep = s.reporter;
+                      const reporterText =
+                        typeof rep === 'string'
+                          ? rep
+                          : rep?.email || rep?.phone || 'Anoniem';
 
-                    const statusObj = s.status;
-                    const state =
-                      statusObj?.state ??
-                      (typeof statusObj === 'string' ? statusObj : undefined);
-                    const statusText = statusObj?.state_display ?? state ?? '—';
+                      const statusObj = s.status;
+                      const state =
+                        statusObj?.state ??
+                        (typeof statusObj === 'string' ? statusObj : undefined);
+                      const statusText =
+                        statusObj?.state_display ?? state ?? '—';
 
-                    return (
-                      <SheetDemo
-                        key={displayId || Math.random()}
-                        id={String(s.id ?? s.signal_id ?? displayId)}
-                        title={title}
-                        body={String(s.text ?? '')}
-                      >
-                        {/* TableRow is the SheetTrigger (asChild) — clicking the row opens the Sheet */}
-                        <TableRow
-                          className='cursor-pointer hover:bg-slate-50 focus:ring-2 focus:ring-sky-300 focus:outline-none'
-                          tabIndex={0}
-                          role='button'
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              (e.currentTarget as HTMLElement).click();
-                              e.preventDefault();
-                            }
-                          }}
+                      return (
+                        <SheetDemo
+                          key={displayId || Math.random()}
+                          id={String(s.id ?? s.signal_id ?? displayId)}
+                          title={title}
+                          body={String(s.text ?? '')}
                         >
-                          <TableCell className='font-mono text-sm'>
-                            {displayId}
-                          </TableCell>
+                          {/* TableRow is the SheetTrigger (asChild) — clicking the row opens the Sheet */}
+                          <TableRow
+                            className='cursor-pointer hover:bg-slate-50 focus:ring-2 focus:ring-sky-300 focus:outline-none'
+                            tabIndex={0}
+                            role='button'
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                (e.currentTarget as HTMLElement).click();
+                                e.preventDefault();
+                              }
+                            }}
+                          >
+                            <TableCell className='font-mono text-sm'>
+                              {displayId}
+                            </TableCell>
 
-                          {/* Urgentie-cel */}
-                          <TableCell className='px-2'>
-                            <span className='inline-flex h-6 w-6 items-center justify-center rounded-full bg-slate-200 dark:bg-slate-700'>
-                              <img
-                                src='/icons/urgent.svg'
-                                alt='Urgentie'
-                                className='h-4 w-4'
-                              />
-                            </span>
-                          </TableCell>
+                            {/* Urgentie-cel */}
+                            <TableCell className='px-2'>
+                              <span className='inline-flex h-6 w-6 items-center justify-center rounded-full bg-slate-200 dark:bg-slate-700'>
+                                <img
+                                  src='/icons/urgent.svg'
+                                  alt='Urgentie'
+                                  className='h-4 w-4'
+                                />
+                              </span>
+                            </TableCell>
 
-                          {/* titel met truncatie zodat rijen netjes blijven */}
-                          <TableCell className='max-w-[28ch]'>
-                            <div className='truncate' title={title}>
-                              {title}
-                            </div>
-                          </TableCell>
-                          <TableCell className='hidden md:table-cell'>
-                            {locationText}
-                          </TableCell>
-                          <TableCell className='hidden lg:table-cell'>
-                            {reporterText}
-                          </TableCell>
+                            {/* titel met truncatie zodat rijen netjes blijven */}
+                            <TableCell className='max-w-[28ch]'>
+                              <div className='truncate' title={title}>
+                                {title}
+                              </div>
+                            </TableCell>
+                            <TableCell className='hidden md:table-cell'>
+                              {locationText}
+                            </TableCell>
+                            <TableCell className='hidden lg:table-cell'>
+                              {reporterText}
+                            </TableCell>
 
-                          <TableCell>
-                            <span
-                              className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs ${
-                                state === 'open'
-                                  ? 'bg-green-100 text-green-800'
-                                  : state === 'in_progress'
-                                    ? 'bg-yellow-100 text-yellow-800'
-                                    : 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200'
-                              }`}
-                            >
-                              {statusText}
-                            </span>
-                          </TableCell>
-
-                          <TableCell>
-                            <div className='flex items-center justify-end gap-2'>
-                              {/* stopPropagation zodat klikken op deze knop de sheet niet opent */}
-                              <Button
-                                size='sm'
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  console.log('Toewijzen', displayId);
-                                }}
+                            <TableCell>
+                              <span
+                                className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs ${
+                                  state === 'open'
+                                    ? 'bg-green-100 text-green-800'
+                                    : state === 'in_progress'
+                                      ? 'bg-yellow-100 text-yellow-800'
+                                      : 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-200'
+                                }`}
                               >
-                                Toewijzen
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      </SheetDemo>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-                </>
-              )}
-            </section>
-          )}
-        )}
+                                {statusText}
+                              </span>
+                            </TableCell>
+
+                            <TableCell>
+                              <div className='flex items-center justify-end gap-2'>
+                                {/* stopPropagation zodat klikken op deze knop de sheet niet opent */}
+                                <Button
+                                  size='sm'
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    console.log('Toewijzen', displayId);
+                                  }}
+                                >
+                                  Toewijzen
+                                </Button>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        </SheetDemo>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </>
+            )}
+          </section>
+        )}{' '}
+        {/* EINDE van de 'else'-tak voor de hoofdcontent */}
         <div className='mt-4 flex gap-2 sm:hidden'>
           <Button onClick={() => console.log('Nieuwe melding')}>
             Nieuwe melding
