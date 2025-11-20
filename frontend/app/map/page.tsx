@@ -1,30 +1,25 @@
 'use client';
 
-import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation'; // Import hook to read URL params
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import * as React from 'react';
 import { Button } from '@/components/ui/button';
 
-// De Map component dynamisch importeren om SSR problemen te voorkomen.
 const Map = dynamic(() => import('@/components/Map'), {
-  ssr: false,
-  loading: () => <div className='p-6 text-center'>Kaart laden...</div>,
+  loading: () => (
+    <div className='flex h-full items-center justify-center'>
+      Kaart laden...
+    </div>
+  ),
+  ssr: false, // Belangrijk: laad de kaart alleen in de browser.
 });
 
 // --- Gekopieerde logica van page.tsx ---
-type Signal = {
-  id: string;
-  title?: string;
-  location?: { address_text?: string; lat?: number; lon?: number } | string;
-  reporter?: string;
-  status?: 'open' | 'in_progress' | 'closed' | string | { state?: string };
-  id_display?: string;
-  text?: string;
-  _display?: string;
-  signal_id?: string;
-};
+// We importeren het Signal type nu uit de Map component, zodat ze altijd overeenkomen.
+import type { Signal } from '@/components/Map';
 
+// Deze logica is niet meer nodig op deze pagina, omdat de Map component het afhandelt.
 const getState = (item: Signal): string => {
   if (!item || !item.status) return '';
   if (typeof item.status === 'string') return item.status;
@@ -160,7 +155,7 @@ export default function MapPage() {
               </Button>
             </div>
           ) : (
-            <Map center={[52.0907, 5.1214]} signals={filteredSignals} />
+            <Map signals={filteredSignals} />
           )}
         </section>
       </main>
