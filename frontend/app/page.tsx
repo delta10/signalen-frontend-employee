@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import Image from 'next/image';
 import * as React from 'react';
 import { SheetDemo } from './message';
@@ -17,7 +18,7 @@ import { Button } from '@/components/ui/button';
 type Signal = {
   id: string;
   title?: string;
-  location?: string;
+  location?: { address_text?: string; lat?: number; lon?: number } | string;
   reporter?: string;
   status?: 'open' | 'in_progress' | 'closed' | string;
 };
@@ -258,10 +259,17 @@ export default function Home() {
       </header>
 
       <main className='mx-auto max-w-7xl'>
-        <section className='rounded-md bg-white p-4 shadow-sm dark:bg-slate-800'>
-          {loading ? (
-            <div className='p-6 text-center'>Laden…</div>
-          ) : error ? (
+        <div className='mb-4 flex items-center justify-between'>
+          <h2 className='text-xl font-semibold'>Signalen overzicht</h2>
+          <Link href='/map' passHref>
+            <Button variant='outline'>Toon kaart</Button>
+          </Link>
+        </div>
+
+        {loading ? (
+          <div className='rounded-md bg-white p-6 text-center shadow-sm dark:bg-slate-800'>Laden…</div>
+        ) : error ? (
+          <div className='rounded-md bg-white p-4 shadow-sm dark:bg-slate-800'>
             <div className='p-6 text-center text-red-600'>
               <div>Fout: {error}</div>
               <div className='mt-3 flex justify-center gap-2'>
@@ -271,8 +279,10 @@ export default function Home() {
                 </Button>
               </div>
             </div>
-          ) : signals.length === 0 ? (
-            <div className='p-6 text-center'>
+          ) : (
+            <section className='rounded-md bg-white p-4 shadow-sm dark:bg-slate-800'>
+              {signals.length === 0 ? (
+                <div className='p-6 text-center'>
               Geen signalen gevonden
               <div className='mt-3'>
                 <Button onClick={() => loadMockData()}>
@@ -280,9 +290,9 @@ export default function Home() {
                 </Button>
               </div>
             </div>
-          ) : (
-            <>
-              <div className='mb-3 flex items-center justify-between'>
+              ) : (
+                <>
+                <div className='mb-3 flex items-center justify-between'>
                 <div className='text-sm text-slate-600 dark:text-slate-400'>
                   Totaal: {signals.length}
                 </div>
@@ -291,7 +301,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <Table>
+                <Table>
                 <TableCaption>Signalen overzicht</TableCaption>
                 <TableHeader>
                   <TableRow>
@@ -418,10 +428,11 @@ export default function Home() {
                   })}
                 </TableBody>
               </Table>
-            </>
+                </>
+              )}
+            </section>
           )}
-        </section>
-
+        )}
         <div className='mt-4 flex gap-2 sm:hidden'>
           <Button onClick={() => console.log('Nieuwe melding')}>
             Nieuwe melding

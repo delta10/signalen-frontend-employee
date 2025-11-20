@@ -1,0 +1,102 @@
+'use client';
+
+import dynamic from 'next/dynamic';
+import Link from 'next/link';
+import * as React from 'react';
+import { Button } from '@/components/ui/button';
+
+// De Map component dynamisch importeren om SSR problemen te voorkomen.
+const Map = dynamic(() => import('@/components/Map'), {
+  ssr: false,
+  loading: () => <div className='p-6 text-center'>Kaart laden...</div>,
+});
+
+// Het Signal type, consistent met de rest van de applicatie.
+type Signal = {
+  id: string;
+  title?: string;
+  location?: { address_text?: string; lat?: number; lon?: number } | string;
+  reporter?: string;
+  status?: 'open' | 'in_progress' | 'closed' | string;
+};
+
+export default function MapPage() {
+  const [signals, setSignals] = React.useState<Signal[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState<string | null>(null);
+
+  const fetchSignals = React.useCallback(() => {
+    let mounted = true;
+    setLoading(true);
+    setError(null);
+
+    const API_BASE = (
+      process.env.NEXT_PUBLIC_API_BASE ||
+      'https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/private/signals/?page=1&page_size=50'
+    ).replace(/\/$/, '');
+    fetch(`${API_BASE}/api/signals`, {
+      headers: {
+        Authorization:
+          'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6ImEwYjBjMzRlODIyN2ZjMDJkMGU0OWY5YWZiNWFkM2VhODEwODcyMWIifQ.eyJpc3MiOiJodHRwczovL21lbGRpbmdlbi51dHJlY2h0LmRlbW8uZGVsdGExMC5jbG91ZC9kZXgiLCJzdWIiOiJFZ1ZzYjJOaGJBIiwiYXVkIjoic2lnbmFsZW4iLCJleHAiOjE3NjI4MTE0MzEsImlhdCI6MTc2Mjc2ODIzMSwibm9uY2UiOiJMVHFHZFVIMWc2S1M0QVpkNDBzSGxBPT0iLCJhdF9oYXNoIjoidTVKYkYydW83RVhhVjUwaG4yT0NudyIsImVtYWlsIjoiYWRtaW5AbWVsZGluZ2VuLnV0cmVjaHQuZGVtby5kZWx0YTEwLmNsb3VkIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJhZG1pbiJ9.oFp6ovGAO3voulIwT8XY2_su0EYxWLzDyGaQXDliE9XogQgkT0ntcg8mtIrqVZCtwPk9DfiSJgP9qkFLuUYnQg52K8-HkdCT8Vi_nj9Q9izfJCeYndANdbcOkdRpF8UBthDHOgw8tqgWFEnHSZPxUhaxk6cVTna00QBL3gYKeZicKkVzkdE_JNLUv-zgyfh4LqOFBtmdx5NScmH7cBhVyQSfpfpg9jjtt4Idbifw7uvg12dJDi62WwKBaRL3lurRDtyyuyIXDvwcnAuQGYIgLDDnwDLJg5RmZnI8tgy9yanrrvQLDtXE88DB6pWt-vgsOXNkyl5r3ANTP0DPR33zYw',
+      },
+    })
+      .then((r) => {
+        if (!r.ok) throw new Error(r.statusText || 'Netwerkfout');
+        return r.json();
+      })
+      .then((data) => {
+        if (!mounted) return;
+        const items = Array.isArray(data)
+          ? data
+          : Array.isArray(data?.results)
+            ? data.results
+            : [];
+        setSignals(items);
+      })
+      .catch((err) => {
+        if (!mounted) return;
+        setError(err?.message ?? 'Fout bij laden');
+        setSignals([]);
+      })
+      .finally(() => mounted && setLoading(false));
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  React.useEffect(() => {
+    const cleanup = fetchSignals();
+    return () => cleanup && cleanup();
+  }, [fetchSignals]);
+
+  return (
+    <div className='min-h-screen bg-slate-50 p-6 text-slate-900 sm:p-12 dark:bg-slate-900 dark:text-slate-100'>
+      <header className='mx-auto mb-8 max-w-7xl'>
+        <div className='flex items-center justify-between'>
+          <h1 className='text-2xl font-bold'>Kaartweergave</h1>
+          <Link href='/' passHref>
+            <Button variant='outline'>Terug naar overzicht</Button>
+          </Link>
+        </div>
+      </header>
+
+      <main className='mx-auto max-w-7xl'>
+        <section className='h-[75vh] w-full rounded-md bg-white shadow-sm dark:bg-slate-800'>
+          {loading ? (
+            <div className='flex h-full items-center justify-center'>Laden…</div>
+          ) : error ? (
+            <div className='flex h-full flex-col items-center justify-center text-red-600'>
+              <div>Fout: {error}</div>
+              <Button onClick={() => fetchSignals()} className='mt-4'>
+                Opnieuw proberen
+              </Button>
+            </div>
+          ) : (
+            <Map center={[52.0907, 5.1214]} signals={signals} />
+          )}
+        </section>
+      </main>
+    </div>
+  );
+}
