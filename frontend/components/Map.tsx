@@ -20,7 +20,15 @@ if (typeof window !== 'undefined') {
 type Signal = {
   id: string;
   title?: string;
-  location?: { address_text?: string; lat?: number; lon?: number } | string;
+  location?:
+    | {
+        address_text?: string;
+        geometrie?: {
+          type: 'Point';
+          coordinates: [number, number]; // [longitude, latitude]
+        };
+      }
+    | string;
   // Velden toegevoegd voor een completere popup
   text?: string;
   _display?: string;
@@ -48,14 +56,15 @@ export default function Map({ center, signals }: MapProps) {
       {signals.map((signal) => {
         // Controleer of de locatie en coördinaten bestaan
         if (
-          typeof signal.location === 'object' &&
-          signal.location.lat &&
-          signal.location.lon
+          typeof signal.location === 'object' && // Locatie is een object
+          signal.location.geometrie && // Het bevat geometrie
+          signal.location.geometrie.coordinates && // Het bevat coördinaten
+          signal.location.geometrie.coordinates.length === 2 // Het is een array met 2 nummers
         ) {
-          const position: LatLngExpression = [
-            signal.location.lat,
-            signal.location.lon,
-          ];
+          const coords = signal.location.geometrie.coordinates;
+          // Leaflet verwacht [latitude, longitude], de API geeft [longitude, latitude]
+          // Dus we draaien ze om: [coords[1], coords[0]]
+          const position: LatLngExpression = [coords[1], coords[0]];
 
           // Gebruik de meest relevante titel voor de popup
           const displayTitle =

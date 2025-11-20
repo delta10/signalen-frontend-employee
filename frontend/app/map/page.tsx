@@ -73,6 +73,10 @@ export default function MapPage() {
         return r.json();
       })
       .then((data) => {
+        // --- CONTROLEER HIER DE DATA ---
+        console.log('API Data ontvangen:', data);
+        // -----------------------------
+
         if (!mounted) return;
         const items = Array.isArray(data)
           ? data
