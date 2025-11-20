@@ -111,3 +111,11 @@ Voor de inloggegevens van de backend raden wij aan even contact op te nemen met 
 
 Deze repository bevat de frontend voor de “employee”-kant van het Signalen-platform: de interface waarmee gemeentemedewerkers meldingen kunnen bekijken, filteren en afhandelen.
 Het project is open-source, zodat andere gemeenten, ontwikkelaars of geïnteresseerden kunnen meekijken met de ontwikkeling van deze app.
+
+# Naming conventions
+
+De afgesproken naming conventions voor elementen in deze repository:
+   Bestanden, URL's en CSS classes: kebab-case 
+   Variabelen, props en functies: camelCase
+   Componenten, interfaces en class names: PascalCase
+   Constanten: snake_case
