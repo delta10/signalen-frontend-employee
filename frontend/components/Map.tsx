@@ -1,18 +1,31 @@
 'use client';
 
 import { useEffect } from 'react';
+import * as React from 'react';
 import 'leaflet/dist/leaflet.css';
 import Link from 'next/link';
 import L, { LatLngExpression } from 'leaflet';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { AlertTriangle, CheckCircle2, Clock, XCircle } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 // We exporteren het Signal type zodat onze pagina het kan gebruiken.
 export type Signal = {
   id: string;
   title?: string;
   text?: string;
+  text_extra?: string;
   _display?: string;
-  status?: 'open' | 'in_progress' | 'closed' | string | { state?: string };
+  status?:
+    | 'open'
+    | 'in_progress'
+    | 'closed'
+    | string
+    | { state?: string; text?: string; state_display?: string };
+  priority?: 'hoog' | 'normaal' | 'laag';
+  category?: string;
+  created_at?: string; // API geeft string, we parsen dit naar een Date
+  assignee?: { first_name: string; last_name: string } | null;
   id_display?: string;
   location?:
     | {
@@ -83,6 +96,43 @@ const getIconForStatus = (status: Signal['status']) => {
   if (['b', 'in_progress'].includes(state ?? '')) return yellowIcon; // In behandeling
   if (['a', 'cancelled'].includes(state ?? '')) return greyIcon; // Geannuleerd
   return blueIcon; // Standaard voor 'open' en andere statussen
+};
+
+// Helper om de datum netjes te formatteren (NL)
+const formatNLDate = (date: Date) => {
+  return new Intl.DateTimeFormat('nl-NL', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(date);
+};
+
+// Helper voor de status badge in de popup
+const getStatusInfoForPopup = (status: Signal['status']) => {
+  const state =
+    typeof status === 'object' && status !== null ? status.state : status;
+
+  if (['m', 'open'].includes(state ?? '')) {
+    return {
+      label: 'Open',
+      icon: <CheckCircle2 className='mr-1.5 h-3.5 w-3.5' />,
+      className:
+        'border-green-300 bg-green-100 text-green-800 dark:border-green-700 dark:bg-green-900/50 dark:text-green-300',
+    };
+  }
+  if (['b', 'in_progress'].includes(state ?? '')) {
+    return {
+      label: 'In behandeling',
+      icon: <Clock className='mr-1.5 h-3.5 w-3.5' />,
+      className:
+        'border-yellow-300 bg-yellow-100 text-yellow-800 dark:border-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-300',
+    };
+  }
+  return {
+    label: 'Afgehandeld',
+    icon: <XCircle className='mr-1.5 h-3.5 w-3.5' />,
+    className:
+      'border-slate-300 bg-slate-100 text-slate-600 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-400',
+  };
 };
 
 // Functie om een leesbare statusnaam te krijgen.
@@ -156,23 +206,39 @@ function AutoZoomController({ signals }: { signals: Signal[] }) {
 function MapLegend() {
   return (
     <div className='leaflet-bottom leaflet-right'>
-      <div className='leaflet-control leaflet-bar bg-white p-2 rounded-md shadow-lg'>
-        <h4 className='font-bold mb-1'>Legenda</h4>
+      <div className='leaflet-control leaflet-bar rounded-md bg-white p-2 shadow-lg'>
+        <h4 className='mb-1 font-bold'>Legenda</h4>
         <ul>
-          <li className='flex items-center mb-1'>
-            <img src={blueIcon.options.iconUrl} alt='Open' className='h-4 w-auto mr-2' />
+          <li className='mb-1 flex items-center'>
+            <img
+              src={blueIcon.options.iconUrl}
+              alt='Open'
+              className='mr-2 h-4 w-auto'
+            />
             <span>Open</span>
           </li>
-          <li className='flex items-center mb-1'>
-            <img src={yellowIcon.options.iconUrl} alt='In behandeling' className='h-4 w-auto mr-2' />
+          <li className='mb-1 flex items-center'>
+            <img
+              src={yellowIcon.options.iconUrl}
+              alt='In behandeling'
+              className='mr-2 h-4 w-auto'
+            />
             <span>In behandeling</span>
           </li>
-          <li className='flex items-center mb-1'>
-            <img src={greenIcon.options.iconUrl} alt='Afgehandeld' className='h-4 w-auto mr-2' />
+          <li className='mb-1 flex items-center'>
+            <img
+              src={greenIcon.options.iconUrl}
+              alt='Afgehandeld'
+              className='mr-2 h-4 w-auto'
+            />
             <span>Afgehandeld</span>
           </li>
           <li className='flex items-center'>
-            <img src={greyIcon.options.iconUrl} alt='Geannuleerd' className='h-4 w-auto mr-2' />
+            <img
+              src={greyIcon.options.iconUrl}
+              alt='Geannuleerd'
+              className='mr-2 h-4 w-auto'
+            />
             <span>Geannuleerd</span>
           </li>
         </ul>
@@ -207,22 +273,71 @@ export default function Map({ signals }: MapProps) {
           const displayTitle =
             signal.title || signal.text || signal._display || 'Geen titel';
           const icon = getIconForStatus(signal.status);
-          const statusText = getStatusDisplayName(signal.status);
+          const statusInfo = getStatusInfoForPopup(signal.status);
+          const locationText =
+            typeof signal.location === 'object'
+              ? signal.location.address_text
+              : signal.location;
+          const descriptionText =
+            (typeof signal.status === 'object' && signal.status?.text) ||
+            signal.text_extra;
 
           return (
             <Marker key={signal.id} position={position} icon={icon}>
-              <Popup>
-                <b>{displayTitle}</b>
-                <br />
-                Status: {statusText}
-                <br />
-                {/* Voeg een link toe naar de detailpagina */}
-                <Link
-                  href={`/signal/${signal.id}`}
-                  className='text-blue-600 hover:underline'
-                >
-                  Bekijk details
-                </Link>
+              <Popup minWidth={240} maxWidth={320}>
+                <div className='text-sm text-slate-800'>
+                  {/* Bovenste sectie: Status en Prioriteit */}
+                  <div className='mb-3 flex items-center justify-between'>
+                    <Badge
+                      variant='outline'
+                      className={`font-semibold ${statusInfo.className}`}
+                    >
+                      {statusInfo.icon}
+                      {statusInfo.label}
+                    </Badge>
+                    {signal.priority === 'hoog' && (
+                      <div className='flex items-center text-xs font-semibold text-orange-600'>
+                        <AlertTriangle className='mr-1 h-4 w-4' />
+                        Hoge prioriteit
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Melding informatie */}
+                  <div className='flex flex-col gap-2.5'>
+                    <h3 className='line-clamp-2 leading-tight font-semibold text-slate-900'>
+                      {displayTitle}
+                    </h3>
+                    <p className='line-clamp-2 text-slate-600'>
+                      {descriptionText}
+                    </p>
+
+                    <div className='border-t border-slate-200 pt-2.5'>
+                      {locationText && (
+                        <div className='flex items-center text-slate-600'>
+                          <span className='mr-2'>📍</span>
+                          <span>{locationText}</span>
+                        </div>
+                      )}
+                      {signal.created_at && (
+                        <div className='mt-1.5 flex items-center text-slate-600'>
+                          <span className='mr-2'>🕐</span>
+                          <span>
+                            {formatNLDate(new Date(signal.created_at))}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Link naar details */}
+                    <Link
+                      href={`/signal/${signal.id}`}
+                      className='font-semibold text-sky-600 hover:underline'
+                    >
+                      Bekijk details
+                    </Link>
+                  </div>
+                </div>
               </Popup>
             </Marker>
           );

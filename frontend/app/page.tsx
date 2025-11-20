@@ -14,7 +14,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Signal, getState, statusFilterMap, statusLabels } from '@/lib/signal-utils';
 
 type Signal = {
   id: string;
