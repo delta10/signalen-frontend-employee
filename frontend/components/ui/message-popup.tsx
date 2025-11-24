@@ -853,6 +853,7 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
             {/* Bestand toevoegen - WIP */}
             <Collapsible open={isFilesOpen} onOpenChange={setIsFilesOpen}>
               <UploadFile 
+                uuid={report?.id}
                 attachments={report?.attachments || []}
                 hasAttachments={report?.has_attachments || false}
                 onAttachmentsUpdate={(attachments) => {
