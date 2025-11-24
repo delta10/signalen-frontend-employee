@@ -169,33 +169,35 @@ export default function Home() {
     return map;
   }, [signals]);
 
-  const filtered = signals.filter((s) => {
-    // status filter: vergelijk backend state codes
-    if (statusFilter !== 'all') {
-      const desired = statusFilterMap[statusFilter] ?? [statusFilter];
-      const state = getState(s);
-      if (!desired.includes(state)) return false;
-    }
+  const filtered = React.useMemo(() => {
+    return signals.filter((s) => {
+      // status filter: vergelijk backend state codes
+      if (statusFilter !== 'all') {
+        const desired = statusFilterMap[statusFilter] ?? [statusFilter];
+        const state = getState(s);
+        if (!desired.includes(state)) return false;
+      }
 
-    // tekst-zoeking (veilig: zet id en velden om naar strings)
-    if (!query.trim()) return true;
-    const q = query.toLowerCase();
-    const idString = String(
-      (s as any).id_display ?? (s as any).id ?? '',
-    ).toLowerCase();
-    return (
-      idString.includes(q) ||
-      String((s as any).title ?? (s as any).text ?? (s as any)._display ?? '')
-        .toLowerCase()
-        .includes(q) ||
-      String((s as any).location?.address_text ?? (s as any).location ?? '')
-        .toLowerCase()
-        .includes(q) ||
-      String((s as any).reporter?.email ?? (s as any).reporter ?? '')
-        .toLowerCase()
-        .includes(q)
-    );
-  });
+      // tekst-zoeking (veilig: zet id en velden om naar strings)
+      if (!query.trim()) return true;
+      const q = query.toLowerCase();
+      const idString = String(
+        (s as any).id_display ?? (s as any).id ?? '',
+      ).toLowerCase();
+      return (
+        idString.includes(q) ||
+        String((s as any).title ?? (s as any).text ?? (s as any)._display ?? '')
+          .toLowerCase()
+          .includes(q) ||
+        String((s as any).location?.address_text ?? (s as any).location ?? '')
+          .toLowerCase()
+          .includes(q) ||
+        String((s as any).reporter?.email ?? (s as any).reporter ?? '')
+          .toLowerCase()
+          .includes(q)
+      );
+    });
+  }, [signals, query, statusFilter]);
 
   return (
     <div className='min-h-screen bg-slate-50 p-6 text-slate-900 sm:p-12 dark:bg-slate-900 dark:text-slate-100'>
@@ -308,7 +310,11 @@ export default function Home() {
           </div>
         ) : view === 'map' ? (
           <div className='h-[600px] w-full rounded-md bg-white p-4 shadow-sm dark:bg-slate-800'>
-            <Map signals={filtered} />
+            <Map
+              signals={filtered}
+              statusFilter={statusFilter}
+              setStatusFilter={setStatusFilter}
+            />
           </div>
         ) : (
           // START van de 'else'-tak voor de hoofdcontent

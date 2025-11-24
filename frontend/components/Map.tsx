@@ -43,7 +43,32 @@ export type Signal = {
 
 type MapProps = {
   signals: Signal[];
+  statusFilter: string;
+  setStatusFilter: (status: string) => void;
 };
+
+function MapFilterControl({
+  statusFilter,
+  setStatusFilter,
+}: Omit<MapProps, 'signals'>) {
+  return (
+    <div className='leaflet-top leaflet-left'>
+      <div className='leaflet-control leaflet-bar bg-white p-1'>
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className='rounded border-slate-300 text-sm focus:border-sky-500 focus:ring-sky-500'
+        >
+          <option value='all'>Alle statussen</option>
+          <option value='open'>Gemeld</option>
+          <option value='in_progress'>In behandeling</option>
+          <option value='closed'>Afgehandeld</option>
+          <option value='geannuleerd'>Geannuleerd</option>
+        </select>
+      </div>
+    </div>
+  );
+}
 
 // --- Gekleurde Iconen ---
 // We definiëren verschillende iconen voor verschillende statussen.
@@ -285,7 +310,11 @@ const mockSignalsForMap: Signal[] = [
   },
 ];
 
-export default function Map({ signals: signalsFromProps = [] }: MapProps) {
+export default function Map({
+  signals: signalsFromProps = [],
+  statusFilter,
+  setStatusFilter,
+}: MapProps) {
   const [signals, setSignals] = React.useState<Signal[]>(signalsFromProps);
 
   useEffect(() => {
@@ -318,6 +347,11 @@ export default function Map({ signals: signalsFromProps = [] }: MapProps) {
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url='https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
+        />
+
+        <MapFilterControl
+          statusFilter={statusFilter}
+          setStatusFilter={setStatusFilter}
         />
 
         {/* Leaflet-specifieke componenten moeten directe kinderen zijn */}
