@@ -1,7 +1,7 @@
 'use client';
 
-import Link from 'next/link';
 import Image from 'next/image';
+import dynamic from 'next/dynamic';
 import * as React from 'react';
 import { SheetDemo } from './message';
 import {
@@ -13,15 +13,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+// Dynamically import the Map component to prevent SSR issues with Leaflet (window is not defined)
+const Map = dynamic(() => import('@/components/Map'), {
+  ssr: false,
+  loading: () => <p>Kaart wordt geladen...</p>,
+});
+import type { Signal as MapSignal } from '@/components/Map';
 import { Button } from '@/components/ui/button';
 
-type Signal = {
-  id: string;
-  title?: string;
-  location?: { address_text?: string; lat?: number; lon?: number } | string;
-  reporter?: string;
-  status?: 'open' | 'in_progress' | 'closed' | string;
-};
+type Signal = MapSignal; // Gebruik het Signal type van de Map component
 
 export default function Home() {
   const [signals, setSignals] = React.useState<Signal[]>([]);
@@ -29,6 +29,7 @@ export default function Home() {
   const [error, setError] = React.useState<string | null>(null);
   const [query, setQuery] = React.useState('');
   const [statusFilter, setStatusFilter] = React.useState<'all' | string>('all');
+  const [view, setView] = React.useState<'table' | 'map'>('table'); // State voor de weergave
 
   const fetchSignals = React.useCallback(() => {
     let mounted = true;
@@ -43,7 +44,7 @@ export default function Home() {
     fetch(API_BASE, {
       headers: {
         Authorization:
-          'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjBhZDhjMTlhY2MzZGYzYTEwYjEwYjI3MTdiZTllMjFiNTVjOWE3NzcifQ.eyJpc3MiOiJodHRwczovL21lbGRpbmdlbi51dHJlY2h0LmRlbW8uZGVsdGExMC5jbG91ZC9kZXgiLCJzdWIiOiJFZ1ZzYjJOaGJBIiwiYXVkIjoic2lnbmFsZW4iLCJleHAiOjE3NjM2Nzg3NDEsImlhdCI6MTc2MzYzNTU0MSwibm9uY2UiOiJFWmlkTzlFTHVYTklpSVpCUGdlUUNBPT0iLCJhdF9oYXNoIjoibkl1ZDh4OUltWDNGYzhiNzMxa3otUSIsImVtYWlsIjoiYWRtaW5AbWVsZGluZ2VuLnV0cmVjaHQuZGVtby5kZWx0YTEwLmNsb3VkIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJhZG1pbiJ9.QPDDkcsLlifNPzLny21MIzWoz7KPYO8-79EoSDgi8ImFZXm-nKUB0rZmYH6OsqT1tXea1qCKxz08kzMFhLq5iBTUXVHCsu-yQy9vUwExFtCHm_AQd29nobXIwG7FsY6fFWvHYDz1XcW0Rd6Ai1f6Pt4_44QXRbi9T8JoErWkwtEJqOQHomxx23o5bh3No-hlWtfMvYVEA2vp6vRIjOrHxBYqhz13GSDa3tOJ1PDF97IrA7AUFo48kz7L9UMSV5lmcygdaW41f68HOBSUsU9LgoyGa6Qo6rQ3z7twey_7zLAaqBp-PdU2Tfzed3IJF7x9NTJ4WC2y-QS72Dr-me0IPg',
+          'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjBhZDhjMTlhY2MzZGYzYTEwYjEwYjI3MTdiZTllMjFiNTVjOWE3NzcifQ.eyJpc3MiOiJodHRwczovL21lbGRpbmdlbi51dHJlY2h0LmRlbW8uZGVsdGExMC5jbG91ZC9kZXgiLCJzdWIiOiJFZ1ZzYjJOaGJBIiwiYXVkIjoic2lnbmFsZW4iLCJleHAiOjE3NjQwMTc4MzYsImlhdCI6MTc2Mzk3NDYzNiwibm9uY2UiOiJvdjZ4OHlkYXAwVkUvNGJJeC9aL2pnPT0iLCJhdF9oYXNoIjoiMW9ZR1ExWjI3Y0o1WVYwM1FBTjM5ZyIsImVtYWlsIjoiYWRtaW5AbWVsZGluZ2VuLnV0cmVjaHQuZGVtby5kZWx0YTEwLmNsb3VkIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJhZG1pbiJ9.IkxbsCvo0TMRS6jzxSD6U5Og3phGCFQ6NHymbJoyftTJwdRw7LS_NP9OFAyXTkyIOhDLEEaGG6KPrlgqgAvG5s5i0vq3jHcOqfYTDjwJP6IALi4STDLMGbl6sLRrsoAInMs4xtzwM8i1XWsz0K7ViSixZO9hXitlxzlPU1tnP5fo3XbFXM5V6GEP5thi-yl_fRnuqyZ8hrMQt2_-pGq32D3rMg4JQEWBXAx_4vNOifYFJZ2ABjkSBDp43ySZ8hB_Rgk962uKJ4j_dIoJe0hWLjlGxitqt4utwCVNWuDc3eDI-NPoEhXPrlhwTjnTlh-rILNahrOVA5mghDOBDBcRMQ',
       },
     })
       .then((r) => {
@@ -80,25 +81,46 @@ export default function Home() {
   const loadMockData = () => {
     setSignals([
       {
-        id: 'S-001',
-        title: 'Kapotte lantaarnpaal',
-        location: 'Parkstraat 12',
-        reporter: 'J. de Boer',
-        status: 'open',
+        id: 'MOCK-001',
+        title: 'Losliggende stoeptegel',
+        location: {
+          address_text: 'Domplein, Utrecht',
+          geometrie: {
+            type: 'Point',
+            coordinates: [5.1216, 52.0907], // [lon, lat]
+          },
+        },
+        status: { state: 'm', state_display: 'Gemeld' },
+        priority: 'hoog',
+        created_at: '2024-05-21T11:00:00Z',
       },
       {
-        id: 'S-002',
-        title: 'Zwerfvuil bij speeltuin',
-        location: 'Dorpsplein',
-        reporter: 'M. van Dijk',
-        status: 'in_progress',
+        id: 'MOCK-002',
+        title: 'Overvolle prullenbak',
+        location: {
+          address_text: 'Ledig Erf, Utrecht',
+          geometrie: {
+            type: 'Point',
+            coordinates: [5.123, 52.0825], // [lon, lat]
+          },
+        },
+        status: { state: 'b', state_display: 'In behandeling' },
+        priority: 'normaal',
+        created_at: '2024-05-20T15:00:00Z',
       },
       {
-        id: 'S-003',
-        title: 'Verstopte put',
-        location: 'Stationsweg 3',
-        reporter: 'A. Klaassen',
-        status: 'closed',
+        id: 'MOCK-003',
+        title: 'Gat in de weg',
+        location: {
+          address_text: 'Amsterdamsestraatweg 100, Utrecht',
+          geometrie: {
+            type: 'Point',
+            coordinates: [5.098, 52.098], // [lon, lat]
+          },
+        },
+        status: { state: 'o', state_display: 'Afgehandeld' },
+        priority: 'laag',
+        created_at: '2024-05-19T09:00:00Z',
       },
     ]);
     setError(null);
@@ -261,15 +283,12 @@ export default function Home() {
       <main className='mx-auto max-w-7xl'>
         <div className='mb-4 flex items-center justify-between'>
           <h2 className='text-xl font-semibold'>Signalen overzicht</h2>
-          <Link
-            href={{
-              pathname: '/map',
-              query: { q: query, status: statusFilter },
-            }}
-            passHref
+          <Button
+            variant='outline'
+            onClick={() => setView(view === 'table' ? 'map' : 'table')}
           >
-            <Button variant='outline'>Toon kaart</Button>
-          </Link>
+            {view === 'table' ? 'Toon kaart' : 'Toon tabel'}
+          </Button>
         </div>
         {loading ? (
           <div className='rounded-md bg-white p-6 text-center shadow-sm dark:bg-slate-800'>
@@ -287,19 +306,16 @@ export default function Home() {
               </div>
             </div>
           </div>
+        ) : view === 'map' ? (
+          <div className='h-[600px] w-full rounded-md bg-white p-4 shadow-sm dark:bg-slate-800'>
+            <Map signals={filtered} />
+          </div>
         ) : (
           // START van de 'else'-tak voor de hoofdcontent
           <section className='rounded-md bg-white p-4 shadow-sm dark:bg-slate-800'>
-            {signals.length === 0 ? (
-              <div className='p-6 text-center'>
-                Geen signalen gevonden
-                <div className='mt-3'>
-                  <Button onClick={() => loadMockData()}>
-                    Laad voorbeelddata
-                  </Button>
-                </div>
-              </div>
-            ) : (
+            {signals.length === 0 && !loading ? (
+              <div className='p-6 text-center'>Geen signalen gevonden</div>
+            ) : signals.length > 0 ? (
               // START van de 'else'-tak voor de tabel
               <>
                 <div className='mb-3 flex items-center justify-between'>
@@ -440,9 +456,11 @@ export default function Home() {
                   </TableBody>
                 </Table>
               </>
+            ) : (
+              <div className='p-6 text-center'>Geen signalen gevonden</div>
             )}
           </section>
-        )}{' '}
+        )}
         {/* EINDE van de 'else'-tak voor de hoofdcontent */}
         <div className='mt-4 flex gap-2 sm:hidden'>
           <Button onClick={() => console.log('Nieuwe melding')}>
