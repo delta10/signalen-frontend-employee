@@ -35,11 +35,11 @@
   --color-secondary-button-active: var(--secondary-button-active);
 
   /*destructive*/
-  --color-destructive: var(--destructive);  
-  --color-destructive-button: var(--destructive-button);  
-  --color-destructive-button-hover: var(--destructive-button-hover);  
-  --color-destructive-button-active: var(--destructive-button-active); 
-  
+  --color-destructive: var(--destructive);
+  --color-destructive-button: var(--destructive-button);
+  --color-destructive-button-hover: var(--destructive-button-hover);
+  --color-destructive-button-active: var(--destructive-button-active);
+
   /*error*/
   --color-error: var(--error);
   --color-error-hover: var(--error-hover);
@@ -49,7 +49,7 @@
   --color-warning-button: var(--warning-button);
   --color-warning-button-hover: var(--warning-button-hover);
   --color-warning-button-active: var(--warning-button-active);
-  
+
   /*success*/
   --color-success-button: var(--success-button);
   --color-success-button-hover: var(--success-button-hover);
@@ -92,7 +92,7 @@
   --primary-button: #2B5A8C;
   --primary-button-hover: #356EAC;
   --primary-button-active: #22466D;
-  
+
   /* Secondary button colors */
   --secondary-button: #2B90CA;
   --secondary-button-hover: #46A2D8;
@@ -135,8 +135,6 @@
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
@@ -180,7 +178,68 @@
   * {
     @apply border-border outline-ring/50;
   }
+
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .saved-filters {
+    @apply border-t-[1] border-b-[1] border-gray-200 w-screen h-1/2 flex flex-row space-x-0.5 items-center bg-gray-50 text-lg
+  }
+}
+
+@layer components {
+  .filter-button {
+    @apply border rounded-md border-gray-200 h-1/2 px-2 flex items-center bg-white text-black text-sm font-medium hover:bg-primary-button-hover hover:text-white active:bg-primary-button active:text-white
+  }
+}
+
+@layer components {
+  .duplicate-button {
+    @apply border rounded-md h-1/2 w-full px-2 flex items-center bg-primary-button text-white text-sm font-medium hover:bg-primary-button-hover hover:text-white active:bg-primary-button
+  }
+}
+
+@layer components {
+  .reject-button {
+    @apply border border-gray-200 rounded-md h-1/2 w-full px-2 flex items-center bg-white text-black text-sm font-medium hover:bg-primary-button-hover hover:text-white active:bg-primary-button active:text-white
+  }
+}
+
+@layer components {
+  .status-filters {
+    @apply border-t-[1] border-b-[1] border-gray-200 px-4 w-full h-24 flex flex-row space-x-2 items-center
+  }
+}
+
+@layer components {
+  .info-card-duplicates {
+    @apply border rounded-lg border-gray-200 h-26 w-[30%] px-4 py-6 flex items-center
+  }
+}
+
+@layer components {
+  .potential-duplicate-card-container {
+    @apply border-r-2 border-gray-200 w-full h-full flex flex-col items-center overflow-y-auto
+  }
+}
+
+@layer components {
+  .duplicate-reject-buttons {
+    @apply w-full h-[10%] flex flex-row items-center px-2 space-x-2
+  }
+}
+
+@layer components {
+  .potential-duplicate-card {
+    @apply
+    /*min 768*/
+    md:w-[85%] md:h-56
+    /*min 1024*/
+    border rounded-lg border-gray-200 h-48 w-[460] m-2 shrink-0 cursor-pointer
+    /*min 1440*/
+    xl:w-[85%] xl:h-80
   }
 }

@@ -21,7 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${instrumentSans.variable}  antialiased`}>
-         <PdfExport/>
+         {/* <PdfExport/> */}
          {children}
       </body>
     </html>
