@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import * as React from 'react';
+import { AlertTriangle } from 'lucide-react';
 import { SheetDemo } from './message';
 import {
   Table,
@@ -44,7 +45,7 @@ export default function Home() {
     fetch(API_BASE, {
       headers: {
         Authorization:
-          'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjBhZDhjMTlhY2MzZGYzYTEwYjEwYjI3MTdiZTllMjFiNTVjOWE3NzcifQ.eyJpc3MiOiJodHRwczovL21lbGRpbmdlbi51dHJlY2h0LmRlbW8uZGVsdGExMC5jbG91ZC9kZXgiLCJzdWIiOiJFZ1ZzYjJOaGJBIiwiYXVkIjoic2lnbmFsZW4iLCJleHAiOjE3NjQwMTc4MzYsImlhdCI6MTc2Mzk3NDYzNiwibm9uY2UiOiJvdjZ4OHlkYXAwVkUvNGJJeC9aL2pnPT0iLCJhdF9oYXNoIjoiMW9ZR1ExWjI3Y0o1WVYwM1FBTjM5ZyIsImVtYWlsIjoiYWRtaW5AbWVsZGluZ2VuLnV0cmVjaHQuZGVtby5kZWx0YTEwLmNsb3VkIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJhZG1pbiJ9.IkxbsCvo0TMRS6jzxSD6U5Og3phGCFQ6NHymbJoyftTJwdRw7LS_NP9OFAyXTkyIOhDLEEaGG6KPrlgqgAvG5s5i0vq3jHcOqfYTDjwJP6IALi4STDLMGbl6sLRrsoAInMs4xtzwM8i1XWsz0K7ViSixZO9hXitlxzlPU1tnP5fo3XbFXM5V6GEP5thi-yl_fRnuqyZ8hrMQt2_-pGq32D3rMg4JQEWBXAx_4vNOifYFJZ2ABjkSBDp43ySZ8hB_Rgk962uKJ4j_dIoJe0hWLjlGxitqt4utwCVNWuDc3eDI-NPoEhXPrlhwTjnTlh-rILNahrOVA5mghDOBDBcRMQ',
+          'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjBhZDhjMTlhY2MzZGYzYTEwYjEwYjI3MTdiZTllMjFiNTVjOWE3NzcifQ.eyJpc3MiOiJodHRwczovL21lbGRpbmdlbi51dHJlY2h0LmRlbW8uZGVsdGExMC5jbG91ZC9kZXgiLCJzdWIiOiJFZ1ZzYjJOaGJBIiwiYXVkIjoic2lnbmFsZW4iLCJleHAiOjE3NjQ2MjM5MzAsImlhdCI6MTc2NDU4MDczMCwibm9uY2UiOiJHMGJrY1dtbGIwaEtXMlVqZldRUTN3PT0iLCJhdF9oYXNoIjoiOEJZWnBRRklwbGozNEE2WVVWcEE3ZyIsImVtYWlsIjoiYWRtaW5AbWVsZGluZ2VuLnV0cmVjaHQuZGVtby5kZWx0YTEwLmNsb3VkIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJhZG1pbiJ9.J613qMZc2MvWJGxsv_NlFcUbnchLWA3kbCpBufWxj71boU0pnQ0C3biqxd__sB4zv7xje0ryO-jTcLDLAvQ21SDKMRmNdXldARqiIE9ZT7KJFZZMteGI4TbOEsfVp9rFHnJ1zlwkn5ReV-kOvbVkg-XwYP12IB9vKzvLubPhuzh1KaWyBhI7grN1meVkxXDohbVj4zWcQYDpow-MhGvDNBOREFFoDR55JFVlrxyejfzAmpcfnxX8J2fdOAJ3HyUq0Vcl8XSJLno1XTH2VeO_iKd2JxLm2eNImvBOTxFh0TuwuxqC9oJcL3KKJcXSjaRuV_d0XDB0bUsPlVwRMtWx9g',
       },
     })
       .then((r) => {
@@ -405,13 +406,13 @@ export default function Home() {
 
                             {/* Urgentie-cel */}
                             <TableCell className='px-2'>
-                              <span className='inline-flex h-6 w-6 items-center justify-center rounded-full bg-slate-200 dark:bg-slate-700'>
-                                <img
-                                  src='/icons/urgent.svg'
-                                  alt='Urgentie'
-                                  className='h-4 w-4'
-                                />
-                              </span>
+                              {((typeof s.priority === 'object' &&
+                                s.priority?.priority === 'high') ||
+                                s.priority === 'hoog') && (
+                                <div className='flex items-center justify-center text-orange-600'>
+                                  <AlertTriangle className='h-5 w-5' />
+                                </div>
+                              )}
                             </TableCell>
 
                             {/* titel met truncatie zodat rijen netjes blijven */}

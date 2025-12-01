@@ -25,7 +25,11 @@ export type Signal = {
     | 'closed'
     | string
     | { state?: string; text?: string; state_display?: string };
-  priority?: 'hoog' | 'normaal' | 'laag';
+  priority?:
+    | 'hoog'
+    | 'normaal'
+    | 'laag'
+    | { priority?: 'high' | 'normal' | 'low' };
   category?: string;
   created_at?: string; // API geeft string, we parsen dit naar een Date
   assignee?: { first_name: string; last_name: string } | null;
@@ -403,7 +407,9 @@ export default function Map({
                             #{signal.id}
                           </span>
                         </div>
-                        {signal.priority === 'hoog' && (
+                        {((typeof signal.priority === 'object' &&
+                          signal.priority?.priority === 'high') ||
+                          signal.priority === 'hoog') && (
                           <div className='flex items-center text-xs font-semibold text-orange-600'>
                             <AlertTriangle className='mr-1 h-4 w-4' />
                             Hoge prioriteit
