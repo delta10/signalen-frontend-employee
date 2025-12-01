@@ -152,27 +152,26 @@ async def all_location_results():
 async def get_text_similarity(location_duplicates, distances):
     unique_ids = list(set([id for pair in location_duplicates for id in pair]))
     ids, embeddings = await load_embeddings(unique_ids)
-    
+
     id_to_index = {id: idx for idx, id in enumerate(ids)}
-    
+    indexes1 = []
+    indexes2 = []
+    for id1, id2 in location_duplicates:
+        indexes1.append(id_to_index[id1])
+        indexes2.append(id_to_index[id2])
+    emb1 = embeddings[indexes1]
+    emb2 = embeddings[indexes2]
+    cosine_scores = util.cos_sim(emb1, emb2).diag()
+
     results = []
-    embeddings = torch.from_numpy(embeddings)
-    
-    for i, pair in enumerate(location_duplicates):
-        id1, id2 = pair[0], pair[1]
-        idx1 = id_to_index.get(id1)
-        idx2 = id_to_index.get(id2)
-        
-        emb1 = embeddings[idx1].unsqueeze(0)  
-        emb2 = embeddings[idx2].unsqueeze(0)  
-        
-        cosine_score = util.cos_sim(emb1, emb2)[0][0].item()
+
+    for i, cosine_score in enumerate(cosine_scores):
         if cosine_score < 0.90:
             continue
         results.append({
-                "signal_id_1": id1,
-                "signal_id_2": id2,
-                "text_score": round(cosine_score, 3),
+                "signal_id_1": location_duplicates[i][0],
+                "signal_id_2": location_duplicates[i][1],
+                "text_score": round(float(cosine_score), 3),
                 "distance": distances[i]
         })
 
@@ -192,7 +191,7 @@ async def get_duplicates():
         "count": len(results),
         "results": results #110 ms with precompiled embeddings (1m 43s initially to calculate embeddings)
     }
-    return json_response
+    return json_response #TODO pagination
 
 
 
