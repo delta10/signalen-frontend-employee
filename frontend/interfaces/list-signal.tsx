@@ -3,7 +3,9 @@ export interface ListSignal {
   id_display: string;
   text?: string;
   //title?: string;
-  priority?: string;
+  priority?: {
+    priority?: string;
+  }
   category?: {
     main?: string;
     sub?: string;

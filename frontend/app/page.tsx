@@ -20,13 +20,14 @@ const Map = dynamic(() => import('@/components/Map'), {
   ssr: false,
   loading: () => <p>Kaart wordt geladen...</p>,
 });
-import type { Signal as MapSignal } from '@/components/Map';
+import type { ListSignal as MapSignal } from '@/components/Map';
 import { Button } from '@/components/ui/button';
 import { ListSignal } from '@/interfaces/list-signal';
 
 async function fetchSignals() {
   const responseSignals = await FetchListSignals();
-} 
+  return responseSignals || [];
+}
 
 type ListSignal = MapSignal; // Gebruik het Signal type van de Map component
 
@@ -45,7 +46,6 @@ export default function Home() {
     };
     loadSignals();
   }, []);
-
 
   // helper: bepaal de 'state' van een item (backend geeft object of string)
   const getState = (item: any) => {
@@ -90,6 +90,7 @@ export default function Home() {
   }, [signals]);
 
   const filtered = React.useMemo(() => {
+    if (!signals || !Array.isArray(signals)) return [];
     return signals.filter((s) => {
       // status filter: vergelijk backend state codes
       if (statusFilter !== 'all') {

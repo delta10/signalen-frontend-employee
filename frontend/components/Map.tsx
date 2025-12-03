@@ -237,8 +237,6 @@ const createClusterCustomIcon = (cluster: any) => {
   });
 };
 
-
-
 export default function Map({
   signals: signalsFromProps = [],
   statusFilter,
@@ -249,7 +247,6 @@ export default function Map({
   useEffect(() => {
     setSignals(signalsFromProps);
   }, [signalsFromProps]);
-
 
   return (
     <div className='relative h-full w-full'>
@@ -293,7 +290,7 @@ export default function Map({
             ) {
               const position: LatLngExpression = [coords[1], coords[0]];
               const displayTitle =
-                signal.title || signal.text || signal._display || 'Geen titel';
+               signal.text || signal.status?.state || 'Geen titel';
               const icon = getIconForStatus(signal.status);
               const statusInfo = getStatusInfoForPopup(signal.status);
               const locationText =
@@ -301,8 +298,8 @@ export default function Map({
                   ? signal.location.address_text
                   : signal.location;
               const descriptionText =
-                (typeof signal.status === 'object' && signal.status?.text) ||
-                signal.text_extra;
+                (typeof signal.status === 'object' && signal.status?.text) 
+                // signal.text_extra;
 
               return (
                 <Marker key={signal.id} position={position} icon={icon}>
@@ -324,7 +321,7 @@ export default function Map({
                         </div>
                         {((typeof signal.priority === 'object' &&
                           signal.priority?.priority === 'high') ||
-                          signal.priority === 'hoog') && (
+                          signal.priority?.priority === 'hoog') && (
                           <div className='flex items-center text-xs font-semibold text-orange-600'>
                             <AlertTriangle className='mr-1 h-4 w-4' />
                             Hoge prioriteit
