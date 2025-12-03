@@ -1,7 +1,7 @@
 export interface ListSignal {
   id: string;
   id_display: string;
-  // title?: string;
+  text?: string;
   priority?: string;
   category?: {
     main?: string;
@@ -10,6 +10,10 @@ export interface ListSignal {
   location?: {
     area_name?: string;
     address_text?: string;
+    geometrie?: {
+      type?: string;
+      coordinates?: Array<number>;
+    };
   };
   created_at?: string;
   assigned_user_email?: string;

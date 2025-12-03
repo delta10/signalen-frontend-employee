@@ -2,16 +2,15 @@ import * as React from 'react';
 import { FetchSignalByID } from '@/server/fetch-signal-by-id';
 import Link from 'next/link';
 //import { Button } from '@/components/ui/button';
-import { TestForm } from '@/components/ui/test-form';
+import { TestForm } from '@/components/ui/tanstack-form';
 import { FullSignal } from '@/interfaces/full-signal';
-import { sign } from 'crypto';
 
 
 async function fetchSignalByID(id: string) {
   const responseSignal = await FetchSignalByID(id);
 
   const signals: FullSignal[] = [];
-  for (const s of responseSignal) {
+  for ( const s of responseSignal) {
     signals.push({
       id: s.id,
       id_display: s.id_display,
@@ -78,7 +77,7 @@ export default async function Page({params}: {params: Promise<{ id: string }>}) 
           className="flex items-center justify-between bg-secondary-700 border border-transparent rounded-lg px-5 py-4
           hover:border-secondary-500 duration-300"
         >
-         <TestForm id={signal.id} signal={signal}></TestForm>
+         <TestForm signal={signal} id={id} />
           <Link
             href={`/overview/melding/${signal.id}`}
             className="flex items-center gap-2 text-sm flex-1"

@@ -1,21 +1,26 @@
 'use server'
 
 import axios from 'axios'
+import { FullSignal } from '@/interfaces/full-signal'
+
 const domainName = process.env.DOMAIN_NAME;
 const bearerToken = process.env.BEARER_TOKEN;
+export async function PatchSignalData(ID: string, data: FullSignal | string | number | boolean) {
 
-export async function PatchSignalData(ID: string, data: string | number | boolean) {
-
-axios
-  .patch(`${domainName}/signals/v1/private/signals/${ID}`, {
+axios({
+    method: 'PATCH',
+    url: `/signals/v1/private/signals/${ID}`,
+    baseURL: `${domainName}`,
+    responseType: 'json',
     headers: {
-        'content-type': 'application/json',
         Authorization: `Bearer ${bearerToken}`
     },
-    data: data
+    data
   })
 
-  .then((response) => console.log(response))
+  .then((response) => {
+    const responseData = response.data;
+    console.log(responseData)})
   
   .catch((error) => console.error(error));
 }
