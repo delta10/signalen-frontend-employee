@@ -14,6 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { FetchListSignals } from '@/server/fetch-list-signals';
 // Dynamically import the Map component to prevent SSR issues with Leaflet (window is not defined)
 const Map = dynamic(() => import('@/components/Map'), {
   ssr: false,
@@ -21,15 +22,16 @@ const Map = dynamic(() => import('@/components/Map'), {
 });
 import type { Signal as MapSignal } from '@/components/Map';
 import { Button } from '@/components/ui/button';
+import { ListSignal } from '@/interfaces/list-signal';
 
 async function fetchSignals() {
   const responseSignals = await FetchListSignals();
 } 
 
-type Signal = MapSignal; // Gebruik het Signal type van de Map component
+type ListSignal = MapSignal; // Gebruik het Signal type van de Map component
 
 export default function Home() {
-  const [signals, setSignals] = React.useState<Signal[]>([]);
+  const [signals, setSignals] = React.useState<ListSignal[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
   const [query, setQuery] = React.useState('');
@@ -44,57 +46,6 @@ export default function Home() {
     loadSignals();
   }, []);
 
-
-
-
-  const loadMockData = () => {
-    setSignals([
-      {
-        id: 'MOCK-001',
-        title: 'Losliggende stoeptegel',
-        location: {
-          address_text: 'Domplein, Utrecht',
-          geometrie: {
-            type: 'Point',
-            coordinates: [5.1216, 52.0907], // [lon, lat]
-          },
-        },
-        status: { state: 'm', state_display: 'Gemeld' },
-        priority: 'hoog',
-        created_at: '2024-05-21T11:00:00Z',
-      },
-      {
-        id: 'MOCK-002',
-        title: 'Overvolle prullenbak',
-        location: {
-          address_text: 'Ledig Erf, Utrecht',
-          geometrie: {
-            type: 'Point',
-            coordinates: [5.123, 52.0825], // [lon, lat]
-          },
-        },
-        status: { state: 'b', state_display: 'In behandeling' },
-        priority: 'normaal',
-        created_at: '2024-05-20T15:00:00Z',
-      },
-      {
-        id: 'MOCK-003',
-        title: 'Gat in de weg',
-        location: {
-          address_text: 'Amsterdamsestraatweg 100, Utrecht',
-          geometrie: {
-            type: 'Point',
-            coordinates: [5.098, 52.098], // [lon, lat]
-          },
-        },
-        status: { state: 'o', state_display: 'Afgehandeld' },
-        priority: 'laag',
-        created_at: '2024-05-19T09:00:00Z',
-      },
-    ]);
-    setError(null);
-    setLoading(false);
-  };
 
   // helper: bepaal de 'state' van een item (backend geeft object of string)
   const getState = (item: any) => {
@@ -271,9 +222,6 @@ export default function Home() {
               <div>Fout: {error}</div>
               <div className='mt-3 flex justify-center gap-2'>
                 <Button onClick={() => fetchSignals()}>Opnieuw proberen</Button>
-                <Button onClick={() => loadMockData()}>
-                  Laad voorbeelddata
-                </Button>
               </div>
             </div>
           </div>

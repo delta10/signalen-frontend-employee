@@ -11,42 +11,10 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { AlertTriangle, CheckCircle2, Clock, XCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-
-// We exporteren het Signal type zodat onze pagina het kan gebruiken.
-export type Signal = {
-  id: string;
-  title?: string;
-  text?: string;
-  text_extra?: string;
-  _display?: string;
-  status?:
-    | 'open'
-    | 'in_progress'
-    | 'closed'
-    | string
-    | { state?: string; text?: string; state_display?: string };
-  priority?:
-    | 'hoog'
-    | 'normaal'
-    | 'laag'
-    | { priority?: 'high' | 'normal' | 'low' };
-  category?: string;
-  created_at?: string; // API geeft string, we parsen dit naar een Date
-  assignee?: { first_name: string; last_name: string } | null;
-  id_display?: string;
-  location?:
-    | {
-        address_text?: string;
-        geometrie?: {
-          type: 'Point';
-          coordinates: [number, number]; // [longitude, latitude]
-        };
-      }
-    | string;
-};
+import { ListSignal } from '@/interfaces/list-signal';
 
 type MapProps = {
-  signals: Signal[];
+  signals: ListSignal[];
   statusFilter: string;
   setStatusFilter: (status: string) => void;
 };
@@ -121,7 +89,7 @@ const greyIcon = L.icon({
 });
 
 // Functie om het juiste icoon te kiezen op basis van de status.
-const getIconForStatus = (status: Signal['status']) => {
+const getIconForStatus = (status: ListSignal['status']) => {
   const state =
     typeof status === 'object' && status !== null ? status.state : status;
   if (['o', 'closed'].includes(state ?? '')) return greenIcon; // Afgehandeld
@@ -139,7 +107,7 @@ const formatNLDate = (date: Date) => {
 };
 
 // Helper voor de status badge in de popup
-const getStatusInfoForPopup = (status: Signal['status']) => {
+const getStatusInfoForPopup = (status: ListSignal['status']) => {
   const state =
     typeof status === 'object' && status !== null ? status.state : status;
 
@@ -176,7 +144,7 @@ const getStatusInfoForPopup = (status: Signal['status']) => {
 };
 
 // Functie om een leesbare statusnaam te krijgen.
-const getStatusDisplayName = (status: Signal['status']): string => {
+const getStatusDisplayName = (status: ListSignal['status']): string => {
   const state =
     typeof status === 'object' && status !== null ? status.state : status;
   switch (state) {
@@ -269,77 +237,24 @@ const createClusterCustomIcon = (cluster: any) => {
   });
 };
 
-const mockSignalsForMap: Signal[] = [
-  {
-    id: 'MOCK-001',
-    title: 'Losliggende stoeptegel',
-    location: {
-      address_text: 'Domplein, Utrecht',
-      geometrie: {
-        type: 'Point',
-        coordinates: [5.1216, 52.0907], // [lon, lat]
-      },
-    },
-    status: { state: 'm', state_display: 'Gemeld' },
-    priority: 'hoog',
-    created_at: '2024-05-21T11:00:00Z',
-  },
-  {
-    id: 'MOCK-002',
-    title: 'Overvolle prullenbak',
-    location: {
-      address_text: 'Ledig Erf, Utrecht',
-      geometrie: {
-        type: 'Point',
-        coordinates: [5.123, 52.0825], // [lon, lat]
-      },
-    },
-    status: { state: 'b', state_display: 'In behandeling' },
-    priority: 'normaal',
-    created_at: '2024-05-20T15:00:00Z',
-  },
-  {
-    id: 'MOCK-003',
-    title: 'Gat in de weg',
-    location: {
-      address_text: 'Amsterdamsestraatweg 100, Utrecht',
-      geometrie: {
-        type: 'Point',
-        coordinates: [5.098, 52.098], // [lon, lat]
-      },
-    },
-    status: { state: 'o', state_display: 'Afgehandeld' },
-    priority: 'laag',
-    created_at: '2024-05-19T09:00:00Z',
-  },
-];
+
 
 export default function Map({
   signals: signalsFromProps = [],
   statusFilter,
   setStatusFilter,
 }: MapProps) {
-  const [signals, setSignals] = React.useState<Signal[]>(signalsFromProps);
+  const [signals, setSignals] = React.useState<ListSignal[]>(signalsFromProps);
 
   useEffect(() => {
     setSignals(signalsFromProps);
   }, [signalsFromProps]);
 
-  const handleLoadMockData = () => {
-    setSignals(mockSignalsForMap);
-  };
 
   return (
     <div className='relative h-full w-full'>
       {signals.length === 0 && (
         <div className='absolute inset-0 z-[1000] flex items-center justify-center'>
-          <Button
-            onClick={handleLoadMockData}
-            variant='default'
-            spellCheck='false'
-          >
-            Fout bij laden, toon voorbeelddata
-          </Button>
         </div>
       )}
       <MapContainer
