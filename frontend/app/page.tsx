@@ -22,6 +22,10 @@ const Map = dynamic(() => import('@/components/Map'), {
 import type { Signal as MapSignal } from '@/components/Map';
 import { Button } from '@/components/ui/button';
 
+async function fetchSignals() {
+  const responseSignals = await FetchListSignals();
+} 
+
 type Signal = MapSignal; // Gebruik het Signal type van de Map component
 
 export default function Home() {
@@ -32,52 +36,16 @@ export default function Home() {
   const [statusFilter, setStatusFilter] = React.useState<'all' | string>('all');
   const [view, setView] = React.useState<'table' | 'map'>('table'); // State voor de weergave
 
-  const fetchSignals = React.useCallback(() => {
-    let mounted = true;
-    setLoading(true);
-    setError(null);
-
-    // gebruik NEXT_PUBLIC_API_BASE of fallback naar localhost:8000
-    const API_BASE = (
-      process.env.NEXT_PUBLIC_API_BASE ||
-      'https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/private/signals/?page=1&page_size=50'
-    ).replace(/\/$/, '');
-    fetch(API_BASE, {
-      headers: {
-        Authorization:
-          'Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IjBhZDhjMTlhY2MzZGYzYTEwYjEwYjI3MTdiZTllMjFiNTVjOWE3NzcifQ.eyJpc3MiOiJodHRwczovL21lbGRpbmdlbi51dHJlY2h0LmRlbW8uZGVsdGExMC5jbG91ZC9kZXgiLCJzdWIiOiJFZ1ZzYjJOaGJBIiwiYXVkIjoic2lnbmFsZW4iLCJleHAiOjE3NjQ2MjM5MzAsImlhdCI6MTc2NDU4MDczMCwibm9uY2UiOiJHMGJrY1dtbGIwaEtXMlVqZldRUTN3PT0iLCJhdF9oYXNoIjoiOEJZWnBRRklwbGozNEE2WVVWcEE3ZyIsImVtYWlsIjoiYWRtaW5AbWVsZGluZ2VuLnV0cmVjaHQuZGVtby5kZWx0YTEwLmNsb3VkIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJhZG1pbiJ9.J613qMZc2MvWJGxsv_NlFcUbnchLWA3kbCpBufWxj71boU0pnQ0C3biqxd__sB4zv7xje0ryO-jTcLDLAvQ21SDKMRmNdXldARqiIE9ZT7KJFZZMteGI4TbOEsfVp9rFHnJ1zlwkn5ReV-kOvbVkg-XwYP12IB9vKzvLubPhuzh1KaWyBhI7grN1meVkxXDohbVj4zWcQYDpow-MhGvDNBOREFFoDR55JFVlrxyejfzAmpcfnxX8J2fdOAJ3HyUq0Vcl8XSJLno1XTH2VeO_iKd2JxLm2eNImvBOTxFh0TuwuxqC9oJcL3KKJcXSjaRuV_d0XDB0bUsPlVwRMtWx9g',
-      },
-    })
-      .then((r) => {
-        if (!r.ok) throw new Error(r.statusText || 'Netwerkfout');
-        return r.json();
-      })
-      .then((data) => {
-        if (!mounted) return;
-        // backend geeft { count, results: [...] } — gebruik results als array
-        const items = Array.isArray(data)
-          ? data
-          : Array.isArray(data?.results)
-            ? data.results
-            : [];
-        setSignals(items);
-      })
-      .catch((err) => {
-        if (!mounted) return;
-        setError(err?.message ?? 'Fout bij laden');
-        setSignals([]);
-      })
-      .finally(() => mounted && setLoading(false));
-
-    return () => {
-      mounted = false;
+  React.useEffect(() => {
+    const loadSignals = async () => {
+      const fetchedSignals = await fetchSignals();
+      setSignals(fetchedSignals);
     };
+    loadSignals();
   }, []);
 
-  React.useEffect(() => {
-    const cleanup = fetchSignals();
-    return () => cleanup && cleanup();
-  }, [fetchSignals]);
+
+
 
   const loadMockData = () => {
     setSignals([
