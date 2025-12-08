@@ -1,7 +1,7 @@
 from sentence_transformers import SentenceTransformer, util
 import requests
 import json
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, Query
 import uvicorn	
 import torch
 import os
@@ -10,6 +10,7 @@ import numpy
 import psycopg2
 from psycopg2.extras import execute_values
 import itertools
+from collections import defaultdict
 
 load_dotenv()
 
@@ -131,7 +132,7 @@ async def load_embeddings(meldingen_ids):
 async def all_location_results():
     cursor.execute("SELECT id FROM embeddings")
 
-    radius = 10 # meters
+    radius = 100 # meters
     results = []
     distances = [] 
     cursor.execute(
@@ -163,35 +164,59 @@ async def get_text_similarity(location_duplicates, distances):
     emb2 = embeddings[indexes2]
     cosine_scores = util.cos_sim(emb1, emb2).diag()
 
-    results = []
+    pairs = []
 
     for i, cosine_score in enumerate(cosine_scores):
-        if cosine_score < 0.90:
+        if cosine_score < 0.80:
             continue
-        results.append({
-                "signal_id_1": location_duplicates[i][0],
-                "signal_id_2": location_duplicates[i][1],
+        pairs.append({
+                "signal_id": location_duplicates[i][0],
+                "duplicate_id": location_duplicates[i][1],
                 "text_score": round(float(cosine_score), 3),
                 "distance": distances[i]
         })
 
-    return results
+    return pairs
 
     
 
-#Endpoint om alle meldingen met mogelijke duplicaten op te halen
+#Endpoint om alle meldingen met mogelijke duplicaten op te halen        TODO: Correct the response output to 
 @app.get("/duplicate/signals")
-async def get_duplicates():
+async def get_duplicates(page: int = Query(1, ge=1), page_size: int = Query(10, ge=1, le=100)):
     await embed_signals() #Get all signals and build embeddings if not exists
     #Get all signals in a range of 100m and cross reference their text score to a certain threshold
     location_duplicates, distances = await all_location_results()
     results = await get_text_similarity(location_duplicates, distances)
+    
+
+    grouped = defaultdict(lambda: {
+        "signal_id": None,
+        "duplicate_ids": [],
+        "text_scores": [],
+        "distances": []
+    })
+
+    for r in results:
+        sid1 = r["signal_id"]
+        sid2 = r["duplicate_id"]
+        grouped[sid1]["signal_id"] = sid1
+        grouped[sid1]["duplicate_ids"].append(sid2)
+        grouped[sid1]["text_scores"].append(r["text_score"])
+        grouped[sid1]["distances"].append(r["distance"])
+
+    grouped_list = list(grouped.values())
+    start = (page - 1) * page_size
+    end = start + page_size
+    paged_results = grouped_list[start:end]
 
     json_response = {
-        "count": len(results),
-        "results": results #110 ms with precompiled embeddings (1m 43s initially to calculate embeddings)
-    }
-    return json_response #TODO pagination
+        "total_count": len(results),
+        "group count": len(grouped_list),
+        "page": page,
+        "page_size": page_size,
+        "results": paged_results
+    } 
+    return json_response #110 ms with precompiled embeddings (1m 43s initially to calculate embeddings)
 
 
 
@@ -237,6 +262,10 @@ async def get_duplicate_from_id(id):
         "duplicates": [results]
     }
 
+
+#TODO: Geef overeenkomende woorden die belangrijk zijn mee in de response
+#TODO: Requirements file voor deployment
+#TODO: Zet op een server ipv localhost
 
 #Endpoint om duplicaten te markeren op meerdere meldingen tegelijk?
 #Endpoint om mogelijke duplicaten op te halen van een melding?
