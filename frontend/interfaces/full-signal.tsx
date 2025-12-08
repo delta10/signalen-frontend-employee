@@ -6,15 +6,43 @@ export interface FullSignal {
 
   status?: {
     text?: string;
+    state?: 'm' |
+            'i' |
+            'b' |
+            'h' |
+            'ingepland' |
+            'ready to send' |
+            'o' |
+            'a' |
+            'reopened' |
+            's' |
+            'closure requested' |
+            'reaction requested' |
+            'reaction received' |
+            'forwarded to external' |
+            'sent' |
+            'send failed' |
+            'done external' |
+            'reopen requested' |
+            string;
     state_display?: 'Gemeld' |
-                    'In behandeling' |
-                    'afgehandeld' |
                     'In afwachting van behandeling' |
-                    'Doorgezet naar extern' |
-                    'Reactie gevraagd' |
+                    'In behandeling' |
+                    'On hold' |
                     'Ingepland' |
-                    'Extern: verzoek tot afhandeling' |
+                    'Extern: te verzenden' |
+                    'Afgehandeld' |
                     'Geannuleerd' |
+                    'Heropend' |
+                    'Gesplitst' |
+                    'Extern: verzoek tot afhandeling' |
+                    'Reactie gevraagd' |
+                    'Reactie ontvangen' |
+                    'Doorgezet naar extern' |
+                    'Extern: verzonden' |
+                    'Extern: mislukt' |
+                    'Extern: afgehandeld' |
+                    'Verzoek tot heropenen' |
                     string;
   };
 
