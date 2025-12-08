@@ -47,26 +47,19 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import dynamic from 'next/dynamic';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
-import UploadFile from './bestand-upload';
+import UploadFile from './file-upload';
+import { AddNote } from './add-note';
+
 const SmallMap = dynamic(() => import('./SmallMap'), {
   ssr: false,
   loading: () => <div className="h-64 w-full rounded-lg bg-gray-100 flex items-center justify-center text-sm text-muted-foreground">Kaart laden...</div>
 });
 
 // Notitie interface
-// export interface Note {
-//   id: string;
-//   source: string;
-//   text: string;
-//   created_at: string;
-  // location: Location;
-  // category: string | any;
-  // reporter: Reporter;
-  // priority: string;
-  // state_display: string;
-  // deadline: string;
-  // notes: string;
-// }
+export interface Note {
+  text: string;
+  created_by: string;
+}
 
 // Melding API data
 export interface Report {
@@ -149,12 +142,7 @@ export interface Report {
       "has_attachments": boolean,
       attachments?: Attachment[];
       "extra_properties": string,
-      "notes": [
-        {
-          "text": string,
-          "created_by": string
-        }
-      ],
+      "notes": Note[],
       "directing_departments": [
         {
           "id": number,
@@ -192,7 +180,7 @@ export interface Attachment {
   caption: string;
 }
 
-interface ReportDetailSheetProps {
+interface MessageModalPopupProps {
   report: Report | null;
   isOpen: boolean;
   onClose: () => void;
@@ -219,16 +207,20 @@ const getPriorityText = (priority: Report['priority'] | string): string => {
   }
 };
 
-export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onExpandToFull }: ReportDetailSheetProps) {
+export function MessageModalPopup({ report, isOpen, onClose, onUpdateReport, onExpandToFull }: MessageModalPopupProps) {
   const [isEditing, setIsEditing] = useState(false);
-  const [newNote, setNewNote] = useState('');
   const [status, setStatus] = useState(report?.status.state_display || 'In Behandeling');
   const [priority, setPriority] = useState(report?.priority.priority || 'Normaal');
-  const [notes, setNotes] = useState(report?.notes || []);
-  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isDescriptionOpen, setIsDescriptionOpen] = useState(true);
   const [isLocationOpen, setIsLocationOpen] = useState(true);
   const [isReporterOpen, setIsReporterOpen] = useState(true);
-  const [isFilesOpen, setIsFilesOpen] = useState(false);
+  const [isAssignmentOpen, setIsAssignmentOpen] = useState(true);
+  const [isSubReportsOpen, setIsSubReportsOpen] = useState(false);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [isFilesOpen, setIsFilesOpen] = useState(true);
+  const [isNotesOpen, setIsNotesOpen] = useState(true);
+  const [notes, setNotes] = useState<Note[]>(report?.notes || []);
+  // const [newNote, setNewNote] = useState('');
 
   React.useEffect(() => {
     if (report) {
@@ -377,6 +369,8 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
   return (
     <Sheet open={isOpen} onOpenChange={handleOpenChange}>
       <SheetContent side="right" className="w-full sm:max-w-2xl p-0 gap-0 !flex !flex-col !h-full overflow-hidden">
+
+        {/* Inleidingsectie */}
         <div className="p-4 pb-3 bg-muted/30 border-b flex-shrink-0">
           <div className="flex items-start justify-between gap-3 mb-6">
 
@@ -434,6 +428,7 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
                 </SheetDescription>
               </div>
             </div>
+
           </div>
           
           {/* Grote expand button */}
@@ -449,6 +444,7 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
           </Button>
         </div>
 
+        {/* Hoofdsectie */}
         <div className="flex-1 overflow-y-auto">
           <div className="p-4 space-y-4 pb-6">
 
@@ -573,32 +569,45 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
             </Card>
 
             {/* Beschrijving */}
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
-                  <FileText className="h-4 w-4" />
-                  Beschrijving
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm leading-relaxed">
-                  {report.text}
-                </p>
-              </CardContent>
-            </Card>
+            <Collapsible open={isDescriptionOpen} onOpenChange={setIsDescriptionOpen}>
+              <Card>
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CollapsibleTrigger className="flex items-center gap-2 flex-1">
+                      <FileText className="h-4 w-4" />
+                      <CardTitle className="text-base">
+                        Beschrijving
+                      </CardTitle>
+                      <div className="ml-auto flex items-center gap-2">
+                        {isDescriptionOpen ? (
+                          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        )}
+                      </div>
+                    </CollapsibleTrigger>
+                  </div>
+                </CardHeader>
+                <CollapsibleContent>
+                  <CardContent>
+                    <p className="text-sm leading-relaxed">
+                      {report.text}
+                    </p>
+                  </CardContent>
+                </CollapsibleContent>
+              </Card>
+            </Collapsible>
 
             {/* Locatie */}
             <Collapsible open={isLocationOpen} onOpenChange={setIsLocationOpen}>
-              <Card className='min-h-96'>
-                <CardHeader className="">
+              <Card>
+                <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <CollapsibleTrigger className="flex items-center gap-2 flex-1">
-                      <div className='flex gap-2'>
-                        <MapPin className="h-4 w-4" />
-                        <CardTitle className="text-base">
-                          Locatie
-                        </CardTitle>
-                      </div>
+                      <MapPin className="h-4 w-4" />
+                      <CardTitle className="text-base">
+                        Locatie
+                      </CardTitle>
                       <div className="ml-auto flex items-center gap-2">
                         {isLocationOpen ? (
                           <ChevronDown className="h-4 w-4 text-muted-foreground" />
@@ -607,14 +616,15 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
                         )}
                       </div>
                     </CollapsibleTrigger>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          openInMaps();
-                        }}
-                        disabled={isEditing}
-                        className="ml-2 h-6 px-2 text-xs rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-1"
-                      >
+                    {/* Maps button stays outside the trigger area but inside the header div */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openInMaps();
+                      }}
+                      disabled={isEditing}
+                      className="ml-2 h-6 px-2 text-xs rounded-md hover:bg-accent hover:text-accent-foreground transition-colors flex items-center gap-1"
+                    >
                       <ExternalLink className="h-3 w-3" />
                       Kaart
                     </button>
@@ -637,7 +647,7 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
                         {report.location.buurt_code || '(0)'} melding(en) in deze omgeving
                       </div>
                     </div>
-                    <div className='w-48 h-48'>
+                    <div className='min-w-48 h-auto'>
                       <SmallMap lon={lon} lat={lat}/>
                     </div>
                   </CardContent>
@@ -722,131 +732,112 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
             </Collapsible>
 
             {/* Toewijzing & Afhandeling */}
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  Toewijzing & Afhandeling
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div>
-                  <div className="text-xs text-muted-foreground mb-1">Toegewezen aan</div>
-                  <div className="text-sm">{report.assigned_user_email || 'Onbekend'}</div>
-                </div>
-                <div>
-                  <div className="text-xs text-muted-foreground mb-1">Verantwoordelijke afdeling</div>
-                  <div className="flex items-center gap-2">
-                    <Building className="h-4 w-4 text-muted-foreground" />
-                    <span className="text-sm">{report.category.departments}</span>
-                  </div>
-                </div>
-                
-                <Separator className="my-3" />
-                
-                <div>
-                  <div className="text-xs text-muted-foreground mb-1">Route</div>
-                  <div className="text-sm">{report.category.departments || 'Onbekend'}</div>
-                </div>
-                <div>
-                  <div className="text-xs text-muted-foreground mb-1">Afhandeltermijn</div>
-                  <div className="text-sm">
-                    {report.incident_date_end !== undefined 
-                      ? (report.incident_date_end ? `${report.incident_date_end} werkdagen` : 'Geen termijn')
-                      : 'Niet gespecificeerd'
-                    }
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Deelmeldingen - WIP */}
+            <Collapsible open={isAssignmentOpen} onOpenChange={setIsAssignmentOpen}>
               <Card>
                 <CardHeader className="pb-3">
-                  <CardTitle className="text-base flex items-center gap-2">
-                    <FileText className="h-4 w-4" />
-                    Deelmeldingen ({
-                    // report.subReports.length || 
-                    '0'})
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  {/* {report.subReports && report.subReports.length > 0 && (
-                    {report.subReports.map((subReport) => (
-                      <div key={subReport.id} className="p-2 bg-muted/30 rounded-md">
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <Badge variant="outline"  className="text-xs">
-                                {subReport.id.replace('sub-', '')}
-                              </Badge>
-                              <span className="text-xs font-medium">{subReport.category}</span>
-                            </div>
-                            {subReport.assignedDepartment && (
-                              <div className="text-xs text-muted-foreground">
-                                {subReport.assignedDepartment}
-                              </div>
-                            )}
-                          </div>
-                          <Badge className={statusColors[subReport.status]} >
-                            {subReport.status}
-                          </Badge>
-                        </div>
+                  <div className="flex items-center justify-between">
+                    <CollapsibleTrigger className="flex items-center gap-2 flex-1">
+                      <Users className="h-4 w-4" />
+                      <CardTitle className="text-base">
+                        Toewijzing & Afhandeling
+                      </CardTitle>
+                      <div className="ml-auto flex items-center gap-2">
+                        {isAssignmentOpen ? (
+                          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        )}
                       </div>
-                    ))}
-                  )} */}
-                </CardContent>
+                    </CollapsibleTrigger>
+                  </div>
+                </CardHeader>
+                <CollapsibleContent>
+                  <CardContent className="space-y-3 pt-0">
+                    <div>
+                      <div className="text-xs text-muted-foreground mb-1">Toegewezen aan</div>
+                      <div className="text-sm">{report.assigned_user_email || 'Onbekend'}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-muted-foreground mb-1">Verantwoordelijke afdeling</div>
+                      <div className="flex items-center gap-2">
+                        <Building className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm">{report.category.departments}</span>
+                      </div>
+                    </div>
+                    
+                    <Separator className="my-3" />
+                    
+                    <div>
+                      <div className="text-xs text-muted-foreground mb-1">Route</div>
+                      <div className="text-sm">{report.category.departments || 'Onbekend'}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-muted-foreground mb-1">Afhandeltermijn</div>
+                      <div className="text-sm">
+                        {report.incident_date_end !== undefined 
+                          ? (report.incident_date_end ? `${report.incident_date_end} werkdagen` : 'Geen termijn')
+                          : 'Niet gespecificeerd'
+                        }
+                      </div>
+                    </div>
+                  </CardContent>
+                </CollapsibleContent>
               </Card>
+            </Collapsible>
 
+            {/* Deelmeldingen - WIP */}
+            <Collapsible open={isSubReportsOpen} onOpenChange={setIsSubReportsOpen}>
+              <Card>
+                <CardHeader className="pb-3">
+                  <div className="flex items-center justify-between">
+                    <CollapsibleTrigger className="flex items-center gap-2 flex-1">
+                      <FileText className="h-4 w-4" />
+                      <CardTitle className="text-base">
+                        Deelmeldingen ({'0'})
+                      </CardTitle>
+                      <div className="ml-auto flex items-center gap-2">
+                        {isSubReportsOpen ? (
+                          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        )}
+                      </div>
+                    </CollapsibleTrigger>
+                  </div>
+                </CardHeader>
+                <CollapsibleContent>
+                  <CardContent className="space-y-2 pt-0">
+                    <p className="text-sm text-muted-foreground">Geen deelmeldingen</p>
+                  </CardContent>
+                </CollapsibleContent>
+              </Card>
+            </Collapsible>
 
             {/* Geschiedenis - WIP*/}
             <Collapsible open={isHistoryOpen} onOpenChange={setIsHistoryOpen}>
               <Card>
                 <CardHeader className="pb-3">
-                  <CollapsibleTrigger className="w-full flex items-center justify-between">
-                    <CardTitle className="text-base flex items-center gap-2">
+                  <div className="flex items-center justify-between">
+                    <CollapsibleTrigger className="flex items-center gap-2 flex-1">
                       <History className="h-4 w-4" />
-                      Geschiedenis 
-                      {/* ({notes.length}) */}
-                    </CardTitle>
-                    {/* {isHistoryOpen ? (
-                      <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                    ) : (
-                      <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                    )} */}
-                  </CollapsibleTrigger>
-                </CardHeader>
-                {/* <CollapsibleContent>
-                  <CardContent className="pt-0">
-                    {notes.length > 0 ? (
-                      <div className="space-y-3">
-                        {notes.slice().reverse().map((note) => (
-                          <div key={note.id} className="flex gap-3 text-sm">
-                            <div className="shrink-0 w-16 text-xs text-muted-foreground">
-                              {formatShortDate(note.createdAt)}
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm leading-relaxed">{note.content}</p>
-                              <div className="flex items-center gap-2 mt-1">
-                                <span className="text-xs text-muted-foreground">{note.author}</span>
-                                {note.type && (
-                                  <Badge variant="outline" className="text-xs h-4 px-1">
-                                    {note.type === 'system' ? 'Systeem' : note.type === 'public' ? 'Publiek' : 'Intern'}
-                                  </Badge>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        ))}
+                      <CardTitle className="text-base">
+                        Geschiedenis 
+                      </CardTitle>
+                      <div className="ml-auto flex items-center gap-2">
+                        {isHistoryOpen ? (
+                          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                        ) : (
+                          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+                        )}
                       </div>
-                    ) : (
-                      <p className="text-sm text-muted-foreground">Geen geschiedenis beschikbaar</p>
-                    )}
+                    </CollapsibleTrigger>
+                  </div>
+                </CardHeader>
+                <CollapsibleContent>
+                  <CardContent className="pt-0">
+                    <p className="text-sm text-muted-foreground">Geen geschiedenis beschikbaar</p>
                   </CardContent>
-                </CollapsibleContent> */}
-                <CardContent>
-                  <p className="text-sm text-muted-foreground">Geen geschiedenis beschikbaar</p>
-                </CardContent>
+                </CollapsibleContent>
               </Card>
             </Collapsible>
 
@@ -870,31 +861,28 @@ export function ReportDetailSheet({ report, isOpen, onClose, onUpdateReport, onE
             </Collapsible>
 
             {/* Notitie toevoegen - WIP */}
-            <Card>
-              <CardHeader className="pb-3">
-                <CardTitle className="text-base flex items-center gap-2">
-                  <MessageSquare className="h-4 w-4" />
-                  Notitie toevoegen
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <Textarea
-                  placeholder="Voeg een nieuwe notitie toe..."
-                  value={newNote}
-                  onChange={(e) => setNewNote(e.target.value)}
-                  className="min-h-[80px] resize-none"
+            <Collapsible open={isNotesOpen} onOpenChange={setIsNotesOpen}>
+               <AddNote 
+                  isOpen={isNotesOpen}
+                  onOpenChange={setIsNotesOpen}
+                  onAddNote={(note) => {
+                    // Voeg de notitie toe aan de huidige notities
+                    const updatedNotes: Note[] = [...notes, note];
+                    setNotes(updatedNotes);
+                    
+                    // Update het report object
+                    if (onUpdateReport) {
+                      onUpdateReport({
+                        ...report,
+                        notes: updatedNotes,
+                        updated_at: new Date().toISOString()
+                      });
+                    }
+                    
+                    console.log('Nieuwe notitie toegevoegd:', note);
+                  }}
                 />
-                <Button 
-                  // onClick={addNote} 
-                  disabled={!newNote.trim() || isEditing}
-                  
-                  className="w-full"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Notitie toevoegen
-                </Button>
-              </CardContent>
-            </Card>
+            </Collapsible>
           </div>
         </div>
       </SheetContent>

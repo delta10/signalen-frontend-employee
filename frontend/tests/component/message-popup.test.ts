@@ -10,9 +10,9 @@ declare global {
   }
 }
 
-test.describe('ReportDetailSheet', () => {
+test.describe('MessageModalPopup', () => {
   test.beforeEach(async ({ page }) => {
-    // Registreer de ReportDetailSheet component als een custom element
+    // Registreer de MessageModalPopup component als een custom element
     await page.evaluate(() => {
       if (customElements.get('report-detail-sheet')) {
         return; // Al gedefinieerd

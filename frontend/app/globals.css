@@ -87,8 +87,8 @@
   /* Priority colors */
     --low: "";
     --normal: "";
-    --high: #FFD85C;
-    --high-border:#d18936;
+    --high: #FEECEC;
+    --high-border:#EF4444;
 
 }
 
