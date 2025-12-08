@@ -90,8 +90,7 @@ async def embed_signals(): #runs once initially to encode all existing signals, 
 
         await build_embeddings(new_meldingen, new_meldingen_ids, new_coordinates)
     
-    return meldingen, meldingen_ids, coordinates
-
+    return
 
 async def build_embeddings(meldingen, meldingen_ids, coordinates): # encode the embeddings for the text descriptions and insert them with the coordinates in the db
     
@@ -132,7 +131,7 @@ async def load_embeddings(meldingen_ids):
 async def all_location_results():
     cursor.execute("SELECT id FROM embeddings")
 
-    radius = 100 # meters
+    radius = 10 # meters
     results = []
     distances = [] 
     cursor.execute(
@@ -167,7 +166,7 @@ async def get_text_similarity(location_duplicates, distances):
     pairs = []
 
     for i, cosine_score in enumerate(cosine_scores):
-        if cosine_score < 0.80:
+        if cosine_score < 0.90:
             continue
         pairs.append({
                 "signal_id": location_duplicates[i][0],
@@ -263,13 +262,10 @@ async def get_duplicate_from_id(id):
     }
 
 
-#TODO: Geef overeenkomende woorden die belangrijk zijn mee in de response
-#TODO: Requirements file voor deployment
-#TODO: Zet op een server ipv localhost
-
-#Endpoint om duplicaten te markeren op meerdere meldingen tegelijk?
-#Endpoint om mogelijke duplicaten op te halen van een melding?
-#Endpoint om te kijken of er mogelijk duplicaten zijn voor een melding?
+#TODO: Add tokenization for security
+#TODO: More error handling
+#TODO: Delete marked duplicates
+#TODO: Meldingen afkeuren zodat ze niet meer getoond worden in de UI
 
 
 if __name__ == "__main__":
