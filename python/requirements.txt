@@ -1,0 +1,8 @@
+sentence-transformers
+requests
+python-dotenv
+fastapi[standard]
+uvicorn
+torch
+psycopg2-binary
+numpy
