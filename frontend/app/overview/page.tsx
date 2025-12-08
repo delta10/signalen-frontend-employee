@@ -5,40 +5,7 @@ import { Button } from '@/components/ui/button';
 import { FetchListSignals } from '@/server/fetch-list-signals';
 import { useEffect } from 'react';
 import Link from 'next/dist/client/link';
-//import { List } from 'lucide-react';
-
-interface ListSignal {
-  id: string;
-  id_display: string;
-  // title?: string;
-  priority?: string;
-  category?: {
-    main?: string;
-    sub?: string;
-  };
-  location?: {
-    area_name?: string;
-    address_text?: string;
-  };
-  created_at?: string;
-  assigned_user_email?: string;
-  status?: {
-    text?: string;
-    state_display?:
-      | 'Gemeld'
-      | 'In behandeling'
-      | 'afgehandeld'
-      | 'In afwachting van behandeling'
-      | 'Doorgezet naar extern'
-      | 'Reactie gevraagd'
-      | 'Ingepland'
-      | 'Extern: verzoek tot afhandeling'
-      | 'Geannuleerd'
-      | string;
-  };
-  directing_department?: string;
-  routing_department?: string;
-}
+import { ListSignal } from '@/interfaces/list-signal'
 
 async function fetchSignals() {
   const responseSignals = await FetchListSignals();
@@ -48,7 +15,10 @@ async function fetchSignals() {
     signals.push({
       id: s.id,
       id_display: s.id_display,
-      priority: s.priority,
+      text: s.text,
+      priority: {
+        priority: s.priority?.priority,
+      }, 
       category: {
         main: s.category?.main,
         sub: s.category?.sub,
@@ -56,6 +26,10 @@ async function fetchSignals() {
       location: {
         area_name: s.location?.area_name,
         address_text: s.location?.address_text,
+        geometrie: {
+          type: s.location?.geometrie?.type,
+          coordinates: s.location?.geometrie?.coordinates,
+        },
       },
       created_at: s.created_at,
       assigned_user_email: s.assigned_user_email,
@@ -63,6 +37,7 @@ async function fetchSignals() {
       routing_department: s.routing_department,
       status: {
         text: s.status?.text,
+        state: s.status?.state,
         state_display: s.status?.state_display,
       },
     });

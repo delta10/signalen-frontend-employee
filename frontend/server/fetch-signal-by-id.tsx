@@ -3,7 +3,7 @@
 import { FullSignal } from "@/interfaces/full-signal";
 import axios from "axios";
 
-export async function FetchSignalByID(ID: string): Promise<FullSignal | null> {
+export async function FetchSignalByID(ID: string): Promise<FullSignal> {
   const domainName = process.env.DOMAIN_NAME;
   const bearerToken = process.env.BEARER_TOKEN;
 
@@ -17,6 +17,7 @@ export async function FetchSignalByID(ID: string): Promise<FullSignal | null> {
     },
   }).then((response) => {
     return Array.isArray(response.data) ? response.data[0] : response.data;
+    
   });
 
   if (!response) {

@@ -10,55 +10,54 @@ async function fetchSignalByID(id: string) {
   const responseSignal = await FetchSignalByID(id);
 
   const signals: FullSignal[] = [];
-  for ( const s of responseSignal) {
-    signals.push({
-      id: s.id,
-      id_display: s.id_display,
-      source: s.source,
-      text: s.text,
-      status: {
-        text: s.status?.text,
-        state_display: s.status?.state_display
+  const s = responseSignal;
+  signals.push({
+    id: s.id,
+    id_display: s.id_display,
+    source: s.source,
+    text: s.text,
+    status: {
+      text: s.status?.text,
+      state_display: s.status?.state_display
+    },
+    location:{
+      stadsdeel: s.location?.stadsdeel,
+      area_name: s.location?.area_name,
+      address_text: s.location?.address_text,
+      geometrie: {
+        type: s.location?.geometrie?.type,
+        coordinates: s.location?.geometrie?.coordinates,
       },
-      location:{
-        stadsdeel: s.location?.stadsdeel,
-        area_name: s.location?.area_name,
-        address_text: s.location?.address_text,
-        geometrie: {
-          type: s.location?.geometrie?.type,
-          coordinates: s.location?.geometrie?.coordinates,
-        },
-      },
-      category: {
-        main: s.category?.main,
-        sub: s.category?.sub,
-      },
-      reporter: {
-        email: s.reporter?.email,
-        phone: s.reporter?.phone,
-        sharing_allowed: s.reporter?.sharing_allowed,
-        allows_contact: s.reporter?.allows_contact,
-      },
-      priority: {
-        priority: s.priority?.priority,
-      },
-      type: {
-        code: s.type?.code,
-      },
-      created_at: s.created_at,
-      updated_at: s.updated_at,
-      incident_date_start: s.incident_date_start,
-      incident_date_end: s.incident_date_end,
-      has_attachments: s.has_attachments,
-      notes: {
-        text: s.notes?.text,
-        created_by: s.notes?.created_by,
-      },
-      directing_department: s.directing_department,
-      routing_department: s.routing_department,
-      assigned_user_email: s.assigned_user_email,
-      });
-  }
+    },
+    category: {
+      main: s.category?.main,
+      sub: s.category?.sub,
+    },
+    reporter: {
+      email: s.reporter?.email,
+      phone: s.reporter?.phone,
+      sharing_allowed: s.reporter?.sharing_allowed,
+      allows_contact: s.reporter?.allows_contact,
+    },
+    priority: {
+      priority: s.priority?.priority,
+    },
+    type: {
+      code: s.type?.code,
+    },
+    created_at: s.created_at,
+    updated_at: s.updated_at,
+    incident_date_start: s.incident_date_start,
+    incident_date_end: s.incident_date_end,
+    has_attachments: s.has_attachments,
+    notes: {
+      text: s.notes?.text,
+      created_by: s.notes?.created_by,
+    },
+    directing_department: s.directing_department,
+    routing_department: s.routing_department,
+    assigned_user_email: s.assigned_user_email,
+    });
 
   return signals;
 }
@@ -77,7 +76,7 @@ export default async function Page({params}: {params: Promise<{ id: string }>}) 
           className="flex items-center justify-between bg-secondary-700 border border-transparent rounded-lg px-5 py-4
           hover:border-secondary-500 duration-300"
         >
-         <TestForm signal={signal} id={id} />
+         <TestForm signal={signal} formType={"status"} />
           <Link
             href={`/overview/melding/${signal.id}`}
             className="flex items-center gap-2 text-sm flex-1"

@@ -25,7 +25,7 @@ import {
   InputGroupText,
   InputGroupTextarea,
 } from "@/components/ui/input-group"
-import { patchFormData } from "@/server/patch-form-data"
+import { PatchSignalData } from "@/server/patch-signal-data"
 import { FullSignal } from "@/interfaces/full-signal"
 import { Select } from "./select"
 
@@ -34,7 +34,7 @@ export function TestForm({ signal, formType }: { signal: FullSignal; formType: s
     defaultValues: signal,
 
     onSubmit: async ({ value }) => {
-        patchFormData(value.id, value.status?.state ?? "");
+        PatchSignalData("id:" + value.id, formType + value.status?.state);
     },
   })
   return (
