@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import MessageModalPopup, { 
     Report, Attachment, HistoryEntry, ContextData, StatusMessage, AutocompleteUser, RelatedReporter, PaginatedResponse
-} from "./message-popup";
+} from "../../../../components/ui/message-popup";
 
 const API_BASE_URL = "https://api.meldingen.utrecht.demo.delta10.cloud/signals/v1/private";
 const API_TOKEN = process.env.API_TOKEN;

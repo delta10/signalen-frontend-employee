@@ -21,7 +21,7 @@ interface AddNoteProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-export function AddNote({ onAddNote, isOpen: controlledIsOpen, onOpenChange }: AddNoteProps) {
+export default function AddNote({ onAddNote, isOpen: controlledIsOpen, onOpenChange }: AddNoteProps) {
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const [newNote, setNewNote] = useState('');
 
