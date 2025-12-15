@@ -41,8 +41,15 @@ export default function Home() {
 
   React.useEffect(() => {
     const loadSignals = async () => {
-      const fetchedSignals = await fetchSignals();
-      setSignals(fetchedSignals);
+      try {
+        setLoading(true);
+        const fetchedSignals = await fetchSignals();
+        setSignals(fetchedSignals);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Onbekende fout');
+      } finally {
+        setLoading(false);
+      }
     };
     loadSignals();
   }, []);
