@@ -36,6 +36,8 @@ const SmallMap = dynamic(() => import('@/components/ui/SmallMap'), {
   loading: () => <div className="h-64 w-full rounded-lg bg-gray-100 flex items-center justify-center text-sm text-muted-foreground">Kaart laden...</div>
 });
 
+
+
 // Component props
 interface MessageModalPopupProps {
   initialReport: Report;
@@ -415,7 +417,7 @@ export default function MessageModalPopup({ initialReport, id, attachments: init
         <div className="flex-1 overflow-y-auto">
           <div className="p-4 space-y-4 pb-6">
 
-            {/* Snel Status bewerken */}
+            {/* Basisinformatie */}
             <Card>
                <CardHeader className="pb-2">
                 <div className="flex items-center justify-between">
@@ -550,7 +552,6 @@ export default function MessageModalPopup({ initialReport, id, attachments: init
                     )}
                   </div>
 
-
                   {/* Prioriteit */}
                   <div className="flex-1 min-w-[200px]">
                     <div className="text-xs text-muted-foreground mb-1">Prioriteit</div>
@@ -584,6 +585,7 @@ export default function MessageModalPopup({ initialReport, id, attachments: init
                     )}
                   </div>
 
+                  {/* Subcategorie */}
                   <div className="flex-1 min-w-0">
                     <div className="text-xs text-muted-foreground mb-1">Subcategorie</div>
                     <Badge variant="secondary"  className="truncate max-w-full">
